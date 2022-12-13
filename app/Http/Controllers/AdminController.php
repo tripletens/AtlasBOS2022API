@@ -50,6 +50,52 @@ class AdminController extends Controller
         ];
     }
 
+    public function update_pro_type()
+    {
+        $pro = Products::all();
+
+        foreach ($pro as $value) {
+            $spec_data = $value->spec_data;
+            $id = $value->id;
+
+            if ($spec_data && $spec_data != null && $spec_data != 'null') {
+                ///  return $value;
+                $spec_data = json_decode($spec_data);
+
+                if (isset($spec_data[0])) {
+                    ///  return $spec_data;
+                    $first = $spec_data[0];
+                    $type = isset($first->type)
+                        ? strtolower($first->type)
+                        : null;
+                    if ($type == 'assorted') {
+                        $grouping = isset($first->grouping)
+                            ? $first->grouping
+                            : null;
+
+                        if ($grouping != null) {
+                            Products::where('id', $id)->update([
+                                'grouping' => $grouping,
+                            ]);
+                        }
+                    }
+                    if ($type != null) {
+                        Products::where('id', $id)->update(['type' => $type]);
+                    }
+                } else {
+                    Products::where('id', $id)->update(['type' => 'regular']);
+                }
+            } else {
+                Products::where('id', $id)->update(['type' => 'regular']);
+            }
+        }
+
+        $this->result->status = true;
+        $this->result->status_code = 200;
+        $this->result->message = 'type fixed';
+        return response()->json($this->result);
+    }
+
     public function end_booking_program()
     {
         Dealer::query()->update(['close_program' => '1']);
@@ -2170,7 +2216,7 @@ class AdminController extends Controller
 
         $all_dealer_ids_order_status = DB::table('atlas_dealers')
             ->wherein('account_id', $fetch_account_ids)
-            ->where('order_status', 1)
+            // ->where('order_status', 1)
             ->pluck('account_id')
             ->toArray();
 
@@ -2190,7 +2236,7 @@ class AdminController extends Controller
 
         $all_dealer_ids_order_status = DB::table('atlas_dealers')
             ->wherein('id', $fetch_dealer_ids)
-            ->where('order_status', 1)
+            // ->where('order_status', 1)
             ->pluck('id')
             ->toArray();
 
@@ -2227,8 +2273,20 @@ class AdminController extends Controller
         // $catalogue_orders = Catalogue_order::all();
         // $carded_products = CardedProducts::all();
         // $service_parts = ServiceParts::all();
-        // $orders = DealerCart::all();
-        $orders = Dealer::where('order_status', 1)->get();
+        ///// $orders = DealerCart::all();
+
+        $cart_orders_ch = Cart::all();
+        $dealer_arr = [];
+        foreach ($cart_orders_ch as $val) {
+            $dealer = $val->dealer;
+
+            if (!in_array($dealer, $dealer_arr)) {
+                array_push($dealer_arr, $dealer);
+            }
+        }
+        $orders = count($dealer_arr);
+
+        //// $orders = Dealer::where('order_status', 1)->get();
 
         // SELECT ALL THE dealers
         // count all the items in their orders
@@ -2236,13 +2294,17 @@ class AdminController extends Controller
 
         // fetch dealers that have completed an order
 
-        $dealer_with_orders = Dealer::where('order_status', 1)
-            ->orderby('id', 'desc')
+        // $dealer_with_orders = Dealer::where('order_status', 1)
+        //     ->orderby('id', 'desc')
+        //     ->get()
+        //     ->take(5);
+
+        $dealer_with_orders = Dealer::orderby('id', 'desc')
             ->get()
             ->take(5);
 
         $all_Dealers_with_orders = DB::table('atlas_dealers')
-            ->where('atlas_dealers.order_status', 1)
+            // ->where('atlas_dealers.order_status', 1)
             ->join('cart', 'atlas_dealers.id', '=', 'cart.dealer')
             ->select('atlas_dealers.account_id', 'cart.price')
             ->sum('cart.price');
@@ -2317,7 +2379,7 @@ class AdminController extends Controller
                 'placed_order_date',
                 'account_id'
             )
-            ->where('order_status', '1')
+            // ->where('order_status', '1')
             ->orderBy('placed_order_date', 'desc')
             ->take(5)
             ->get()
@@ -2353,7 +2415,7 @@ class AdminController extends Controller
         $this->result->data->total_service_parts = $all_service_parts
             ? count($all_service_parts)
             : 0;
-        $this->result->data->total_orders = $orders ? count($orders) : 0;
+        $this->result->data->total_orders = $orders;
 
         $this->result->data->recent_orders = $recent_order;
         $this->result->data->new_products = $new_products

@@ -45,10 +45,52 @@ class DealerController extends Controller
         ];
     }
 
+    public function recent_item_in_cart($id)
+    {
+        $cart = Cart::join(
+            'atlas_products',
+            'cart.pro_id',
+            '=',
+            'atlas_products.id'
+        )
+            ->select('cart.*', 'atlas_products.type', 'atlas_products.grouping')
+
+            ->where('cart.dealer', '=', $id)
+            ->where('cart.status', '=', '0')
+            ->take(10)
+            ->get();
+        foreach ($cart as $value) {
+            $spec_data = $value->spec_data
+                ? json_decode($value->spec_data)
+                : [];
+            $qty = intval($value->qty);
+            $unit_price = floatval($value->unit_price);
+
+            $value->spec_data = $spec_data;
+            $value->qty = $qty;
+            $value->unit_price = $unit_price;
+        }
+
+        $this->result->status = true;
+        $this->result->status_code = 200;
+        $this->result->data = $cart;
+        $this->result->message = 'User cart items';
+
+        return response()->json($this->result);
+    }
+
     public function get_user_cart($id)
     {
-        $cart = Cart::where('dealer', '=', $id)
-            ->where('status', '=', '0')
+        $cart = Cart::join(
+            'atlas_products',
+            'cart.pro_id',
+            '=',
+            'atlas_products.id'
+        )
+            ->select('cart.*', 'atlas_products.type', 'atlas_products.grouping')
+
+            ->where('cart.dealer', '=', $id)
+            ->where('cart.status', '=', '0')
             ->get();
         foreach ($cart as $value) {
             $spec_data = $value->spec_data
@@ -829,58 +871,102 @@ class DealerController extends Controller
 
     public function store_user_cart(Request $request)
     {
-        $pro_id = $request->id;
-        $atlas_id = $request->atlasId;
-        $qty = $request->quantity;
-        $unit_price = $request->uPrice;
-        $dealer = $request->dealer;
-        $price = $request->price;
-        $desc = $request->desc;
-        $grouping = $request->grouping;
-        $price = $request->price;
-        $pro_img = $request->proImg;
-        $spec = $request->spec_data;
-        $vendor_img = $request->vendorImg;
-        $booking = $request->booking;
-        $category = $request->category;
-        $um = $request->um;
-        $xref = $request->xref;
+        // $pro_id = $request->id;
+        // $atlas_id = $request->atlasId;
+        // $qty = $request->quantity;
+        // $unit_price = $request->uPrice;
+        // $dealer = $request->dealer;
+        // $price = $request->price;
+        // $desc = $request->desc;
+        // $grouping = $request->grouping;
+        // $price = $request->price;
+        // $pro_img = $request->proImg;
+        // $spec = $request->spec_data;
+        // $vendor_img = $request->vendorImg;
+        // $booking = $request->booking;
+        // $category = $request->category;
+        // $um = $request->um;
+        // $xref = $request->xref;
 
-        if (intval($qty) > 0) {
-            $check = Cart::where('dealer', '=', $dealer)
-                ->where('atlas_id', '=', $atlas_id)
-                ->get()
-                ->toArray();
-            if (empty($check)) {
-                $create_carded_product = Cart::create([
-                    'dealer' => $dealer,
-                    'pro_id' => $pro_id,
-                    'atlas_id' => $atlas_id,
-                    'qty' => $qty,
-                    'price' => $price,
-                    'unit_price' => $unit_price,
-                    'desc' => $desc,
-                    'pro_img' => $pro_img,
-                    'vendor_img' => $vendor_img,
-                    'spec_data' => json_encode($spec),
-                    'grouping' => $grouping,
-                    'booking' => $booking,
-                    'category' => $category,
-                    'um' => $um,
-                    'xref' => $xref,
-                ]);
+        // lets get the items from the array
+        $product_array = $request->input('product_array');
+        $dealer = $request->input('dealer');
 
-                $this->result->status = true;
-                $this->result->status_code = 200;
-                $this->result->message = 'Carded Product created successfully';
-            } else {
-                $this->result->status = true;
-                $this->result->status_code = 200;
-                $this->result->message = 'Item Already Added to the cart';
+        if (count(json_decode($product_array)) > 0 && $product_array) {
+            $decode_product_array = json_decode($product_array);
+
+            foreach ($decode_product_array as $product) {
+                // update to the db
+
+                if (
+                    !Cart::where('dealer', $dealer)
+                        ->where('atlas_id', $product->atlas_id)
+                        ->exists()
+                ) {
+                    if (intval($product->quantity) > 0) {
+                        $create_carded_product = Cart::create([
+                            'dealer' => $dealer,
+                            'atlas_id' => $product->atlasId,
+                            'desc' => $desc,
+                            'pro_img' => $proImg,
+                            'vendor_img' => $vendorImg,
+                            'qty' => $product->quantity,
+                            'price' => $product->price,
+                            'unit_price' => $product->unitPrice,
+                            'spec_data' => json_encode($spec),
+                            'grouping' => $product->grouping,
+                            'type' => $product->type,
+                            'xref' => $product->xref,
+                            'pro_id' => $product->id,
+                            'booking' => $booking,
+                            'category' => $category,
+                            'um' => $um,
+                        ]);
+                    }
+                }
             }
-
-            return response()->json($this->result);
         }
+
+        $this->result->status = true;
+        $this->result->status_code = 200;
+        $this->result->message = 'Item Already Added to the cart';
+        return response()->json($this->result);
+
+        // if (intval($qty) > 0) {
+        //     $check = Cart::where('dealer', '=', $dealer)
+        //         ->where('atlas_id', '=', $atlas_id)
+        //         ->get()
+        //         ->toArray();
+        //     if (empty($check)) {
+        //         $create_carded_product = Cart::create([
+        //             'dealer' => $dealer,
+        //             'pro_id' => $pro_id,
+        //             'atlas_id' => $atlas_id,
+        //             'qty' => $qty,
+        //             'price' => $price,
+        //             'unit_price' => $unit_price,
+        //             'desc' => $desc,
+        //             'pro_img' => $pro_img,
+        //             'vendor_img' => $vendor_img,
+        //             'spec_data' => json_encode($spec),
+        //             'grouping' => $grouping,
+        //             'booking' => $booking,
+        //             'category' => $category,
+        //             'um' => $um,
+        //             'xref' => $xref,
+        //         ]);
+
+        //         $this->result->status = true;
+        //         $this->result->status_code = 200;
+        //         $this->result->message = 'Carded Product created successfully';
+        //     } else {
+        //         $this->result->status = true;
+        //         $this->result->status_code = 200;
+        //         $this->result->message = 'Item Already Added to the cart';
+        //     }
+
+        //     return response()->json($this->result);
+        // }
     }
 
     public function edit_user_cart(Request $request)
