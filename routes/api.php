@@ -32,6 +32,9 @@ Route::group(
         Route::post('/admin-login', 'AdminController@login');
         Route::post('/register-dealer', 'AdminController@register_dealer');
         Route::post('/register-admin', 'AdminController@register_admin');
+
+        Route::get('/admin/fix-pro-type', 'AdminController@update_pro_type');
+
         Route::get(
             '/deactivate_admin/{id}',
             'AdminController@deactivate_admin'
@@ -429,6 +432,11 @@ Route::group(
         Route::get(
             '/get-user-cart-item/{id}',
             'DealerController@get_user_cart'
+        );
+
+        Route::get(
+            '/get-recent-item-in-cart/{id}',
+            'DealerController@recent_item_in_cart'
         );
 
         Route::get(
