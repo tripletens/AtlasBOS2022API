@@ -871,26 +871,11 @@ class DealerController extends Controller
 
     public function store_user_cart(Request $request)
     {
-        // $pro_id = $request->id;
-        // $atlas_id = $request->atlasId;
-        // $qty = $request->quantity;
-        // $unit_price = $request->uPrice;
-        // $dealer = $request->dealer;
-        // $price = $request->price;
-        // $desc = $request->desc;
-        // $grouping = $request->grouping;
-        // $price = $request->price;
-        // $pro_img = $request->proImg;
-        // $spec = $request->spec_data;
-        // $vendor_img = $request->vendorImg;
-        // $booking = $request->booking;
-        // $category = $request->category;
-        // $um = $request->um;
-        // $xref = $request->xref;
-
         // lets get the items from the array
         $product_array = $request->input('product_array');
         $dealer = $request->input('dealer');
+
+        $added_item = 0;
 
         if (count(json_decode($product_array)) > 0 && $product_array) {
             $decode_product_array = json_decode($product_array);
@@ -904,6 +889,8 @@ class DealerController extends Controller
                         ->exists()
                 ) {
                     if (intval($product->quantity) > 0) {
+                        $added_item++;
+
                         $create_carded_product = Cart::create([
                             'dealer' => $dealer,
                             'atlas_id' => $product->atlasId,
@@ -923,12 +910,15 @@ class DealerController extends Controller
                             'um' => $product->um,
                         ]);
                     }
+                } else {
                 }
             }
         }
 
         $this->result->status = true;
         $this->result->status_code = 200;
+        $this->result->data->added = $added_item;
+
         $this->result->message = 'Item Already Added to the cart';
         return response()->json($this->result);
 
