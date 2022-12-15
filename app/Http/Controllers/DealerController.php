@@ -900,7 +900,7 @@ class DealerController extends Controller
 
                 if (
                     !Cart::where('dealer', $dealer)
-                        ->where('atlas_id', $product->atlas_id)
+                        ->where('atlas_id', $product->atlasId)
                         ->exists()
                 ) {
                     if (intval($product->quantity) > 0) {
