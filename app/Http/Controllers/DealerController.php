@@ -91,7 +91,6 @@ class DealerController extends Controller
 
             ->where('cart.dealer', '=', $id)
             ->where('cart.status', '=', '0')
-            ->orderBy('cart.created_at', 'desc')
             ->get();
         foreach ($cart as $value) {
             $spec_data = $value->spec_data
