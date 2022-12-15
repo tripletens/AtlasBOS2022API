@@ -843,6 +843,7 @@ class DealerController extends Controller
     {
         $cart = Cart::where('dealer', '=', $id)
             ->where('status', '1')
+            ->orderBy('xref', 'asc')
             ->get();
 
         if ($cart) {
