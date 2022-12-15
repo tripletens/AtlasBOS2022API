@@ -907,20 +907,20 @@ class DealerController extends Controller
                         $create_carded_product = Cart::create([
                             'dealer' => $dealer,
                             'atlas_id' => $product->atlasId,
-                            'desc' => $desc,
-                            'pro_img' => $proImg,
-                            'vendor_img' => $vendorImg,
+                            'desc' => $product->desc,
+                            'pro_img' => $product->proImg,
+                            'vendor_img' => $product->vendorImg,
                             'qty' => $product->quantity,
                             'price' => $product->price,
                             'unit_price' => $product->unitPrice,
-                            'spec_data' => json_encode($spec),
+                            'spec_data' => json_encode($product->spec_data),
                             'grouping' => $product->grouping,
                             'type' => $product->type,
                             'xref' => $product->xref,
                             'pro_id' => $product->id,
-                            'booking' => $booking,
-                            'category' => $category,
-                            'um' => $um,
+                            'booking' => $product->booking,
+                            'category' => $product->category,
+                            'um' => $product->um,
                         ]);
                     }
                 }
