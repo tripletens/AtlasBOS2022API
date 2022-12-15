@@ -890,7 +890,6 @@ class DealerController extends Controller
                 ) {
                     if (intval($product->quantity) > 0) {
                         $added_item++;
-
                         $create_carded_product = Cart::create([
                             'dealer' => $dealer,
                             'atlas_id' => $product->atlasId,
@@ -919,7 +918,7 @@ class DealerController extends Controller
         $this->result->status_code = 200;
         $this->result->data->added = $added_item;
 
-        $this->result->message = 'Item Already Added to the cart';
+        // $this->result->message = 'Item Already Added to the cart';
         return response()->json($this->result);
 
         // if (intval($qty) > 0) {
