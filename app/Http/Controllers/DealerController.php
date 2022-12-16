@@ -28,12 +28,18 @@ use App\Models\CardedProducts;
 use App\Models\ServiceParts;
 use App\Models\Cart;
 
+set_time_limit(2500000000000000);
+
 class DealerController extends Controller
 {
     //
 
+    //// DB::raw(“date($date)”)
+
     public function __construct()
     {
+        set_time_limit(2500000000000000);
+
         $this->middleware('auth:api', [
             'except' => ['login', 'register', 'test'],
         ]);
