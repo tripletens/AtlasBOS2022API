@@ -33,6 +33,21 @@ Route::group(
         Route::post('/register-dealer', 'AdminController@register_dealer');
         Route::post('/register-admin', 'AdminController@register_admin');
 
+        Route::post(
+            '/admin/upload-catalogue-products',
+            'AdminController@upload_catalogue_products'
+        );
+
+        Route::post(
+            '/admin/upload-carded-products',
+            'AdminController@upload_carded_products'
+        );
+
+        Route::post(
+            '/admin/upload-service-products',
+            'AdminController@upload_service_products'
+        );
+
         Route::get('/admin/fix-pro-type', 'AdminController@update_pro_type');
 
         Route::get(
