@@ -30,8 +30,14 @@ use App\Models\DealerCart;
 use App\Models\ServiceParts;
 use App\Models\CardedProducts;
 use App\Models\PromotionalCategory;
+use App\Models\ExtraProducts;
 
 use Barryvdh\DomPDF\Facade as PDF;
+
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Reader\Exception;
+use PhpOffice\PhpSpreadsheet\Writer\Xls;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class AdminController extends Controller
 {
@@ -48,6 +54,180 @@ class AdminController extends Controller
             'token' => null,
             'debug' => null,
         ];
+    }
+
+    public function upload_service_products(Request $request)
+    {
+        $the_file = $request->file('excel');
+
+        if ($the_file == null) {
+            $this->result->status = false;
+            $this->result->status_code = 422;
+            $this->result->message = 'Please upload products in excel format';
+            return response()->json($this->result);
+        }
+
+        try {
+            $spreadsheet = IOFactory::load($the_file->getRealPath());
+            $sheet = $spreadsheet->getActiveSheet();
+            $row_limit = $sheet->getHighestDataRow();
+            $column_limit = $sheet->getHighestDataColumn();
+            $row_range = range(2, $row_limit);
+            $column_range = range('F', $column_limit);
+            $startcount = 2;
+            $data = [];
+
+            foreach ($row_range as $row) {
+                $item_code = $sheet->getCell('A' . $row)->getValue();
+                $vendor_code = $sheet->getCell('B' . $row)->getValue();
+                $description = $sheet->getCell('C' . $row)->getValue();
+
+                if (!ExtraProducts::where('item_code', $item_code)->exists()) {
+                    $save_catalogue = ExtraProducts::create([
+                        'item_code' => $item_code,
+                        'vendor_code' => $vendor_code,
+                        'description' => $description,
+                        'type' => '3',
+                        'type_name' => 'service_parts',
+                    ]);
+
+                    if (!$save_catalogue) {
+                        $this->result->status = false;
+                        $this->result->status_code = 422;
+                        $this->result->message =
+                            'Sorry File could not be uploaded. Try again later.';
+                        return response()->json($this->result);
+                    }
+                }
+            }
+        } catch (Exception $e) {
+            $error_code = $e->errorInfo[1];
+            $this->result->status = false;
+            $this->result->status_code = 404;
+            $this->result->message = 'Something went wrong';
+            return response()->json($this->result);
+        }
+
+        $this->result->status = true;
+        $this->result->status_code = 200;
+        $this->result->message = 'Service part products uploaded successfully';
+        return response()->json($this->result);
+    }
+
+    public function upload_carded_products(Request $request)
+    {
+        $the_file = $request->file('excel');
+
+        if ($the_file == null) {
+            $this->result->status = false;
+            $this->result->status_code = 422;
+            $this->result->message = 'Please upload products in excel format';
+            return response()->json($this->result);
+        }
+
+        try {
+            $spreadsheet = IOFactory::load($the_file->getRealPath());
+            $sheet = $spreadsheet->getActiveSheet();
+            $row_limit = $sheet->getHighestDataRow();
+            $column_limit = $sheet->getHighestDataColumn();
+            $row_range = range(2, $row_limit);
+            $column_range = range('F', $column_limit);
+            $startcount = 2;
+            $data = [];
+
+            foreach ($row_range as $row) {
+                $item_code = $sheet->getCell('A' . $row)->getValue();
+                $vendor_code = $sheet->getCell('B' . $row)->getValue();
+                $description = $sheet->getCell('C' . $row)->getValue();
+
+                if (!ExtraProducts::where('item_code', $item_code)->exists()) {
+                    $save_catalogue = ExtraProducts::create([
+                        'item_code' => $item_code,
+                        'vendor_code' => $vendor_code,
+                        'description' => $description,
+                        'type' => '2',
+                        'type_name' => 'carded_product',
+                    ]);
+
+                    if (!$save_catalogue) {
+                        $this->result->status = false;
+                        $this->result->status_code = 422;
+                        $this->result->message =
+                            'Sorry File could not be uploaded. Try again later.';
+                        return response()->json($this->result);
+                    }
+                }
+            }
+        } catch (Exception $e) {
+            $error_code = $e->errorInfo[1];
+            $this->result->status = false;
+            $this->result->status_code = 404;
+            $this->result->message = 'Something went wrong';
+            return response()->json($this->result);
+        }
+
+        $this->result->status = true;
+        $this->result->status_code = 200;
+        $this->result->message = 'Carded products uploaded successfully';
+        return response()->json($this->result);
+    }
+
+    public function upload_catalogue_products(Request $request)
+    {
+        $the_file = $request->file('excel');
+
+        if ($the_file == null) {
+            $this->result->status = false;
+            $this->result->status_code = 422;
+            $this->result->message = 'Please upload products in excel format';
+            return response()->json($this->result);
+        }
+
+        try {
+            $spreadsheet = IOFactory::load($the_file->getRealPath());
+            $sheet = $spreadsheet->getActiveSheet();
+            $row_limit = $sheet->getHighestDataRow();
+            $column_limit = $sheet->getHighestDataColumn();
+            $row_range = range(2, $row_limit);
+            $column_range = range('F', $column_limit);
+            $startcount = 2;
+            $data = [];
+
+            foreach ($row_range as $row) {
+                $item_code = $sheet->getCell('A' . $row)->getValue();
+                $vendor_code = $sheet->getCell('B' . $row)->getValue();
+                $description = $sheet->getCell('C' . $row)->getValue();
+
+                if (!ExtraProducts::where('item_code', $item_code)->exists()) {
+                    $save_catalogue = ExtraProducts::create([
+                        'item_code' => $item_code,
+                        'vendor_code' => $vendor_code,
+                        'description' => $description,
+                        'type' => '1',
+                        'type_name' => 'catalogue_product',
+                    ]);
+
+                    if (!$save_catalogue) {
+                        $this->result->status = false;
+                        $this->result->status_code = 422;
+                        $this->result->message =
+                            'Sorry File could not be uploaded. Try again later.';
+                        return response()->json($this->result);
+                    }
+                }
+            }
+        } catch (Exception $e) {
+            $error_code = $e->errorInfo[1];
+            $this->result->status = false;
+            $this->result->status_code = 404;
+            $this->result->message = 'Something went wrong';
+            return response()->json($this->result);
+        }
+
+        $this->result->status = true;
+        $this->result->status_code = 200;
+        $this->result->message = 'Catalogue products uploaded successfully';
+        return response()->json($this->result);
     }
 
     public function update_pro_type()

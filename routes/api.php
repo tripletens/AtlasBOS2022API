@@ -33,6 +33,21 @@ Route::group(
         Route::post('/register-dealer', 'AdminController@register_dealer');
         Route::post('/register-admin', 'AdminController@register_admin');
 
+        Route::post(
+            '/admin/upload-catalogue-products',
+            'AdminController@upload_catalogue_products'
+        );
+
+        Route::post(
+            '/admin/upload-carded-products',
+            'AdminController@upload_carded_products'
+        );
+
+        Route::post(
+            '/admin/upload-service-products',
+            'AdminController@upload_service_products'
+        );
+
         Route::get('/admin/fix-pro-type', 'AdminController@update_pro_type');
 
         Route::get(
@@ -333,6 +348,17 @@ Route::group(
             '/search-product/{value}',
             'DealerController@search_product'
         );
+
+        Route::get(
+            '/search-product-type/{value}',
+            'DealerController@search_product_type'
+        );
+
+        Route::get(
+            '/search-product-type-carded-products/{value}',
+            'DealerController@search_product_type_carded_product'
+        );
+
         Route::get(
             '/fetch_all_promotional_ad',
             'DealerController@fetch_all_promotional_ad'
