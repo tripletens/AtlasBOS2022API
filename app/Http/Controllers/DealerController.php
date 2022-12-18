@@ -1628,9 +1628,9 @@ class DealerController extends Controller
             'access_token' => $token,
             'token_type' => 'bearer',
             'expires_in' =>
-                auth()
-                    ->factory()
-                    ->getTTL() * 60,
+            auth()
+                ->factory()
+                ->getTTL() * 60,
         ]);
     }
 
@@ -1746,8 +1746,8 @@ class DealerController extends Controller
                     10,
                     $record['atlas_id']
                 ) == true
-                    ? true
-                    : false;
+                ? true
+                : false;
 
             return array_merge(
                 [
@@ -1878,8 +1878,8 @@ class DealerController extends Controller
                     10,
                     $record['atlas_id']
                 ) == true
-                    ? true
-                    : false;
+                ? true
+                : false;
             // if(intval($this->check_if_its_new($record['created_at'], 10,$record['atlas_id']))){
 
             // }
@@ -1938,8 +1938,8 @@ class DealerController extends Controller
                     10,
                     $record['atlas_id']
                 ) == true
-                    ? true
-                    : false;
+                ? true
+                : false;
 
             return array_merge(
                 [
@@ -1982,8 +1982,8 @@ class DealerController extends Controller
                     10,
                     $record['atlas_id']
                 ) == true
-                    ? true
-                    : false;
+                ? true
+                : false;
 
             return array_merge(
                 [
@@ -2012,6 +2012,162 @@ class DealerController extends Controller
         $this->result->data = $format_products;
         $this->result->message = 'Products fetched Successfully';
         return response()->json($this->result);
+    }
+
+    public function search_product_type($value)
+    {
+        $search_value = (string) $value;
+
+        $all_catalogue_order = Catalogue_Order::get()->toArray();
+
+        $format_catalogue_order = array_map(function ($record) {
+            $catalogue_data = $record['data'];
+
+            $decode_catalogue_data = json_decode($catalogue_data);
+
+            return $decode_catalogue_data;
+        }, $all_catalogue_order);
+
+        // foreach )
+        // return $format_catalogue_order;
+
+        $response_data = false;
+
+        $response_message = "";
+
+        foreach ($format_catalogue_order as $key => $item) {
+
+            $format_item = array_map(function ($record) {
+                $format_item_atlas_id = $record->atlasId;
+
+                return $format_item_atlas_id;
+            }, $item);
+
+            if (in_array($search_value, $format_item)) {
+                // item was found 
+                $response_data['status'] = true;
+                $response_data['data'] = $item;
+
+                $response_message = "Product with atlas id - " .  $search_value . " - found in catalogue order products";
+
+                break;
+            } else {
+                // we check the other categories, carded and service parts 
+
+                // search carded products 
+                $search_carded_products = $this->search_product_type_carded_product($search_value);
+
+                if ($search_carded_products['status'] == true) {
+                    $response_message = "Product with atlas id - " .  $search_value . " - found in carded products";
+                    break;
+                }
+
+                $search_carded_products = $this->search_product_type_service_parts($search_value);
+
+                if ($search_carded_products['status'] == true) {
+                    $response_message = "Product with atlas id - " .  $search_value . " - found in service parts products";
+                    break;
+                }
+
+                $response_message = "Product with atlas id - " . $search_value . " - not found. ";
+                break;
+            }
+        }
+
+        $this->result->status = true;
+        $this->result->status_code = 200;
+        $this->result->message = $response_message;
+
+        // 'Catalogue Product found Successfully';
+        return response()->json($this->result);
+    }
+
+    // check carded products for a product 
+
+    public function search_product_type_carded_product($value)
+    {
+        $search_value = (string) $value;
+
+        $all_carded_products = CardedProducts::get()->toArray();
+
+        // return $all_carded_products;
+
+        $format_carded_products = array_map(function ($record) {
+            $catalogue_data = $record['data'];
+
+            $decode_catalogue_data = json_decode($catalogue_data);
+
+            return $decode_catalogue_data;
+        }, $all_carded_products);
+
+        $response_data = false;
+
+        $product_data = [];
+
+        // return count($format_carded_products);
+
+        foreach ($format_carded_products as $key => $item) {
+            // return $item[$key]->atlasId;
+            foreach ($item as $key => $record) {
+                array_push($product_data, $record->atlasId);
+            }
+        }
+
+        if (in_array($search_value, $product_data)) {
+            // item was found 
+            $response_data['status'] = true;
+            $response_data['data'] = $item;
+        } else {
+            // we check the other categories, carded and service parts 
+            $response_data['status'] = false;
+            $response_data['data'] = [];
+        }
+
+        return $response_data;
+    }
+
+    // check for service parts 
+
+    public function search_product_type_service_parts($value)
+    {
+        $search_value = (string) $value;
+
+        $all_carded_products = ServiceParts::get()->toArray();
+
+        // return $all_carded_products;
+
+        $format_carded_products = array_map(function ($record) {
+            $catalogue_data = $record['data'];
+
+            $decode_catalogue_data = json_decode($catalogue_data);
+
+            return $decode_catalogue_data;
+        }, $all_carded_products);
+
+        $response_data = false;
+
+        $product_data = [];
+
+        // return count($format_carded_products);
+
+        foreach ($format_carded_products as $key => $item) {
+            // return $item[$key]->atlasId;
+            foreach ($item as $key => $record) {
+                array_push($product_data, $record->atlasId);
+            }
+        }
+
+        if (in_array($search_value, $product_data)) {
+            // item was found 
+            $response_data['status'] = true;
+            $response_data['data'] = $item;
+        } else {
+            // we check the other categories, carded and service parts 
+            $response_data['status'] = false;
+            $response_data['data'] = [];
+        }
+
+        return $response_data;
     }
 
     public function add_catalogue_order(Request $request)
@@ -2599,7 +2755,6 @@ class DealerController extends Controller
     }
 
     // service parts crud
-
     public function create_service_part(Request $request)
     {
         // `dealer`, `atlas_id`, `quantity`,
@@ -2889,6 +3044,7 @@ class DealerController extends Controller
         // echo print_r($new_data_array); exit();
 
         $service_orders = DB::table('atlas_service_parts')
+
             ->join(
                 'atlas_dealers',
                 'atlas_service_parts.dealer',
@@ -2905,6 +3061,7 @@ class DealerController extends Controller
                 'atlas_dealers.placed_order_date as order_date'
             )
             ->get();
+
 
         foreach ($service_orders as $value) {
             $value->data = json_decode($value->data);
@@ -3219,7 +3376,7 @@ class DealerController extends Controller
 
                 if (
                     count(json_decode($check_catalogue_order[0]->data, true)) ==
-                        0 ||
+                    0 ||
                     empty($check_catalogue_order[0]->data) == true
                 ) {
                     $check_catalogue_order[0]->delete();

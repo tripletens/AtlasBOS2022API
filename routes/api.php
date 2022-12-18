@@ -348,6 +348,17 @@ Route::group(
             '/search-product/{value}',
             'DealerController@search_product'
         );
+
+        Route::get(
+            '/search-product-type/{value}',
+            'DealerController@search_product_type'
+        );
+
+        Route::get(
+            '/search-product-type-carded-products/{value}',
+            'DealerController@search_product_type_carded_product'
+        );
+
         Route::get(
             '/fetch_all_promotional_ad',
             'DealerController@fetch_all_promotional_ad'
