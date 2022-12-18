@@ -2253,7 +2253,7 @@ class DealerController extends Controller
 
     public function fetch_all_promotional_ad()
     {
-        $promotional_ads = Promotional_ads::all();
+        $promotional_ads = Promotional_ads::orderby('name','asc')->get();
 
         $this->result->status = true;
         $this->result->status_code = 200;
@@ -2261,6 +2261,7 @@ class DealerController extends Controller
         $this->result->message = 'All Promotional Ad fetched Successfully';
         return response()->json($this->result);
     }
+
 
     public function fetch_promotion_by_category($id)
     {
