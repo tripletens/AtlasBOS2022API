@@ -350,6 +350,16 @@ Route::group(
         );
 
         Route::get(
+            '/search-product-by-type-category/{value}/{type}',
+            'DealerController@search_product_by_type_category'
+        );
+
+        Route::get(
+            '/validate-product/{value}/{type}',
+            'DealerController@vaidate_extra_products'
+        );
+        
+        Route::get(
             '/search-product-type/{value}',
             'DealerController@search_product_type'
         );
@@ -517,6 +527,12 @@ Route::group(
         Route::get(
             '/send-order-to-mail/{id}',
             'DealerController@send_order_to_mail'
+        );
+
+        // Get all loggedin dealers 
+        Route::get(
+            '/get-all-loggedin-dealers',
+            'DealerController@get_all_loggedin_dealers'
         );
     }
 );
