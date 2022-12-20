@@ -198,19 +198,48 @@ class BranchController extends Controller
             }
 
             $dealer_array = [];
+
             foreach($fetch_dealers as $dealer){
                 $dealer = (object)$dealer;
+                // check if the dealer has service part, carded or catalogue products 
+
+                
                 $fetch_dealer_details = Dealer::where('account_id',$dealer->dealer_id)->first();
                 if($fetch_dealer_details){
                     array_push($dealer_array,$fetch_dealer_details);
                 }
             }
 
+
+            // 
+
+            $format_dealer_array = array_map(function ($record){
+                $dealer_id = $record->id;
+                $check_service_parts_count = ServiceParts::where('dealer',$dealer_id)->count();
+
+                $record->has_service_parts = $check_service_parts_count > 0 ? true : false;
+
+                // check for catalogue products 
+
+                $check_catalogue_products_count = Catalogue_Order::where('dealer',$dealer_id)->count();
+
+                $record->has_catalogue_products = $check_catalogue_products_count > 0 ? true : false;
+
+                // check for carded products 
+
+                $check_carded_products_count = CardedProducts::where('dealer',$dealer_id)->count();
+
+                $record->has_carded_products = $check_carded_products_count > 0 ? true : false;
+
+                return $record;
+                
+            }, $dealer_array);
+
             // dd($fetch_dealers);
 
             $this->result->status = true;
             $this->result->status_code = 200;
-            $this->result->data = ['branch' => $fetch_branch_details, 'dealers' => $dealer_array];
+            $this->result->data = ['branch' => $fetch_branch_details, 'dealers' => $format_dealer_array];
             $this->result->message = 'All Branches fetched Successfully';
             return response()->json($this->result);
 
