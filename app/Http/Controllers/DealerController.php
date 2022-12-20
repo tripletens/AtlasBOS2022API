@@ -2041,17 +2041,17 @@ class DealerController extends Controller
         if($type_number == $product_type){
             // item with atlas id found and the category will be displayed with other details 
             $this->result->status = true;
-            $this->result->status_code = 422;
+            $this->result->status_code = 200;
             $this->result->data =  $check_product;
             $this->result->message = 'Product found successfully in ' . ucwords(str_replace("_", " ", $check_product->type_name)) ;
-            return response()->json($this->result);
+            return response()->json($this->result,200);
         }else{
             // return the category of the product 
             $this->result->status = true;
-            $this->result->status_code = 422;
+            $this->result->status_code = 200;
             $this->result->data =  $check_product;
             $this->result->message = 'Kindly check in ' . ucwords(str_replace("_"," ",$check_product->type_name)) ;
-            return response()->json($this->result);
+            return response()->json($this->result,200);
         }
     }
 
