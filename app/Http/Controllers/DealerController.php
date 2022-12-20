@@ -3203,7 +3203,6 @@ class DealerController extends Controller
         // echo print_r($new_data_array); exit();
 
         $service_orders = DB::table('atlas_service_parts')
-
             ->join(
                 'atlas_dealers',
                 'atlas_service_parts.dealer',
