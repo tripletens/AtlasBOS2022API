@@ -617,6 +617,10 @@ Route::group(
             'BranchController@get_all_branch_loggedin_dealers'
         );
 
-
+        // Get all not loggedin dealers for a branch
+        Route::get(
+            '/get-all-branch-notloggedin-dealers/{branch_id}',
+            'BranchController@get_all_branch_notloggedin_dealers'
+        );
     }
 );

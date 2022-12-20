@@ -1010,7 +1010,14 @@ class BranchController extends Controller
             ->join('atlas_dealers', 'atlas_branch_assign_dealers.dealer_id', '=', 'atlas_dealers.id')
             ->orderby('atlas_dealers.account_id','desc')
             ->where('atlas_dealers.last_login', '!=', null)
-            ->select('atlas_dealers.*', 'atlas_branch_assign_dealers.dealer_id as branch_dealer_id')
+            ->select('atlas_branch_assign_dealers.dealer_id as branch_dealer_id',
+            'atlas_dealers.full_name','atlas_dealers.first_name', 
+            'atlas_dealers.last_name','atlas_dealers.email','atlas_dealers.email',
+            'atlas_dealers.email','atlas_dealers.email','atlas_dealers.account_id',
+            'atlas_dealers.phone','atlas_dealers.status',
+            'atlas_dealers.order_status','atlas_dealers.location',
+            'atlas_dealers.company_name','atlas_dealers.last_login',
+            'atlas_dealers.placed_order_date','atlas_dealers.order_pdf')
             ->distinct('atlas_branch_assign_dealers.dealer_id')
             ->get();
 
@@ -1025,6 +1032,38 @@ class BranchController extends Controller
         $this->result->status_code = 200;
         $this->result->data = $get_branch_details;
         $this->result->message = 'All branch dealers that have loggedin have been fetched successfully';
+        return response()->json($this->result);
+    }
+
+    public function get_all_branch_notloggedin_dealers($branch_id)
+    {
+        // get all the logged in dealers under a branch 
+        $get_branch_details = BranchAssignDealer::where('branch_id', $branch_id)
+            ->join('atlas_dealers', 'atlas_branch_assign_dealers.dealer_id', '=', 'atlas_dealers.id')
+            ->orderby('atlas_dealers.account_id','desc')
+            ->where('atlas_dealers.last_login', '=', null)
+            ->select('atlas_branch_assign_dealers.dealer_id as branch_dealer_id',
+            'atlas_dealers.full_name','atlas_dealers.first_name', 
+            'atlas_dealers.last_name','atlas_dealers.email','atlas_dealers.email',
+            'atlas_dealers.email','atlas_dealers.email','atlas_dealers.account_id',
+            'atlas_dealers.phone','atlas_dealers.status',
+            'atlas_dealers.order_status','atlas_dealers.location',
+            'atlas_dealers.company_name','atlas_dealers.last_login',
+            'atlas_dealers.placed_order_date','atlas_dealers.order_pdf')
+            ->distinct('atlas_branch_assign_dealers.dealer_id')
+            ->get();
+
+        if (!$get_branch_details) {
+            $this->result->status = false;
+            $this->result->status_code = 422;
+            $this->result->message = 'Sorry we could not fetch the dealers that have not logged in';
+            return response()->json($this->result);
+        }
+
+        $this->result->status = true;
+        $this->result->status_code = 200;
+        $this->result->data = $get_branch_details;
+        $this->result->message = 'All branch dealers that have not loggedin have been fetched successfully';
         return response()->json($this->result);
     }
 }
