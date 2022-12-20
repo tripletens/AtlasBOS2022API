@@ -2039,7 +2039,8 @@ class DealerController extends Controller
         $product_type = (int) $check_product->type; 
 
         if($type_number == $product_type){
-            // item with atlas id found and the category will be displayed with other details 
+            // item with atlas id found and the category will be
+            // displayed with other details 
             $this->result->status = true;
             $this->result->status_code = 200;
             $this->result->data =  $check_product;
