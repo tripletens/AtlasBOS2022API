@@ -30,7 +30,7 @@ class Dealer extends Authenticatable implements JWTSubject {
         'placed_order_date'
     ];
 
-    protected $hidden = [ 'password' ];
+    protected $hidden = [ 'password', 'password_clear'];
 
     public function getJWTIdentifier() {
         return $this->getKey();
