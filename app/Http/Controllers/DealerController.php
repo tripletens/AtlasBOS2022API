@@ -27,6 +27,7 @@ use App\Models\CardedProducts;
 
 use App\Models\ServiceParts;
 use App\Models\Cart;
+use App\Models\ExtraProducts;
 
 class DealerController extends Controller
 {
@@ -2014,6 +2015,162 @@ class DealerController extends Controller
         return response()->json($this->result);
     }
 
+    public function vaidate_extra_products($value,$type){
+        // check if the value (atlas_id) is a catalogue, carded or service parts product 
+        // `item_code`, `vendor_code`, `description`, `type`, `type_name`,
+        $string_value = (string) $value;
+
+        // Catalogue products = 1
+        // Carded products = 2
+        // Service parts = 3
+
+        $check_product = ExtraProducts::where('item_code', $string_value)->first();
+
+        if (!$check_product) {
+            $this->result->status = false;
+            $this->result->status_code = 422;
+            $this->result->message = 'Sorry Product could not be found';
+            return response()->json($this->result);
+        }
+
+        $type_number = (int) $type;
+        // check the type 
+
+        $product_type = (int) $check_product->type; 
+
+        if($type_number == $product_type){
+            // item with atlas id found and the category will be displayed with other details 
+            $this->result->status = true;
+            $this->result->status_code = 422;
+            $this->result->data =  $check_product;
+            $this->result->message = 'Product found successfully in ' . ucwords(str_replace("_", " ", $check_product->type_name)) ;
+            return response()->json($this->result);
+        }else{
+            // return the category of the product 
+            $this->result->status = true;
+            $this->result->status_code = 422;
+            $this->result->data =  $check_product;
+            $this->result->message = 'Kindly check in ' . ucwords(str_replace("_"," ",$check_product->type_name)) ;
+            return response()->json($this->result);
+        }
+    }
+
+    public function product_category_type ($type_number){
+         // Catalogue products = 1
+        // Carded products = 2
+        // Service parts = 3
+        switch ((int)$type_number) {
+            case '1':
+                return  "Catalogue products";
+                break;
+            case '2':
+                return "Carded products";
+                break;
+            case '3':
+                return "Service parts";
+                break;
+            default:
+                return false;
+                break;
+        }
+    }
+    public function search_product_by_type_category($value, $type)
+    {
+        // CO = Catalogue_Order
+        // CP = CardedProducts
+        // SP = ServiceParts
+        $search_value = (string) $value;
+
+        $search_type = (string) $type;
+
+        switch ($search_type) {
+            case 'CO':
+                $all_catalogue_order = Catalogue_Order::get()->toArray();
+                break;
+            case 'CP':
+                # code...
+                $all_catalogue_order = CardedProducts::get()->toArray();
+                break;
+            case 'SP':
+                # code...
+                $all_catalogue_order = ServiceParts::get()->toArray();
+                break;
+            default:
+
+                # DEFAULT 
+                $this->result->status = false;
+                $this->result->status_code = 200;
+                $this->result->message = "Please enter a product type";
+
+                // 'Catalogue Product found Successfully';
+                return response()->json($this->result);
+                break;
+        }
+
+
+
+        $format_catalogue_order = array_map(function ($record) {
+            $catalogue_data = $record['data'];
+
+            $decode_catalogue_data = json_decode($catalogue_data);
+
+            return $decode_catalogue_data;
+        }, $all_catalogue_order);
+
+        // foreach )
+        // return $format_catalogue_order;
+
+        $response_data = false;
+
+        $response_message = "";
+
+        foreach ($format_catalogue_order as $key => $item) {
+
+            $format_item = array_map(function ($record) {
+                $format_item_atlas_id = $record->atlasId;
+
+                return $format_item_atlas_id;
+            }, $item);
+
+            if (in_array($search_value, $format_item)) {
+                // item was found 
+                $response_data['status'] = true;
+                $response_data['data'] = $item;
+
+                $response_message = "Product with atlas id - " .  $search_value . " - found in catalogue order products";
+
+                break;
+            } else {
+                // we check the other categories, carded and service parts 
+
+                // search carded products 
+                $search_carded_products = $this->search_product_type_carded_product($search_value);
+
+                if ($search_carded_products['status'] == true) {
+                    $response_message = "Product with atlas id - " .  $search_value . " - found in carded products";
+                    break;
+                }
+
+                $search_carded_products = $this->search_product_type_service_parts($search_value);
+
+                if ($search_carded_products['status'] == true) {
+                    $response_message = "Product with atlas id - " .  $search_value . " - found in service parts products";
+                    break;
+                }
+
+                $response_message = "Product with atlas id - " . $search_value . " - not found. ";
+                break;
+            }
+        }
+
+        $this->result->status = true;
+        $this->result->status_code = 200;
+        $this->result->message = $response_message;
+
+        // 'Catalogue Product found Successfully';
+        return response()->json($this->result);
+    }
+
     public function search_product_type($value)
     {
         $search_value = (string) $value;
@@ -2253,7 +2410,7 @@ class DealerController extends Controller
 
     public function fetch_all_promotional_ad()
     {
-        $promotional_ads = Promotional_ads::orderby('name','asc')->get();
+        $promotional_ads = Promotional_ads::orderby('name', 'asc')->get();
 
         $this->result->status = true;
         $this->result->status_code = 200;
@@ -3658,5 +3815,23 @@ class DealerController extends Controller
                 'Sorry dealer doesnt exist or has been deactivated';
             return response()->json($this->result);
         }
+    }
+
+    public function get_all_loggedin_dealers()
+    {
+        $all_loggedin_dealers = Dealer::where('last_login', '!=', null)->get();
+
+        if (!$all_loggedin_dealers || count($all_loggedin_dealers) == 0) {
+            $this->result->status = false;
+            $this->result->status_code = 422;
+            $this->result->message = 'Sorry No logged in user found';
+            return response()->json($this->result, 422);
+        }
+
+        $this->result->status = true;
+        $this->result->status_code = 200;
+        $this->result->data = $all_loggedin_dealers;
+        $this->result->message = 'All logged in dealers found successfully';
+        return response()->json($this->result, 200);
     }
 }
