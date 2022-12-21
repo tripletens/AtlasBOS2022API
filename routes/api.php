@@ -471,7 +471,7 @@ Route::group(
         );
         Route::get(
             '/fetch_all_service_parts',
-            'DealerController@fetch_all_service_parts'
+            'DealerController@fetch_alfetch_all_dealers_with_active_orderl_service_parts'
         );
         Route::get(
             '/fetch_service_parts_by_id/{atlas_id}',
