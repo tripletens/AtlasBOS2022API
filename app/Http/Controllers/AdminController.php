@@ -45,9 +45,9 @@ class AdminController extends Controller
 
     public function __construct()
     {
-        $this->middleware('auth:api', [
-            'except' => ['login', 'register', 'test'],
-        ]);
+        // $this->middleware('auth:api', [
+        //     'except' => ['login', 'register', 'test'],
+        // ]);
 
         $this->result = (object) [
             'status' => false,
