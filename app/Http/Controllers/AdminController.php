@@ -60,7 +60,8 @@ class AdminController extends Controller
 
     public function close_bos_program()
     {
-        Dealer::update(['close_program' => 1]);
+        Dealer::query()->update(['close_program' => 1]);
+        Admin::query()->update(['close_program' => 1]);
 
         $this->result->status = true;
         $this->result->status_code = 200;
@@ -70,7 +71,8 @@ class AdminController extends Controller
 
     public function open_bos_program()
     {
-        Dealer::update(['close_program' => 0]);
+        Dealer::query()->update(['close_program' => 0]);
+        Admin::query()->update(['close_program' => 0]);
 
         $this->result->status = true;
         $this->result->status_code = 200;
