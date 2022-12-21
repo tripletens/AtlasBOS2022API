@@ -45,7 +45,9 @@ class AdminController extends Controller
 
     public function __construct()
     {
-        //// $this->middleware( 'auth:api', [ 'except' => [ 'login', 'register', 'test' ] ] );
+        $this->middleware('auth:api', [
+            'except' => ['login', 'register', 'test'],
+        ]);
         $this->result = (object) [
             'status' => false,
             'status_code' => 200,
@@ -54,6 +56,26 @@ class AdminController extends Controller
             'token' => null,
             'debug' => null,
         ];
+    }
+
+    public function close_bos_program()
+    {
+        Dealer::update(['close_program' => 1]);
+
+        $this->result->status = true;
+        $this->result->status_code = 200;
+        $this->result->message = 'Program has been closed';
+        return response()->json($this->result);
+    }
+
+    public function open_bos_program()
+    {
+        Dealer::update(['close_program' => 0]);
+
+        $this->result->status = true;
+        $this->result->status_code = 200;
+        $this->result->message = 'Program has been opened';
+        return response()->json($this->result);
     }
 
     public function upload_service_products(Request $request)

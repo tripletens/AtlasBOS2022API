@@ -66,6 +66,15 @@ Route::group(
         Route::get('/admin/fix-pro-type', 'AdminController@update_pro_type');
 
         Route::get(
+            '/admin/close-bos-program',
+            'AdminController@close_bos_program'
+        );
+        Route::get(
+            '/admin/open-bos-program',
+            'AdminController@open_bos_program'
+        );
+
+        Route::get(
             '/deactivate_admin/{id}',
             'AdminController@deactivate_admin'
         );
