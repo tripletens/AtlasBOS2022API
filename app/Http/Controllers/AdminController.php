@@ -48,6 +48,7 @@ class AdminController extends Controller
         $this->middleware('auth:api', [
             'except' => ['login', 'register', 'test'],
         ]);
+
         $this->result = (object) [
             'status' => false,
             'status_code' => 200,
