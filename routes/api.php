@@ -41,7 +41,6 @@ Route::get('/check', function () {
 Route::group(
     [
         'namespace' => 'App\Http\Controllers',
-        'middleware' => 'cors',
     ],
     function () {
         Route::post('/admin-login', 'AdminController@login');
