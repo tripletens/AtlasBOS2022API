@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,6 +22,20 @@ use Illuminate\Support\Facades\Route;
 Route::get('/check', function () {
     echo 'tsersrss';
 });
+
+// Route::group(
+//     [
+//         'middleware' => 'api',
+//         // 'prefix' => 'auth',
+//         'namespace' => 'App\Http\Controllers',
+//     ],
+//     function ($router) {
+//         // Route::post('/login', 'AuthController@login');
+//         // Route::post('/register', 'AuthController@register');
+
+//         Route::post('/login', 'DealerController@login');
+//     }
+// );
 
 ///////////////// Admin /////////////
 Route::group(
@@ -332,7 +347,8 @@ Route::group(
     function () {
         Route::get('/dashboard/dealer', 'DealerController@dealer_de');
 
-        Route::post('/dealer-login', 'DealerController@login');
+        // Route::post('/login', 'DealerController@login');
+
         Route::get('/dashboard/{dealer}', 'DealerController@dashboard');
         Route::post('/add-product', 'DealerController@add_product');
         Route::get('/fetch-all-product', 'DealerController@fetch_all_products');
@@ -392,7 +408,6 @@ Route::group(
         );
         Route::post('/log-dealer', 'DealerController@save_dealer_login_log');
 
-        Route::post('/dealer-login', 'DealerController@login');
         Route::get('/dashboard/{dealer}', 'DealerController@dashboard');
         Route::post('/add-product', 'DealerController@add_product');
         Route::get('/fetch-all-product', 'DealerController@fetch_all_products');
