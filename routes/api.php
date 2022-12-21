@@ -327,188 +327,172 @@ Route::group(
 );
 
 ///////////////// Dealer /////////////
-Route::group(
-    ['namespace' => 'App\Http\Controllers', 'middleware' => 'cors'],
-    function () {
-        Route::post('/dealer-login', 'DealerController@login');
-        Route::get('/dashboard/{dealer}', 'DealerController@dashboard');
-        Route::post('/add-product', 'DealerController@add_product');
-        Route::get('/fetch-all-product', 'DealerController@fetch_all_products');
-        Route::get(
-            '/search-product-by-category/{category}',
-            'DealerController@search_category'
-        );
-        Route::get('/all-category', 'CategoryController@index');
-        Route::get(
-            '/quick-search-category/{category_name}/{value}',
-            'DealerController@quick_search_product'
-        );
-        Route::post('/send-order-email', 'DealerController@sendOrderMail');
-        Route::get(
-            '/search-product/{value}',
-            'DealerController@search_product'
-        );
-        Route::get(
-            '/fetch_all_promotional_ad',
-            'DealerController@fetch_all_promotional_ad'
-        );
-        Route::get(
-            '/fetch-category-promotions/{id}',
-            'DealerController@fetch_promotion_by_category'
-        );
-        Route::post(
-            '/add-catalogue-order',
-            'DealerController@add_catalogue_order'
-        );
-        Route::get('/check-atlas/{id}', 'DealerController@check_atlas_id');
-        // Route::post('/save-catalogue', 'DealerController@add_catalogue_order');
-        // Route::get('/send-html/{id}', 'DealerController@send_pdf');
-        Route::get(
-            '/get-dealer-orders/{id}',
-            'DealerController@get_dealer_orders'
-        );
-        Route::post('/log-dealer', 'DealerController@save_dealer_login_log');
+Route::group(['namespace' => 'App\Http\Controllers'], function () {
+    Route::get('/dashboard/dealer', 'DealerController@dealer_de');
 
-        Route::get(
-            '/delete-carded-product/{dealer_id}/{atlas_id}',
-            'DealerController@delete_carded_product'
-        ); // working
-        Route::get(
-            '/restore-carded-product/{id}',
-            'DealerController@restore_carded_product'
-        ); // working
+    Route::post('/dealer-login', 'DealerController@login');
+    Route::get('/dashboard/{dealer}', 'DealerController@dashboard');
+    Route::post('/add-product', 'DealerController@add_product');
+    Route::get('/fetch-all-product', 'DealerController@fetch_all_products');
+    Route::get(
+        '/search-product-by-category/{category}',
+        'DealerController@search_category'
+    );
+    Route::get('/all-category', 'CategoryController@index');
+    Route::get(
+        '/quick-search-category/{category_name}/{value}',
+        'DealerController@quick_search_product'
+    );
+    Route::post('/send-order-email', 'DealerController@sendOrderMail');
+    Route::get('/search-product/{value}', 'DealerController@search_product');
+    Route::get(
+        '/fetch_all_promotional_ad',
+        'DealerController@fetch_all_promotional_ad'
+    );
+    Route::get(
+        '/fetch-category-promotions/{id}',
+        'DealerController@fetch_promotion_by_category'
+    );
+    Route::post('/add-catalogue-order', 'DealerController@add_catalogue_order');
+    Route::get('/check-atlas/{id}', 'DealerController@check_atlas_id');
+    // Route::post('/save-catalogue', 'DealerController@add_catalogue_order');
+    // Route::get('/send-html/{id}', 'DealerController@send_pdf');
+    Route::get('/get-dealer-orders/{id}', 'DealerController@get_dealer_orders');
+    Route::post('/log-dealer', 'DealerController@save_dealer_login_log');
 
-        Route::get(
-            '/fetch_carded_products_by_id/{atlas_id}',
-            'DealerController@fetch_carded_products_by_id'
-        );
+    Route::get(
+        '/delete-carded-product/{dealer_id}/{atlas_id}',
+        'DealerController@delete_carded_product'
+    ); // working
+    Route::get(
+        '/restore-carded-product/{id}',
+        'DealerController@restore_carded_product'
+    ); // working
 
-        Route::post('/edit-service-part', 'DealerController@edit_service_part');
-        Route::get(
-            '/delete-service-part/{dealer_id}/{atlas_id}',
-            'DealerController@delete_service_part'
-        );
-        Route::get(
-            '/restore-service-part/{id}',
-            'DealerController@restore_service_part'
-        );
-        Route::get(
-            '/fetch_all_service_parts',
-            'DealerController@fetch_all_service_parts'
-        );
-        Route::get(
-            '/fetch_service_parts_by_id/{atlas_id}',
-            'DealerController@fetch_service_parts_by_id'
-        );
+    Route::get(
+        '/fetch_carded_products_by_id/{atlas_id}',
+        'DealerController@fetch_carded_products_by_id'
+    );
 
-        Route::post(
-            '/add-carded-product-dealer',
-            'DealerController@add_carded_product'
-        );
-        Route::post(
-            '/edit_carded_product',
-            'DealerController@edit_carded_product'
-        );
-        Route::get(
-            '/delete_carded_product/{id}',
-            'DealerController@delete_carded_product'
-        );
-        Route::get(
-            '/restore_carded_product/{id}',
-            'DealerController@restore_carded_product'
-        );
+    Route::post('/edit-service-part', 'DealerController@edit_service_part');
+    Route::get(
+        '/delete-service-part/{dealer_id}/{atlas_id}',
+        'DealerController@delete_service_part'
+    );
+    Route::get(
+        '/restore-service-part/{id}',
+        'DealerController@restore_service_part'
+    );
+    Route::get(
+        '/fetch_all_service_parts',
+        'DealerController@fetch_all_service_parts'
+    );
+    Route::get(
+        '/fetch_service_parts_by_id/{atlas_id}',
+        'DealerController@fetch_service_parts_by_id'
+    );
 
-        Route::post(
-            '/add-service-part-dealer',
-            'DealerController@add_service_part'
-        );
-        Route::get(
-            '/fetch_all_new_products',
-            'DealerController@fetch_all_new_products'
-        );
+    Route::post(
+        '/add-carded-product-dealer',
+        'DealerController@add_carded_product'
+    );
+    Route::post('/edit_carded_product', 'DealerController@edit_carded_product');
+    Route::get(
+        '/delete_carded_product/{id}',
+        'DealerController@delete_carded_product'
+    );
+    Route::get(
+        '/restore_carded_product/{id}',
+        'DealerController@restore_carded_product'
+    );
 
-        Route::get(
-            '/delete_all_cart_items/{dealer_id}',
-            'DealerController@delete_all_cart_items'
-        );
+    Route::post(
+        '/add-service-part-dealer',
+        'DealerController@add_service_part'
+    );
+    Route::get(
+        '/fetch_all_new_products',
+        'DealerController@fetch_all_new_products'
+    );
 
-        Route::post('/store-user-cart', 'DealerController@store_user_cart');
-        Route::post('edit-user-cart/', 'DealerController@edit_user_cart');
+    Route::get(
+        '/delete_all_cart_items/{dealer_id}',
+        'DealerController@delete_all_cart_items'
+    );
 
-        Route::get(
-            '/delete_catalogue_order_dealer/{dealer_id}/{atlas_id}',
-            'DealerController@delete_catalogue_order'
-        );
-        Route::get(
-            '/restore_catalogue_order_dealer/{dealer_id}',
-            'DealerController@restore_catalogue_order'
-        );
+    Route::post('/store-user-cart', 'DealerController@store_user_cart');
+    Route::post('edit-user-cart/', 'DealerController@edit_user_cart');
 
-        Route::get(
-            '/get-user-cart-item/{id}',
-            'DealerController@get_user_cart'
-        );
+    Route::get(
+        '/delete_catalogue_order_dealer/{dealer_id}/{atlas_id}',
+        'DealerController@delete_catalogue_order'
+    );
+    Route::get(
+        '/restore_catalogue_order_dealer/{dealer_id}',
+        'DealerController@restore_catalogue_order'
+    );
 
-        Route::get(
-            '/get-recent-item-in-cart/{id}',
-            'DealerController@recent_item_in_cart'
-        );
+    Route::get('/get-user-cart-item/{id}', 'DealerController@get_user_cart');
 
-        Route::get(
-            '/remove-item-cart/{dealer}/{id}',
-            'DealerController@remove_item_cart'
-        );
+    Route::get(
+        '/get-recent-item-in-cart/{id}',
+        'DealerController@recent_item_in_cart'
+    );
 
-        Route::get(
-            '/submit_carded_products/{dealer}',
-            'DealerController@submit_carded_products'
-        );
+    Route::get(
+        '/remove-item-cart/{dealer}/{id}',
+        'DealerController@remove_item_cart'
+    );
 
-        Route::get(
-            '/submit_service_parts/{dealer}',
-            'DealerController@submit_service_parts'
-        );
+    Route::get(
+        '/submit_carded_products/{dealer}',
+        'DealerController@submit_carded_products'
+    );
 
-        Route::get(
-            '/submit_catalogue_order/{dealer}',
-            'DealerController@submit_catalogue_order'
-        );
+    Route::get(
+        '/submit_service_parts/{dealer}',
+        'DealerController@submit_service_parts'
+    );
 
-        Route::get('/cart_count/{dealer}', 'DealerController@cart_count');
+    Route::get(
+        '/submit_catalogue_order/{dealer}',
+        'DealerController@submit_catalogue_order'
+    );
 
-        Route::get(
-            '/get-dealer-order-summary/{dealer}',
-            'DealerController@get_dealer_order_summary'
-        );
-        Route::get(
-            '/remove-item-cart/{dealer}/{id}/{grouping}',
-            'DealerController@remove_item_cart'
-        );
-        Route::get('/send-order-mail/{id}', 'DealerController@send_order_mail');
-        Route::get('/submit-order/{id}', 'DealerController@user_submit_order');
+    Route::get('/cart_count/{dealer}', 'DealerController@cart_count');
 
-        Route::get(
-            '/edit-user-cart-item/{dealer}/{proId}/{qty}/{price}/{unitPrice}',
-            'DealerController@edit_user_cart_item'
-        );
-        Route::get(
-            '/check_is_new/{created_at}/{number_of_days}/{atlas_id}',
-            'DealerController@check_if_its_new'
-        );
-        Route::get(
-            '/view_dealer_order_by_acct_id/{account_id}',
-            'DealerController@view_dealer_order_by_acct_id'
-        );
+    Route::get(
+        '/get-dealer-order-summary/{dealer}',
+        'DealerController@get_dealer_order_summary'
+    );
+    Route::get(
+        '/remove-item-cart/{dealer}/{id}/{grouping}',
+        'DealerController@remove_item_cart'
+    );
+    Route::get('/send-order-mail/{id}', 'DealerController@send_order_mail');
+    Route::get('/submit-order/{id}', 'DealerController@user_submit_order');
 
-        Route::get('/download-pdf/{id}', 'DealerController@download_pdf');
-        Route::get('/test-cart/{id}', 'DealerController@test_cart');
+    Route::get(
+        '/edit-user-cart-item/{dealer}/{proId}/{qty}/{price}/{unitPrice}',
+        'DealerController@edit_user_cart_item'
+    );
+    Route::get(
+        '/check_is_new/{created_at}/{number_of_days}/{atlas_id}',
+        'DealerController@check_if_its_new'
+    );
+    Route::get(
+        '/view_dealer_order_by_acct_id/{account_id}',
+        'DealerController@view_dealer_order_by_acct_id'
+    );
 
-        Route::get(
-            '/send-order-to-mail/{id}',
-            'DealerController@send_order_to_mail'
-        );
-    }
-);
+    Route::get('/download-pdf/{id}', 'DealerController@download_pdf');
+    Route::get('/test-cart/{id}', 'DealerController@test_cart');
+
+    Route::get(
+        '/send-order-to-mail/{id}',
+        'DealerController@send_order_to_mail'
+    );
+});
 
 ///////////////// Branch /////////////
 Route::group(

@@ -1,7 +1,6 @@
 <?php
 
 return [
-
     /*
     |--------------------------------------------------------------------------
     | Authentication Defaults
@@ -57,7 +56,6 @@ return [
             'provider' => 'branch',
             'hash' => false,
         ],
-
     ],
 
     /*
@@ -135,5 +133,4 @@ return [
     */
 
     'password_timeout' => 10800,
-
 ];

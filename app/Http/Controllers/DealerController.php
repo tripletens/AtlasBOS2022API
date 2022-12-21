@@ -40,9 +40,10 @@ class DealerController extends Controller
     {
         set_time_limit(2500000000000000);
 
-        $this->middleware('auth:api', [
-            'except' => ['login', 'register', 'test'],
-        ]);
+        // $this->middleware('auth:api', [
+        //     'except' => ['login', 'register', 'test'],
+        // ]);
+
         $this->result = (object) [
             'status' => false,
             'status_code' => 200,
@@ -51,6 +52,11 @@ class DealerController extends Controller
             'token' => null,
             'debug' => null,
         ];
+    }
+
+    public function dealer_de()
+    {
+        return 'hello world';
     }
 
     public function recent_item_in_cart($id)
