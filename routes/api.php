@@ -345,9 +345,9 @@ Route::group(
 Route::group(
     ['namespace' => 'App\Http\Controllers', 'middleware' => 'cors'],
     function () {
-        Route::get('/dashboard/dealer', 'DealerController@dealer_de');
+        // Route::get('/dashboard/dealer', 'DealerController@dealer_de');
 
-        // Route::post('/login', 'DealerController@login');
+        Route::post('/dealer-login', 'DealerController@login');
 
         Route::get('/dashboard/{dealer}', 'DealerController@dashboard');
         Route::post('/add-product', 'DealerController@add_product');
