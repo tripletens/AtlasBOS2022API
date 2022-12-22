@@ -1683,6 +1683,7 @@ class DealerController extends Controller
             $category_id = $request->input('category_id');
             $assorted_discount = $request->input('assorted_discount');
             $quantity_discount = $request->input('quantity_discount');
+            $short_note_url = $request->input('short_note_url');
             // save the file to
 
             if ($request->file('img')->isValid()) {
@@ -1707,6 +1708,7 @@ class DealerController extends Controller
                         'img' => env('APP_URL') . Storage::url($path),
                         'assorted_discount' => $assorted_discount,
                         'quantity_discount' => $quantity_discount,
+                        'short_note_url' => $short_note_url,
                     ]);
 
                     if ($save_product) {
