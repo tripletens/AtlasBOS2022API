@@ -1777,6 +1777,8 @@ class AdminController extends Controller
                     ->get()
                     ->first();
                 $dealer->carded_completed = $carded->completed;
+            }else{
+                $dealer->carded_completed = 3;
             }
 
             $check_catalogue_parts = CardedProducts::where(
@@ -1788,6 +1790,8 @@ class AdminController extends Controller
                     ->get()
                     ->first();
                 $dealer->catalogue_completed = $catalogue->completed;
+            }else{
+                $dealer->catalogue_completed = 3
             }
         }
 
