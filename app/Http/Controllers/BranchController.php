@@ -729,11 +729,46 @@ class BranchController extends Controller
             $fetch_account_ids = $fetch_dealers->pluck("dealer_id")->toArray();
 
             $all_dealer_ids = DB::table('atlas_dealers')->wherein('account_id', $fetch_account_ids)->where('order_status', 1)->pluck('id')->toArray();
+    
+            
+            $all_orders = DB::table('atlas_dealers')
+                ->wherein('id', $all_dealer_ids)
+                ->where('order_status', '1')
+                ->select(
+                    'atlas_dealers.id',
+                    'atlas_dealers.full_name',
+                    'atlas_dealers.first_name',
+                    'atlas_dealers.last_name',
+                    'atlas_dealers.email',
+                    'atlas_dealers.email',
+                    'atlas_dealers.email',
+                    'atlas_dealers.email',
+                    'atlas_dealers.account_id',
+                    'atlas_dealers.phone',
+                    'atlas_dealers.status',
+                    'atlas_dealers.order_status',
+                    'atlas_dealers.location',
+                    'atlas_dealers.company_name',
+                    'atlas_dealers.last_login',
+                    'atlas_dealers.placed_order_date',
+                    'atlas_dealers.order_pdf',
+                    'placed_order_date as order_date'
+                )
+                ->orderby('placed_order_date', 'desc')->get()->toArray();
 
+            $format_all_orders = array_map(function($record){
 
-            $all_orders = DB::table('atlas_dealers')->wherein('id', $all_dealer_ids)->where('order_status', '1')->select('*', 'placed_order_date as order_date')->orderby('placed_order_date', 'desc')->get();
+                $dealer_id = $record->id;
 
-            // return $all_orders;
+                $check_total_price = Cart::where('dealer',$dealer_id)->sum('price');
+
+                $record->total_amount = number_format($check_total_price,2);
+
+                return $record;
+
+            },$all_orders);
+
+            // return $format_all_orders;
 
             // $dealers_cart_orders = DB::table('atlas_branch_assign_dealers')
             //     ->where('atlas_dealers.order_status','1')
@@ -776,7 +811,7 @@ class BranchController extends Controller
 
             $this->result->status = true;
             $this->result->status_code = 200;
-            $this->result->data = $all_orders;
+            $this->result->data = $format_all_orders;
             $this->result->message = 'All dealers with catalogue orders fetched successfully';
             return response()->json($this->result);
         }
@@ -1008,16 +1043,27 @@ class BranchController extends Controller
         // get all the logged in dealers under a branch 
         $get_branch_details = BranchAssignDealer::where('branch_id', $branch_id)
             ->join('atlas_dealers', 'atlas_branch_assign_dealers.dealer_id', '=', 'atlas_dealers.id')
-            ->orderby('atlas_dealers.account_id','desc')
+            ->orderby('atlas_dealers.account_id', 'desc')
             ->where('atlas_dealers.last_login', '!=', null)
-            ->select('atlas_branch_assign_dealers.dealer_id as branch_dealer_id',
-            'atlas_dealers.full_name','atlas_dealers.first_name', 
-            'atlas_dealers.last_name','atlas_dealers.email','atlas_dealers.email',
-            'atlas_dealers.email','atlas_dealers.email','atlas_dealers.account_id',
-            'atlas_dealers.phone','atlas_dealers.status',
-            'atlas_dealers.order_status','atlas_dealers.location',
-            'atlas_dealers.company_name','atlas_dealers.last_login',
-            'atlas_dealers.placed_order_date','atlas_dealers.order_pdf')
+            ->select(
+                'atlas_branch_assign_dealers.dealer_id as branch_dealer_id',
+                'atlas_dealers.full_name',
+                'atlas_dealers.first_name',
+                'atlas_dealers.last_name',
+                'atlas_dealers.email',
+                'atlas_dealers.email',
+                'atlas_dealers.email',
+                'atlas_dealers.email',
+                'atlas_dealers.account_id',
+                'atlas_dealers.phone',
+                'atlas_dealers.status',
+                'atlas_dealers.order_status',
+                'atlas_dealers.location',
+                'atlas_dealers.company_name',
+                'atlas_dealers.last_login',
+                'atlas_dealers.placed_order_date',
+                'atlas_dealers.order_pdf'
+            )
             ->distinct('atlas_branch_assign_dealers.dealer_id')
             ->get();
 
@@ -1040,16 +1086,27 @@ class BranchController extends Controller
         // get all the logged in dealers under a branch 
         $get_branch_details = BranchAssignDealer::where('branch_id', $branch_id)
             ->join('atlas_dealers', 'atlas_branch_assign_dealers.dealer_id', '=', 'atlas_dealers.id')
-            ->orderby('atlas_dealers.account_id','desc')
+            ->orderby('atlas_dealers.account_id', 'desc')
             ->where('atlas_dealers.last_login', '=', null)
-            ->select('atlas_branch_assign_dealers.dealer_id as branch_dealer_id',
-            'atlas_dealers.full_name','atlas_dealers.first_name', 
-            'atlas_dealers.last_name','atlas_dealers.email','atlas_dealers.email',
-            'atlas_dealers.email','atlas_dealers.email','atlas_dealers.account_id',
-            'atlas_dealers.phone','atlas_dealers.status',
-            'atlas_dealers.order_status','atlas_dealers.location',
-            'atlas_dealers.company_name','atlas_dealers.last_login',
-            'atlas_dealers.placed_order_date','atlas_dealers.order_pdf')
+            ->select(
+                'atlas_branch_assign_dealers.dealer_id as branch_dealer_id',
+                'atlas_dealers.full_name',
+                'atlas_dealers.first_name',
+                'atlas_dealers.last_name',
+                'atlas_dealers.email',
+                'atlas_dealers.email',
+                'atlas_dealers.email',
+                'atlas_dealers.email',
+                'atlas_dealers.account_id',
+                'atlas_dealers.phone',
+                'atlas_dealers.status',
+                'atlas_dealers.order_status',
+                'atlas_dealers.location',
+                'atlas_dealers.company_name',
+                'atlas_dealers.last_login',
+                'atlas_dealers.placed_order_date',
+                'atlas_dealers.order_pdf'
+            )
             ->distinct('atlas_branch_assign_dealers.dealer_id')
             ->get();
 
