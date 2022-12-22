@@ -1759,9 +1759,24 @@ class AdminController extends Controller
                 'dealer',
                 $code
             )->exists();
+
             if ($check_service_parts) {
-                $service = ServiceParts::where('dealer', $code)->get();
-                $dealers->service_completed = $service->completed;
+                $service = CardedProducts::where('dealer', $code)
+                    ->get()
+                    ->first();
+                $dealer->service_completed = $service->completed;
+            }
+
+            $check_carded_parts = CardedProducts::where(
+                'dealer',
+                $code
+            )->exists();
+
+            if ($check_carded_parts) {
+                $carded = CardedProducts::where('dealer', $code)
+                    ->get()
+                    ->first();
+                $dealer->carded_completed = $carded->completed;
             }
         }
 
