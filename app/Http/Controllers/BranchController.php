@@ -731,7 +731,8 @@ class BranchController extends Controller
             $fetch_account_ids = $fetch_dealers->pluck("dealer_id")->toArray();
 
             $all_dealer_ids = DB::table('atlas_dealers')->wherein('account_id', $fetch_account_ids)->where('order_status', 1)->pluck('id')->toArray();
-
+    
+            
             $all_orders = DB::table('atlas_dealers')
                 ->wherein('id', $all_dealer_ids)
                 ->where('order_status', '1')

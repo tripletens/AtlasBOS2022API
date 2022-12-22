@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers;
 
 /*
 |--------------------------------------------------------------------------
@@ -22,11 +23,24 @@ Route::get('/check', function () {
     echo 'tsersrss';
 });
 
+// Route::group(
+//     [
+//         'middleware' => 'api',
+//         // 'prefix' => 'auth',
+//         'namespace' => 'App\Http\Controllers',
+//     ],
+//     function ($router) {
+//         // Route::post('/login', 'AuthController@login');
+//         // Route::post('/register', 'AuthController@register');
+
+//         Route::post('/login', 'DealerController@login');
+//     }
+// );
+
 ///////////////// Admin /////////////
 Route::group(
     [
         'namespace' => 'App\Http\Controllers',
-        'middleware' => 'cors',
     ],
     function () {
         Route::post('/admin-login', 'AdminController@login');
@@ -48,7 +62,21 @@ Route::group(
             'AdminController@upload_service_products'
         );
 
+        Route::get(
+            '/admin/get-location-dealers',
+            'AdminController@dealer_location_filter'
+        );
+
         Route::get('/admin/fix-pro-type', 'AdminController@update_pro_type');
+
+        Route::get(
+            '/admin/close-bos-program',
+            'AdminController@close_bos_program'
+        );
+        Route::get(
+            '/admin/open-bos-program',
+            'AdminController@open_bos_program'
+        );
 
         Route::get(
             '/deactivate_admin/{id}',
@@ -330,7 +358,10 @@ Route::group(
 Route::group(
     ['namespace' => 'App\Http\Controllers', 'middleware' => 'cors'],
     function () {
+        // Route::get('/dashboard/dealer', 'DealerController@dealer_de');
+
         Route::post('/dealer-login', 'DealerController@login');
+
         Route::get('/dashboard/{dealer}', 'DealerController@dashboard');
         Route::post('/add-product', 'DealerController@add_product');
         Route::get('/fetch-all-product', 'DealerController@fetch_all_products');
@@ -358,7 +389,7 @@ Route::group(
             '/validate-order-product/{value}/{type}',
             'DealerController@vaidate_extra_products'
         )->name("validate-order-product");
-        
+       
         Route::get(
             '/search-product-type/{value}',
             'DealerController@search_product_type'
@@ -369,6 +400,44 @@ Route::group(
             'DealerController@search_product_type_carded_product'
         );
 
+        Route::get(
+            '/fetch_all_promotional_ad',
+            'DealerController@fetch_all_promotional_ad'
+        );
+        Route::get(
+            '/fetch-category-promotions/{id}',
+            'DealerController@fetch_promotion_by_category'
+        );
+        Route::post(
+            '/add-catalogue-order',
+            'DealerController@add_catalogue_order'
+        );
+        Route::get('/check-atlas/{id}', 'DealerController@check_atlas_id');
+        // Route::post('/save-catalogue', 'DealerController@add_catalogue_order');
+        // Route::get('/send-html/{id}', 'DealerController@send_pdf');
+        Route::get(
+            '/get-dealer-orders/{id}',
+            'DealerController@get_dealer_orders'
+        );
+        Route::post('/log-dealer', 'DealerController@save_dealer_login_log');
+
+        Route::get('/dashboard/{dealer}', 'DealerController@dashboard');
+        Route::post('/add-product', 'DealerController@add_product');
+        Route::get('/fetch-all-product', 'DealerController@fetch_all_products');
+        Route::get(
+            '/search-product-by-category/{category}',
+            'DealerController@search_category'
+        );
+        Route::get('/all-category', 'CategoryController@index');
+        Route::get(
+            '/quick-search-category/{category_name}/{value}',
+            'DealerController@quick_search_product'
+        );
+        Route::post('/send-order-email', 'DealerController@sendOrderMail');
+        Route::get(
+            '/search-product/{value}',
+            'DealerController@search_product'
+        );
         Route::get(
             '/fetch_all_promotional_ad',
             'DealerController@fetch_all_promotional_ad'
@@ -521,15 +590,12 @@ Route::group(
             'DealerController@view_dealer_order_by_acct_id'
         );
 
-        Route::get('/download-pdf/{id}', 'DealerController@download_pdf');
-        Route::get('/test-cart/{id}', 'DealerController@test_cart');
-
         Route::get(
             '/send-order-to-mail/{id}',
             'DealerController@send_order_to_mail'
         );
 
-        // Get all loggedin dealers 
+        // Get all loggedin dealers
         Route::get(
             '/get-all-loggedin-dealers',
             'DealerController@get_all_loggedin_dealers'
@@ -538,89 +604,80 @@ Route::group(
 );
 
 ///////////////// Branch /////////////
-Route::group(
-    ['namespace' => 'App\Http\Controllers', 'middleware' => 'cors'],
-    function () {
-        Route::post('/branch-login', 'BranchController@login');
-        Route::get(
-            '/fetch_branch_by_id/{id}',
-            'BranchController@fetch_branch_by_id'
-        );
-        Route::get(
-            '/fetch_all_branches',
-            'BranchController@fetch_all_branches'
-        );
-        Route::post(
-            '/assign_dealer_to_branch',
-            'BranchController@assign_dealer_to_branch'
-        );
-        Route::get(
-            '/fetch_dealer_by_branch/{branch_id}',
-            'BranchController@fetch_dealer_by_branch'
-        );
-        Route::get(
-            '/deactivate_branch/{id}',
-            'BranchController@deactivate_branch'
-        );
-        Route::get('/restore_branch/{id}', 'BranchController@restore_branch');
-        Route::get(
-            '/branch_dashboard/{branch_id}',
-            'BranchController@branch_dashboard'
-        );
-        Route::post(
-            '/remove_dealer_from_branch',
-            'BranchController@remove_dealer_from_branch'
-        );
-        Route::get(
-            '/fetch_dealer_active_order/{dealer_id}',
-            'BranchController@fetch_dealer_active_order'
-        );
-        Route::get(
-            '/fetch_dealer_service_parts_order/{dealer_id}',
-            'BranchController@fetch_dealer_service_parts_order'
-        );
-        Route::get(
-            '/fetch_dealer_catalogue_order/{dealer_id}',
-            'BranchController@fetch_dealer_catalogue_order'
-        );
-        Route::get(
-            '/fetch_dealer_carded_products_order/{dealer_id}',
-            'BranchController@fetch_dealer_carded_products_order'
-        );
+Route::group(['namespace' => 'App\Http\Controllers'], function () {
+    Route::post('/branch-login', 'BranchController@login');
+    Route::get(
+        '/fetch_branch_by_id/{id}',
+        'BranchController@fetch_branch_by_id'
+    );
+    Route::get('/fetch_all_branches', 'BranchController@fetch_all_branches');
+    Route::post(
+        '/assign_dealer_to_branch',
+        'BranchController@assign_dealer_to_branch'
+    );
+    Route::get(
+        '/fetch_dealer_by_branch/{branch_id}',
+        'BranchController@fetch_dealer_by_branch'
+    );
+    Route::get('/deactivate_branch/{id}', 'BranchController@deactivate_branch');
+    Route::get('/restore_branch/{id}', 'BranchController@restore_branch');
+    Route::get(
+        '/branch_dashboard/{branch_id}',
+        'BranchController@branch_dashboard'
+    );
+    Route::post(
+        '/remove_dealer_from_branch',
+        'BranchController@remove_dealer_from_branch'
+    );
+    Route::get(
+        '/fetch_dealer_active_order/{dealer_id}',
+        'BranchController@fetch_dealer_active_order'
+    );
+    Route::get(
+        '/fetch_dealer_service_parts_order/{dealer_id}',
+        'BranchController@fetch_dealer_service_parts_order'
+    );
+    Route::get(
+        '/fetch_dealer_catalogue_order/{dealer_id}',
+        'BranchController@fetch_dealer_catalogue_order'
+    );
+    Route::get(
+        '/fetch_dealer_carded_products_order/{dealer_id}',
+        'BranchController@fetch_dealer_carded_products_order'
+    );
 
-        Route::get(
-            '/fetch_all_dealers_with_active_catalogue_order/{branch_id}',
-            'BranchController@fetch_all_dealers_with_active_catalogue_order'
-        );
-        Route::get(
-            '/fetch_all_dealers_with_active_order/{branch_id}',
-            'BranchController@fetch_all_dealers_with_active_order'
-        );
+    Route::get(
+        '/fetch_all_dealers_with_active_catalogue_order/{branch_id}',
+        'BranchController@fetch_all_dealers_with_active_catalogue_order'
+    );
+    Route::get(
+        '/fetch_all_dealers_with_active_order/{branch_id}',
+        'BranchController@fetch_all_dealers_with_active_order'
+    );
 
-        Route::get(
-            '/fetch_all_dealers_with_active_carded_products_order/{branch_id}',
-            'BranchController@fetch_all_dealers_with_active_carded_products_order'
-        );
-        Route::get(
-            '/fetch_all_dealers_with_active_service_parts_order/{branch_id}',
-            'BranchController@fetch_all_dealers_with_active_service_parts_order'
-        );
+    Route::get(
+        '/fetch_all_dealers_with_active_carded_products_order/{branch_id}',
+        'BranchController@fetch_all_dealers_with_active_carded_products_order'
+    );
+    Route::get(
+        '/fetch_all_dealers_with_active_service_parts_order/{branch_id}',
+        'BranchController@fetch_all_dealers_with_active_service_parts_order'
+    );
 
-        Route::get(
-            '/fetch_dealers_by_id/{dealer_id}',
-            'BranchController@fetch_dealers_by_id'
-        );
+    Route::get(
+        '/fetch_dealers_by_id/{dealer_id}',
+        'BranchController@fetch_dealers_by_id'
+    );
 
-        // Get all loggedin dealers for a branch
-        Route::get(
-            '/get-all-branch-loggedin-dealers/{branch_id}',
-            'BranchController@get_all_branch_loggedin_dealers'
-        );
+    // Get all loggedin dealers for a branch
+    Route::get(
+        '/get-all-branch-loggedin-dealers/{branch_id}',
+        'BranchController@get_all_branch_loggedin_dealers'
+    );
 
-        // Get all not loggedin dealers for a branch
-        Route::get(
-            '/get-all-branch-notloggedin-dealers/{branch_id}',
-            'BranchController@get_all_branch_notloggedin_dealers'
-        );
-    }
-);
+    // Get all not loggedin dealers for a branch
+    Route::get(
+        '/get-all-branch-notloggedin-dealers/{branch_id}',
+        'BranchController@get_all_branch_notloggedin_dealers'
+    );
+});

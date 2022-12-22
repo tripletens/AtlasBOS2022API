@@ -45,7 +45,10 @@ class AdminController extends Controller
 
     public function __construct()
     {
-        //// $this->middleware( 'auth:api', [ 'except' => [ 'login', 'register', 'test' ] ] );
+        // $this->middleware('auth:api', [
+        //     'except' => ['login', 'register', 'test'],
+        // ]);
+
         $this->result = (object) [
             'status' => false,
             'status_code' => 200,
@@ -54,6 +57,85 @@ class AdminController extends Controller
             'token' => null,
             'debug' => null,
         ];
+    }
+
+    public function dealer_location_filter(Request $request)
+    {
+        $location = $request->query('location');
+        $dealers = Dealer::where('location', $location)->get();
+
+        foreach ($dealers as $dealer) {
+            $code = $dealer->account_id;
+            $check_service_parts = ServiceParts::where(
+                'dealer',
+                $code
+            )->exists();
+
+            if ($check_service_parts) {
+                $service = ServiceParts::where('dealer', $code)
+                    ->get()
+                    ->first();
+                $dealer->service_completed = $service->completed;
+            } else {
+                $dealer->service_completed = 3;
+            }
+
+            $check_carded_parts = CardedProducts::where(
+                'dealer',
+                $code
+            )->exists();
+
+            if ($check_carded_parts) {
+                $carded = CardedProducts::where('dealer', $code)
+                    ->get()
+                    ->first();
+                $dealer->carded_completed = $carded->completed;
+            } else {
+                $dealer->carded_completed = 3;
+            }
+
+            $check_catalogue_parts = CardedProducts::where(
+                'dealer',
+                $code
+            )->exists();
+            if ($check_catalogue_parts) {
+                $catalogue = CardedProducts::where('dealer', $code)
+                    ->get()
+                    ->first();
+                $dealer->catalogue_completed = $catalogue->completed;
+            } else {
+                $dealer->catalogue_completed = 3;
+            }
+        }
+
+        $this->result->status = true;
+        $this->result->status_code = 200;
+        $this->result->data = $dealers;
+        $this->result->message = 'Dealers fetched Successfully';
+
+        return response()->json($this->result);
+    }
+
+    public function close_bos_program()
+    {
+        Dealer::query()->update(['close_program' => 1]);
+        Admin::query()->update(['close_program' => 1]);
+
+        $this->result->status = true;
+        $this->result->status_code = 200;
+        $this->result->message = 'Program has been closed';
+        return response()->json($this->result);
+    }
+
+    public function open_bos_program()
+    {
+        Dealer::query()->update(['close_program' => 0]);
+        Admin::query()->update(['close_program' => 0]);
+
+        $this->result->status = true;
+        $this->result->status_code = 200;
+        $this->result->message = 'Program has been opened';
+        return response()->json($this->result);
     }
 
     public function upload_service_products(Request $request)
@@ -1698,7 +1780,79 @@ class AdminController extends Controller
 
     public function fetch_dealers()
     {
+        // $dealers = Dealer::join(
+        //     'atlas_service_parts',
+        //     'atlas_dealers.account_id',
+        //     '=',
+        //     'atlas_service_parts.dealer'
+        // )
+        //     ->join(
+        //         'atlas_carded_products',
+        //         'atlas_dealers.account_id',
+        //         '=',
+        //         'atlas_carded_products.dealer'
+        //     )
+        //     ->join(
+        //         'atlas_catalogue_orders',
+        //         'atlas_dealers.account_id',
+        //         '=',
+        //         'atlas_catalogue_orders.dealer'
+        //     )
+        //     ->select(
+        //         'atlas_service_parts.completed as service_completed',
+        //         'atlas_carded_products.completed as carded_completed',
+        //         'atlas_catalogue_orders.completed as catalogue_completed',
+        //         'atlas_dealers.*'
+        //     )
+
+        //     ->get();
+
         $dealers = Dealer::all();
+        $service_parts = 0;
+
+        foreach ($dealers as $dealer) {
+            $code = $dealer->account_id;
+            $check_service_parts = ServiceParts::where(
+                'dealer',
+                $code
+            )->exists();
+
+            if ($check_service_parts) {
+                $service = ServiceParts::where('dealer', $code)
+                    ->get()
+                    ->first();
+                $dealer->service_completed = $service->completed;
+            } else {
+                $dealer->service_completed = 3;
+            }
+
+            $check_carded_parts = CardedProducts::where(
+                'dealer',
+                $code
+            )->exists();
+
+            if ($check_carded_parts) {
+                $carded = CardedProducts::where('dealer', $code)
+                    ->get()
+                    ->first();
+                $dealer->carded_completed = $carded->completed;
+            } else {
+                $dealer->carded_completed = 3;
+            }
+
+            $check_catalogue_parts = CardedProducts::where(
+                'dealer',
+                $code
+            )->exists();
+            if ($check_catalogue_parts) {
+                $catalogue = CardedProducts::where('dealer', $code)
+                    ->get()
+                    ->first();
+                $dealer->catalogue_completed = $catalogue->completed;
+            } else {
+                $dealer->catalogue_completed = 3;
+            }
+        }
 
         if (!$dealers) {
             $this->result->status = false;
