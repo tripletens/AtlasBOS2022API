@@ -59,6 +59,19 @@ class AdminController extends Controller
         ];
     }
 
+    public function dealer_location_filter(Request $request)
+    {
+        $location = $request->query('location');
+        $dealers = Dealer::where('location', $location)->get();
+
+        $this->result->status = true;
+        $this->result->status_code = 200;
+        $this->result->data = $dealers;
+        $this->result->message = 'Dealers fetched Successfully';
+
+        return response()->json($this->result);
+    }
+
     public function close_bos_program()
     {
         Dealer::query()->update(['close_program' => 1]);
@@ -1777,7 +1790,7 @@ class AdminController extends Controller
                     ->get()
                     ->first();
                 $dealer->carded_completed = $carded->completed;
-            }else{
+            } else {
                 $dealer->carded_completed = 3;
             }
 
@@ -1790,8 +1803,8 @@ class AdminController extends Controller
                     ->get()
                     ->first();
                 $dealer->catalogue_completed = $catalogue->completed;
-            }else{
-                $dealer->catalogue_completed = 3
+            } else {
+                $dealer->catalogue_completed = 3;
             }
         }
 

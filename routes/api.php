@@ -62,6 +62,11 @@ Route::group(
             'AdminController@upload_service_products'
         );
 
+        Route::get(
+            '/admin/get-location-dealers',
+            'AdminController@dealer_location_filter'
+        );
+
         Route::get('/admin/fix-pro-type', 'AdminController@update_pro_type');
 
         Route::get(
