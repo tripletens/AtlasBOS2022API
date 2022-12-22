@@ -1751,21 +1751,21 @@ class AdminController extends Controller
         //     ->get();
 
         $dealers = Dealer::all();
-        // $service_parts = 0;
+        $service_parts = 0;
 
         foreach ($dealers as $dealer) {
             $code = $dealer->account_id;
-            $check_service_parts = ServiceParts::where(
-                'dealer',
-                $code
-            )->exists();
+            // $check_service_parts = ServiceParts::where(
+            //     'dealer',
+            //     $code
+            // )->exists();
 
-            if ($check_service_parts) {
-                $service = CardedProducts::where('dealer', $code)
-                    ->get()
-                    ->first();
-                $dealer->service_completed = $service->completed;
-            }
+            // if ($check_service_parts) {
+            //     $service = CardedProducts::where('dealer', $code)
+            //         ->get()
+            //         ->first();
+            //     $dealer->service_completed = $service->completed;
+            // }
 
             $check_carded_parts = CardedProducts::where(
                 'dealer',
@@ -1777,6 +1777,17 @@ class AdminController extends Controller
                     ->get()
                     ->first();
                 $dealer->carded_completed = $carded->completed;
+            }
+
+            $check_catalogue_parts = CardedProducts::where(
+                'dealer',
+                $code
+            )->exists();
+            if ($check_catalogue_parts) {
+                $catalogue = CardedProducts::where('dealer', $code)
+                    ->get()
+                    ->first();
+                $dealer->catalogue_completed = $catalogue->completed;
             }
         }
 
