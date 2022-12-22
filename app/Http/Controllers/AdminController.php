@@ -1768,17 +1768,19 @@ class AdminController extends Controller
 
         foreach ($dealers as $dealer) {
             $code = $dealer->account_id;
-            // $check_service_parts = ServiceParts::where(
-            //     'dealer',
-            //     $code
-            // )->exists();
+            $check_service_parts = ServiceParts::where(
+                'dealer',
+                $code
+            )->exists();
 
-            // if ($check_service_parts) {
-            //     $service = CardedProducts::where('dealer', $code)
-            //         ->get()
-            //         ->first();
-            //     $dealer->service_completed = $service->completed;
-            // }
+            if ($check_service_parts) {
+                $service = ServiceParts::where('dealer', $code)
+                    ->get()
+                    ->first();
+                $dealer->service_completed = $service->completed;
+            } else {
+                $dealer->service_completed = 3;
+            }
 
             $check_carded_parts = CardedProducts::where(
                 'dealer',
