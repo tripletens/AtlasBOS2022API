@@ -62,6 +62,11 @@ Route::group(
             'AdminController@upload_service_products'
         );
 
+        Route::get(
+            '/admin/get-location-dealers',
+            'AdminController@dealer_location_filter'
+        );
+
         Route::get('/admin/fix-pro-type', 'AdminController@update_pro_type');
 
         Route::get(
@@ -381,10 +386,10 @@ Route::group(
         );
 
         Route::get(
-            '/validate-product/{value}/{type}',
+            '/validate-order-product/{value}/{type}',
             'DealerController@vaidate_extra_products'
-        );
-
+        )->name("validate-order-product");
+       
         Route::get(
             '/search-product-type/{value}',
             'DealerController@search_product_type'

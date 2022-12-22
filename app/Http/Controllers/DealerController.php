@@ -1027,7 +1027,7 @@ class DealerController extends Controller
                 $this->result->status_code = 422;
                 $this->result->message = 'Sorry we could not find product';
             } else {
-                $update_cart_product = Cart::update([
+                $update_cart_product = Cart::query()->update([
                     'dealer' => $dealer,
                     'pro_id' => $pro_id,
                     'atlas_id' => $atlas_id,
@@ -2029,9 +2029,8 @@ class DealerController extends Controller
         return response()->json($this->result);
     }
 
-    public function vaidate_extra_products($value, $type)
-    {
-        // check if the value (atlas_id) is a catalogue, carded or service parts product
+    public function vaidate_extra_products($value, $type){
+        // check if the value (atlas_id) is a catalogue, carded or service parts product 
         // `item_code`, `vendor_code`, `description`, `type`, `type_name`,
         $string_value = (string) $value;
 
