@@ -132,9 +132,11 @@ class BranchController extends Controller
             ];
             return response()->json($this->result);
         } else {
-
+            
             $branch_id = $request->input('branch_id');
             $dealers = $request->input('dealers');
+
+            // return $dealers;
 
             $not_inserted_dealers = [];
 
@@ -810,7 +812,7 @@ class BranchController extends Controller
 
             $this->result->status = true;
             $this->result->status_code = 200;
-            $this->result->data = $format_all_orders;
+            $this->result->data = $format_all_orders ? $format_all_orders : [];
             $this->result->message = 'All dealers with catalogue orders fetched successfully';
             return response()->json($this->result);
         }
