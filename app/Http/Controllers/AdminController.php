@@ -1723,7 +1723,39 @@ class AdminController extends Controller
 
     public function fetch_dealers()
     {
-        $dealers = Dealer::all();
+        $dealers = Dealer::join(
+            'atlas_service_parts',
+            'atlas_dealers.dealer',
+            '=',
+            'atlas_service_parts.dealer'
+        )
+            ->join(
+                'atlas_carded_products',
+                'atlas_dealers.dealer',
+                '=',
+                'atlas_carded_products.dealer'
+            )
+            ->select(
+                'atlas_service_parts.completed as service_completed',
+                'atlas_service_parts.completed as carded_completed',
+                'atlas_service_parts.completed as catalogue_completed',
+                'atlas_dealers.*'
+            )
+
+            ->get();
+
+        ///  $dealers = Dealer::all();
+        // $service_parts = 0;
+
+        // foreach($dealers as $dealer){
+        //     $code = $dealer->account_id;
+        //     $check_service_parts = ServiceParts::where('dealer', $code)->exists();
+        //     // if($check_service_parts){
+        //     //     ServiceParts::
+
+        //     // }
+
+        // }
 
         if (!$dealers) {
             $this->result->status = false;
