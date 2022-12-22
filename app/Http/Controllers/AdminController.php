@@ -1723,45 +1723,47 @@ class AdminController extends Controller
 
     public function fetch_dealers()
     {
-        $dealers = Dealer::join(
-            'atlas_service_parts',
-            'atlas_dealers.account_id',
-            '=',
-            'atlas_service_parts.dealer'
-        )
-            ->join(
-                'atlas_carded_products',
-                'atlas_dealers.account_id',
-                '=',
-                'atlas_carded_products.dealer'
-            )
-            ->join(
-                'atlas_catalogue_orders',
-                'atlas_dealers.account_id',
-                '=',
-                'atlas_catalogue_orders.dealer'
-            )
-            ->select(
-                'atlas_service_parts.completed as service_completed',
-                'atlas_carded_products.completed as carded_completed',
-                'atlas_catalogue_orders.completed as catalogue_completed',
-                'atlas_dealers.*'
-            )
+        // $dealers = Dealer::join(
+        //     'atlas_service_parts',
+        //     'atlas_dealers.account_id',
+        //     '=',
+        //     'atlas_service_parts.dealer'
+        // )
+        //     ->join(
+        //         'atlas_carded_products',
+        //         'atlas_dealers.account_id',
+        //         '=',
+        //         'atlas_carded_products.dealer'
+        //     )
+        //     ->join(
+        //         'atlas_catalogue_orders',
+        //         'atlas_dealers.account_id',
+        //         '=',
+        //         'atlas_catalogue_orders.dealer'
+        //     )
+        //     ->select(
+        //         'atlas_service_parts.completed as service_completed',
+        //         'atlas_carded_products.completed as carded_completed',
+        //         'atlas_catalogue_orders.completed as catalogue_completed',
+        //         'atlas_dealers.*'
+        //     )
 
-            ->get();
+        //     ->get();
 
-        ///  $dealers = Dealer::all();
+        $dealers = Dealer::all();
         // $service_parts = 0;
 
-        // foreach($dealers as $dealer){
-        //     $code = $dealer->account_id;
-        //     $check_service_parts = ServiceParts::where('dealer', $code)->exists();
-        //     // if($check_service_parts){
-        //     //     ServiceParts::
-
-        //     // }
-
-        // }
+        foreach ($dealers as $dealer) {
+            $code = $dealer->account_id;
+            $check_service_parts = ServiceParts::where(
+                'dealer',
+                $code
+            )->exists();
+            if ($check_service_parts) {
+                $service = ServiceParts::where('dealer', $code)->get();
+                $dealers->service_completed = $service->completed;
+            }
+        }
 
         if (!$dealers) {
             $this->result->status = false;
