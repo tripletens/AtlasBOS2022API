@@ -1735,10 +1735,16 @@ class AdminController extends Controller
                 '=',
                 'atlas_carded_products.dealer'
             )
+            ->join(
+                'atlas_catalogue_orders',
+                'atlas_dealers.dealer',
+                '=',
+                'atlas_catalogue_orders.dealer'
+            )
             ->select(
                 'atlas_service_parts.completed as service_completed',
-                'atlas_service_parts.completed as carded_completed',
-                'atlas_service_parts.completed as catalogue_completed',
+                'atlas_carded_products.completed as carded_completed',
+                'atlas_catalogue_orders.completed as catalogue_completed',
                 'atlas_dealers.*'
             )
 
