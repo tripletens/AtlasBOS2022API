@@ -1725,19 +1725,19 @@ class AdminController extends Controller
     {
         $dealers = Dealer::join(
             'atlas_service_parts',
-            'atlas_dealers.dealer',
+            'atlas_dealers.account_id',
             '=',
             'atlas_service_parts.dealer'
         )
             ->join(
                 'atlas_carded_products',
-                'atlas_dealers.dealer',
+                'atlas_dealers.account_id',
                 '=',
                 'atlas_carded_products.dealer'
             )
             ->join(
                 'atlas_catalogue_orders',
-                'atlas_dealers.dealer',
+                'atlas_dealers.account_id',
                 '=',
                 'atlas_catalogue_orders.dealer'
             )
