@@ -388,8 +388,8 @@ Route::group(
         Route::get(
             '/validate-order-product/{value}/{type}',
             'DealerController@vaidate_extra_products'
-        );
-
+        )->name("validate-order-product");
+       
         Route::get(
             '/search-product-type/{value}',
             'DealerController@search_product_type'
