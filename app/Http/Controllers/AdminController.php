@@ -64,6 +64,50 @@ class AdminController extends Controller
         $location = $request->query('location');
         $dealers = Dealer::where('location', $location)->get();
 
+        foreach ($dealers as $dealer) {
+            $code = $dealer->account_id;
+            $check_service_parts = ServiceParts::where(
+                'dealer',
+                $code
+            )->exists();
+
+            if ($check_service_parts) {
+                $service = ServiceParts::where('dealer', $code)
+                    ->get()
+                    ->first();
+                $dealer->service_completed = $service->completed;
+            } else {
+                $dealer->service_completed = 3;
+            }
+
+            $check_carded_parts = CardedProducts::where(
+                'dealer',
+                $code
+            )->exists();
+
+            if ($check_carded_parts) {
+                $carded = CardedProducts::where('dealer', $code)
+                    ->get()
+                    ->first();
+                $dealer->carded_completed = $carded->completed;
+            } else {
+                $dealer->carded_completed = 3;
+            }
+
+            $check_catalogue_parts = CardedProducts::where(
+                'dealer',
+                $code
+            )->exists();
+            if ($check_catalogue_parts) {
+                $catalogue = CardedProducts::where('dealer', $code)
+                    ->get()
+                    ->first();
+                $dealer->catalogue_completed = $catalogue->completed;
+            } else {
+                $dealer->catalogue_completed = 3;
+            }
+        }
+
         $this->result->status = true;
         $this->result->status_code = 200;
         $this->result->data = $dealers;
