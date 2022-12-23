@@ -386,8 +386,8 @@ Route::group(
         );
 
         Route::get(
-            '/validate-order-product/{value}/{type}',
-            'DealerController@vaidate_extra_products'
+            '/check-order-product/{value}/{type}',
+            'DealerController@validate_extra_products'
         );
        
         Route::get(

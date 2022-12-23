@@ -2029,7 +2029,7 @@ class DealerController extends Controller
         return response()->json($this->result);
     }
 
-    public function vaidate_extra_products($value, $type){
+    public function validate_extra_products($value, $type){
         // check if the value (atlas_id) is a catalogue, carded or service parts product 
         // `item_code`, `vendor_code`, `description`, `type`, `type_name`,
         $string_value = (string) $value;
