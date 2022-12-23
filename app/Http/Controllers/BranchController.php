@@ -238,6 +238,35 @@ class BranchController extends Controller
 
                 $record->has_carded_products = $check_carded_products_count > 0 ? true : false;
 
+                // check if the dealer has an item in cart return 0  
+                $check_cart = Cart::where('dealer', $dealer_id)->get();
+
+                if(count($check_cart) == 0 ){
+                    $record->order_status = 0;
+                }
+
+                // foreach($check_cart as $key => $item){
+                //     $cart_status = $item->status;
+
+                //     if(){
+
+                //     }
+                // }
+                // doesnt have item in the cart and has not submitted return 2 pending 
+                $check_cart = Cart::where('dealer', $dealer_id)->where('status',0)->get();
+
+                if(count($check_cart) > 0 ){
+                    $record->order_status = 2;
+                }
+                
+                // check if the person has submitted return 1 
+
+                $check_cart = Cart::where('dealer', $dealer_id)->where('status',1)->get();
+
+                if(count($check_cart) > 0 ){
+                    $record->order_status = 1;
+                }
+
                 return $record;
             }, $dealer_array);
 
