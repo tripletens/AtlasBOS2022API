@@ -424,10 +424,7 @@ Route::group(
         Route::get('/dashboard/{dealer}', 'DealerController@dashboard');
         Route::post('/add-product', 'DealerController@add_product');
         Route::get('/fetch-all-product', 'DealerController@fetch_all_products');
-        Route::get(
-            '/search-product-by-category/{category}',
-            'DealerController@search_category'
-        );
+        
         Route::get('/all-category', 'CategoryController@index');
         Route::get(
             '/quick-search-category/{category_name}/{value}',
@@ -614,6 +611,10 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
     Route::post(
         '/assign_dealer_to_branch',
         'BranchController@assign_dealer_to_branch'
+    );
+    Route::get(
+        '/search-product-by-category/{category}',
+        'BranchController@search_category'
     );
     Route::get(
         '/fetch_dealer_by_branch/{branch_id}',

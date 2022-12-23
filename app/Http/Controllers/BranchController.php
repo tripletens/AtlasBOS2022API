@@ -15,7 +15,7 @@ use App\Models\ServiceParts;
 use App\Models\CardedProducts;
 use App\Models\Cart;
 use App\Models\Orders;
-
+use App\Models\Products;
 use DB;
 
 class BranchController extends Controller
@@ -1125,4 +1125,50 @@ class BranchController extends Controller
         $this->result->message = 'All branch dealers that have not loggedin have been fetched successfully';
         return response()->json($this->result);
     }
+
+    public function search_category($category)
+    {
+        $products = Products::where('category', $category)
+            ->where('status', '1')
+            ->orderBy('xref', 'asc')
+            ->get();
+
+        if ($products) {
+            foreach ($products as $value) {
+                $spec_data = $value->spec_data
+                    ? json_decode($value->spec_data)
+                    : [];
+                $value->spec_data = $spec_data;
+            }
+        } else {
+            $products = [];
+        }
+
+        $format_products = array_map(function ($record) {
+            // $record =
+            $format_data =
+                $this->check_if_its_new(
+                    $record['created_at'],
+                    10,
+                    $record['atlas_id']
+                ) == true
+                    ? true
+                    : false;
+
+            return array_merge(
+                [
+                    'is_new' => $format_data,
+                ],
+                $record
+            );
+        }, json_decode($products, true));
+
+        $this->result->status = true;
+        $this->result->status_code = 200;
+        $this->result->data = $format_products;
+        $this->result->message =
+            'Products in this category successfully fetched';
+        return response()->json($this->result);
+    }
 }
+
