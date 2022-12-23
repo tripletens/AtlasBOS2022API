@@ -246,11 +246,12 @@ class BranchController extends Controller
 
             $this->result->status = true;
             $this->result->status_code = 200;
-            $this->result->data = ['branch' => $fetch_branch_details, 'dealers' => $format_dealer_array];
+            $this->result->data = ['branch' => $fetch_branch_details, 'dealers' => $format_dealer_array && count($format_dealer_array) > 0 ? $format_dealer_array : [] ];
             $this->result->message = 'All Branches fetched Successfully';
             return response()->json($this->result);
         }
     }
+    
     public function deactivate_branch($id)
     {
         $branch = Branch::find($id);
