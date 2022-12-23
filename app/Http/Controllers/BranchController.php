@@ -218,9 +218,6 @@ class BranchController extends Controller
                 }
             }
 
-
-            // 
-
             $format_dealer_array = array_map(function ($record) {
                 $dealer_id = $record->id;
                 $check_service_parts_count = ServiceParts::where('dealer', $dealer_id)->count();
@@ -251,7 +248,7 @@ class BranchController extends Controller
             return response()->json($this->result);
         }
     }
-    
+
     public function deactivate_branch($id)
     {
         $branch = Branch::find($id);
@@ -324,6 +321,7 @@ class BranchController extends Controller
         if (!$fetch_branch_details) {
             $this->result->status = false;
             $this->result->status_code = 422;
+            $this->result->data = [];
             $this->result->message = 'Sorry branch doesnt exist or deactivated';
             return response()->json($this->result);
         } else {
@@ -332,6 +330,7 @@ class BranchController extends Controller
             if (!$fetch_dealers) {
                 $this->result->status = false;
                 $this->result->status_code = 422;
+                $this->result->data = [];
                 $this->result->message = 'Sorry we could not fetch all the dealers assigned to the branch';
                 return response()->json($this->result);
             }
