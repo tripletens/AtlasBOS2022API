@@ -1170,5 +1170,43 @@ class BranchController extends Controller
             'Products in this category successfully fetched';
         return response()->json($this->result);
     }
+
+    public function check_if_its_new(
+        $created_at,
+        $no_of_days,
+        $atlas_id = false
+    ) {
+        $format_created_at = Carbon::parse($created_at);
+
+        $now = Carbon::now();
+
+        $length = $format_created_at->diffInDays($now);
+
+        // echo "hello"; exit();
+
+        if ($length <= $no_of_days) {
+            if ($atlas_id == true) {
+                // $product = DB::select("SELECT * FROM `PRODUCTS` WHERE `atlas_id` = '$atlas_id' AND  `full_desc` IS NULL OR `full_desc` == ' '");
+
+                // $product = Products::where('atlas_id',$atlas_id)->where('full_desc',' ')->whereNull('full_desc')->get();
+
+                $product = DB::table('atlas_products')
+                    ->where('atlas_id', $atlas_id)
+                    ->whereNotNull('full_desc')
+                    ->where('full_desc', '!=', '')
+                    ->get();
+
+                // return $product;
+
+                if ($product && count($product) > 0) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        } else {
+            return false;
+        }
+    }
 }
 
