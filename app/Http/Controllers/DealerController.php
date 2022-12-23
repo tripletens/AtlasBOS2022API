@@ -69,9 +69,9 @@ class DealerController extends Controller
             'atlas_products.id'
         )
             ->select('cart.*', 'atlas_products.type', 'atlas_products.grouping')
-
             ->where('cart.dealer', '=', $id)
             ->where('cart.status', '=', '0')
+            ->orderBy('cart.created_at', 'desc')
             ->take(10)
             ->get();
         foreach ($cart as $value) {
