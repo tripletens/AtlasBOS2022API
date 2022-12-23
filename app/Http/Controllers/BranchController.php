@@ -193,6 +193,7 @@ class BranchController extends Controller
         if (!$fetch_branch_details) {
             $this->result->status = false;
             $this->result->status_code = 422;
+            $this->result->data = [];
             $this->result->message = 'Sorry branch doesnt exist or deactivated';
             return response()->json($this->result);
         } else {
@@ -201,6 +202,7 @@ class BranchController extends Controller
             if (!$fetch_dealers) {
                 $this->result->status = false;
                 $this->result->status_code = 422;
+                $this->result->data = [];
                 $this->result->message = 'Sorry we could not fetch all the dealers assigned to the branch';
                 return response()->json($this->result);
             }
@@ -624,6 +626,7 @@ class BranchController extends Controller
         if (!$fetch_branch_details) {
             $this->result->status = false;
             $this->result->status_code = 422;
+            $this->result->data = [];
             $this->result->message = 'Sorry branch doesnt exist or deactivated';
             return response()->json($this->result);
         } else {
@@ -724,6 +727,7 @@ class BranchController extends Controller
         if (!$fetch_branch_details) {
             $this->result->status = false;
             $this->result->status_code = 422;
+            $this->result->data = [];
             $this->result->message = 'Sorry branch doesnt exist or deactivated';
             return response()->json($this->result);
         } else {
@@ -834,6 +838,7 @@ class BranchController extends Controller
         if (!$fetch_branch_details) {
             $this->result->status = false;
             $this->result->status_code = 422;
+            $this->result->data = [];
             $this->result->message = 'Sorry branch doesnt exist or deactivated';
             return response()->json($this->result);
         } else {
@@ -944,6 +949,7 @@ class BranchController extends Controller
         if (!$fetch_branch_details) {
             $this->result->status = false;
             $this->result->status_code = 422;
+            $this->result->data = [];
             $this->result->message = 'Sorry branch doesnt exist or deactivated';
             return response()->json($this->result);
         } else {
