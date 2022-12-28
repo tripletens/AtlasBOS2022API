@@ -1840,12 +1840,12 @@ class AdminController extends Controller
                 $dealer->carded_completed = 3;
             }
 
-            $check_catalogue_parts = CardedProducts::where(
+            $check_catalogue_parts = Catalogue_Order::where(
                 'dealer',
                 $code
             )->exists();
             if ($check_catalogue_parts) {
-                $catalogue = CardedProducts::where('dealer', $code)
+                $catalogue = Catalogue_Order::where('dealer', $code)
                     ->get()
                     ->first();
                 $dealer->catalogue_completed = $catalogue->completed;
