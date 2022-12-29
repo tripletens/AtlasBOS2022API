@@ -297,7 +297,7 @@ class AdminController extends Controller
                     $save_product = Products::create([
                         'atlas_id' => $atlas_id,
                         'img' => $img,
-                        'description' => $description,
+                        'description' => $desc,
                         'full_desc' => $full_desc,
                         'vendor_name' => $vendor_name,
                         'vendor_logo' => $vendor_logo,
