@@ -48,6 +48,11 @@ Route::group(
         Route::post('/register-admin', 'AdminController@register_admin');
 
         Route::post(
+            '/admin/upload-dealer-excel',
+            'AdminController@upload_dealer_excel'
+        );
+
+        Route::post(
             '/admin/upload-regular-products',
             'AdminController@upload_regular_products'
         );
