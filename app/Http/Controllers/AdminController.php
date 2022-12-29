@@ -59,6 +59,72 @@ class AdminController extends Controller
         ];
     }
 
+    public function upload_dealer_excel(Request $request)
+    {
+        $csv = $request->file('csv');
+
+        if ($csv == null) {
+            $this->result->status = false;
+            $this->result->status_code = 422;
+            $this->result->message = 'Please upload products in csv format';
+            return response()->json($this->result);
+        }
+
+        $the_file = $request->file('csv');
+        try {
+            $spreadsheet = IOFactory::load($the_file->getRealPath());
+            $sheet = $spreadsheet->getActiveSheet();
+            $row_limit = $sheet->getHighestDataRow();
+            $column_limit = $sheet->getHighestDataColumn();
+            $row_range = range(2, $row_limit);
+            $column_range = range('F', $column_limit);
+            $startcount = 2;
+            $data = [];
+
+            foreach ($row_range as $row) {
+                $dealer_code = $sheet->getCell('A' . $row)->getValue();
+                $full_name = $sheet->getCell('B' . $row)->getValue();
+                $email = $sheet->getCell('C' . $row)->getValue();
+                $password = $sheet->getCell('D' . $row)->getValue();
+                $phone = $sheet->getCell('E' . $row)->getValue();
+                $location = $sheet->getCell('F' . $row)->getValue();
+                $company = $sheet->getCell('G' . $row)->getValue();
+
+                $save_dealer = Dealer::create([
+                    'first_name' => $full_name,
+                    'last_name' => null,
+                    'email' => $email,
+                    'password' => bcrypt($password),
+                    'account_id' => $dealer_code,
+                    'phone' => $phone,
+                    'location' => $location,
+                    'password_clear' => $password,
+                    'full_name' => $full_name,
+                    'company_name' => $company,
+                ]);
+
+                if (!$save_dealer) {
+                    $this->result->status = false;
+                    $this->result->status_code = 422;
+                    $this->result->message =
+                        'Sorry File could not be uploaded. Try again later.';
+                    return response()->json($this->result);
+                }
+            }
+        } catch (Exception $e) {
+            $error_code = $e->errorInfo[1];
+            $this->result->status = false;
+            $this->result->status_code = 404;
+            $this->result->message = 'Something went wrong';
+            return response()->json($this->result);
+        }
+
+        $this->result->status = true;
+        $this->result->status_code = 200;
+        $this->result->message = 'Dealers uploaded successfully';
+        return response()->json($this->result);
+    }
+
     public function upload_product_assorted(Request $request)
     {
         $csv = $request->file('csv');
