@@ -187,7 +187,7 @@ Route::group(
             'AdminController@restore_product'
         );
 
-        Route::get('/fetch-all-orders', 'AdminController@fetch_all_orders');
+        ////  Route::get('/fetch-all-orders', 'AdminController@fetch_all_orders');
         Route::get(
             '/fetch-all-dealers-with-order',
             'AdminController@fetch_all_dealers_with_orders'
