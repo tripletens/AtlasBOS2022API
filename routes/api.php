@@ -48,6 +48,21 @@ Route::group(
         Route::post('/register-admin', 'AdminController@register_admin');
 
         Route::post(
+            '/admin/upload-regular-products',
+            'AdminController@upload_regular_products'
+        );
+
+        Route::post(
+            '/admin/upload-assorted-products',
+            'AdminController@upload_product_assorted'
+        );
+
+        Route::post(
+            '/admin/upload-special-products',
+            'AdminController@upload_product_special'
+        );
+
+        Route::post(
             '/admin/upload-catalogue-products',
             'AdminController@upload_catalogue_products'
         );
