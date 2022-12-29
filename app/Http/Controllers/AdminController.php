@@ -3269,7 +3269,7 @@ class AdminController extends Controller
                 'placed_order_date',
                 'account_id'
             )
-            ->where('order_status', '1')
+            ////   ->where('order_status', '1')
             ->orderBy('placed_order_date', 'DESC')
             ->get()
             ->toArray();
@@ -3283,10 +3283,23 @@ class AdminController extends Controller
                 'id' => $dealer_id,
                 'account_id' => $account_id,
                 'dealer_name' => $dealer_name,
-                'total_item' => Cart::where('dealer', $dealer_id)->count(),
+                'total_item' => Cart::where('dealer', $dealer_id)
+                    ->where('status', '1')
+                    ->count(),
+                'total_pending_item' => Cart::where('dealer', $dealer_id)
+                    ->where('status', '0')
+                    ->count(),
+
                 'total_amt' => DB::table('cart')
                     ->where('dealer', $dealer_id)
+                    ->where('status', '1')
                     ->sum('price'),
+
+                'total_pending_amt' => DB::table('cart')
+                    ->where('dealer', $dealer_id)
+                    ->where('status', '0')
+                    ->sum('price'),
+
                 'order_date' => $order_date,
             ];
         }, $submitted_dealers);
