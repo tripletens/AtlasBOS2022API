@@ -254,9 +254,9 @@ class BranchController extends Controller
                     // lets sum the total pending amount 
                     $sum_pending_amount = Cart::where('dealer', $dealer_id)->where('status', 0)->sum('price');
 
-                    $record->pending_total = $sum_pending_amount;
+                    $record->pending_total = number_format($sum_pending_amount,2);
                 }else{
-                    $record->pending_total = 0;
+                    $record->pending_total = number_format(0,2);
                 }
                 
                 // check if the person has submitted return 1 
@@ -269,10 +269,10 @@ class BranchController extends Controller
                     // lets get the total submitted amount 
                     $sum_submitted_amount = Cart::where('dealer', $dealer_id)->where('status', 1)->sum('price');
 
-                    $record->submitted_total = $sum_submitted_amount;
+                    $record->submitted_total = number_format($sum_submitted_amount,2);
 
                 }else{
-                    $record->submitted_total = 0;
+                    $record->submitted_total = number_format(0,2);
                 }
 
                 return $record;
