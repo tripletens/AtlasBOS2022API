@@ -245,18 +245,18 @@ class BranchController extends Controller
                     $record->order_status = 0;
                 }
 
-                // foreach($check_cart as $key => $item){
-                //     $cart_status = $item->status;
-
-                //     if(){
-
-                //     }
-                // }
                 // doesnt have item in the cart and has not submitted return 2 pending 
                 $check_cart = Cart::where('dealer', $dealer_id)->where('status',0)->get();
 
                 if(count($check_cart) > 0 ){
                     $record->order_status = 2;
+
+                    // lets sum the total pending amount 
+                    $sum_pending_amount = Cart::where('dealer', $dealer_id)->where('status', 0)->sum('price');
+
+                    $record->pending_total = $sum_pending_amount;
+                }else{
+                    $record->pending_total = 0;
                 }
                 
                 // check if the person has submitted return 1 
@@ -265,6 +265,14 @@ class BranchController extends Controller
 
                 if(count($check_cart) > 0 ){
                     $record->order_status = 1;
+
+                    // lets get the total submitted amount 
+                    $sum_submitted_amount = Cart::where('dealer', $dealer_id)->where('status', 1)->sum('price');
+
+                    $record->submitted_total = $sum_submitted_amount;
+
+                }else{
+                    $record->submitted_total = 0;
                 }
 
                 return $record;

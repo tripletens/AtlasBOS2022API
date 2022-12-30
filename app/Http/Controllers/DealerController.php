@@ -3272,6 +3272,8 @@ class DealerController extends Controller
             'data' => 'required',
         ]);
 
+        
+
         if ($validator->fails()) {
             $this->result->status_code = 422;
             $this->result->message = [
