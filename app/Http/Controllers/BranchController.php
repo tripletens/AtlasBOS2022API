@@ -225,6 +225,8 @@ class BranchController extends Controller
             $format_dealer_array = array_map(function ($record) {
                 $dealer_id = $record->account_id;
 
+                $dealer_user_id = $record->id;
+
                 // return $dealer_id;
 
                 $check_service_parts_count = ServiceParts::where('dealer', $dealer_id)->where('completed',1)->count();
@@ -246,20 +248,20 @@ class BranchController extends Controller
                 $record->has_carded_products = $check_carded_products_count > 0 ? true : false;
 
                 // check if the dealer has an item in cart return 0  
-                $check_cart = Cart::where('dealer', $dealer_id)->get();
+                $check_cart = Cart::where('dealer', $dealer_user_id)->get();
 
                 if(count($check_cart) == 0 ){
                     $record->order_status = 0;
                 }
                 
                 // doesnt have item in the cart and has not submitted return 2 pending 
-                $check_cart = Cart::where('dealer', $dealer_id)->where('status',0)->get();
+                $check_cart = Cart::where('dealer', $dealer_user_id)->where('status',0)->get();
 
                 if(count($check_cart) > 0 ){
                     $record->order_status = 2;
 
                     // lets sum the total pending amount 
-                    $sum_pending_amount = Cart::where('dealer', $dealer_id)->where('status', 0)->sum('price');
+                    $sum_pending_amount = Cart::where('dealer', $dealer_user_id)->where('status', 0)->sum('price');
 
                     $record->pending_total = number_format($sum_pending_amount,2);
                 }else{
@@ -268,13 +270,13 @@ class BranchController extends Controller
                 
                 // check if the person has submitted return 1 
 
-                $check_cart = Cart::where('dealer', $dealer_id)->where('status',1)->get();
+                $check_cart = Cart::where('dealer', $dealer_user_id)->where('status',1)->get();
 
                 if(count($check_cart) > 0 ){
                     $record->order_status = 1;
 
                     // lets get the total submitted amount 
-                    $sum_submitted_amount = Cart::where('dealer', $dealer_id)->where('status', 1)->sum('price');
+                    $sum_submitted_amount = Cart::where('dealer', $dealer_user_id)->where('status', 1)->sum('price');
 
                     $record->submitted_total = number_format($sum_submitted_amount,2);
 

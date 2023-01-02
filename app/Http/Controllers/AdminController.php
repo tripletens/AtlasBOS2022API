@@ -1449,14 +1449,44 @@ class AdminController extends Controller
 
     public function fetch_dealer_catalogue_orders($dealer_id)
     {
+        // return $dealer_id;
         $catalogue_order = Catalogue_Order::where('dealer', $dealer_id)->get();
 
+        if (!$catalogue_order) {
+            $this->result->status = false;
+            $this->result->status_code = 422;
+            $this->result->message =
+                'Dealer\'s catalogue order could not be fetched';
+            return response()->json($this->result);
+        }
+        
         $dealer_details = Dealer::where('account_id', $dealer_id)->get();
+
+        // return $catalogue_order;
+
+        if (!$dealer_details || count($dealer_details) == 0) {
+            $this->result->status = false;
+            $this->result->status_code = 422;
+            $this->result->message = 'Dealer\'s with account id - ' . $dealer_id . ' not found';
+            return response()->json($this->result);
+        }
+
+        // return $dealer_details;
+
         $order_date = $dealer_details[0]->placed_order_date;
 
         foreach ($catalogue_order as $value) {
             $data = $value->data ? json_decode($value->data) : [];
             $value->data = $data;
+            
+            $value_data = array_map(function ($record) {
+                $atlas_id = $record->atlasId;
+                // fetch the item full details of extra products 
+                $extra_product_details = ExtraProducts::where('item_code', $atlas_id)->get();
+                $record->description = $extra_product_details && count($extra_product_details) ? $extra_product_details[0]->description : "";
+                return $record;
+            },$value->data);
+
             $value->order_date = $order_date;
         }
 
@@ -3467,7 +3497,15 @@ class AdminController extends Controller
         }
 
         foreach ($carded_products as $value) {
-            $value->data = json_decode($value->data);
+            $value->data =  $value->data ? json_decode($value->data) : [];
+
+            $value_data = array_map(function ($record) {
+                $atlas_id = $record->atlasId;
+                // fetch the item full details of extra products 
+                $extra_product_details = ExtraProducts::where('item_code', $atlas_id)->get();
+                $record->description = $extra_product_details && count($extra_product_details) ? $extra_product_details[0]->description : "";
+                return $record;
+            },$value->data);
         }
 
         $this->result->status = true;
@@ -4150,6 +4188,13 @@ class AdminController extends Controller
         foreach ($service_parts as $value) {
             $data = $value->data ? json_decode($value->data) : [];
             $value->data = $data;
+            $value_data = array_map(function ($record) {
+                $atlas_id = $record->atlasId;
+                // fetch the item full details of extra products 
+                $extra_product_details = ExtraProducts::where('item_code', $atlas_id)->get();
+                $record->description = $extra_product_details && count($extra_product_details) ? $extra_product_details[0]->description : "";
+                return $record;
+            },$value->data);
             $value->order_date = $order_date;
         }
 
@@ -4181,6 +4226,13 @@ class AdminController extends Controller
         foreach ($carded_products as $value) {
             $data = $value->data ? json_decode($value->data) : [];
             $value->data = $data;
+            $value_data = array_map(function ($record) {
+                $atlas_id = $record->atlasId;
+                // fetch the item full details of extra products 
+                $extra_product_details = ExtraProducts::where('item_code', $atlas_id)->get();
+                $record->description = $extra_product_details && count($extra_product_details) ? $extra_product_details[0]->description : "";
+                return $record;
+            },$value->data);
             $value->order_date = $order_date;
         }
 
