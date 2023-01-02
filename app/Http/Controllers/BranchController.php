@@ -815,6 +815,18 @@ class BranchController extends Controller
 
                 $record->total_amount = number_format($check_total_price,2);
 
+                // total pending amount i.e amount of items that has not been submitted 
+                $record->total_pending_amt = number_format(DB::table('cart')
+                    ->where('dealer', $dealer_id)
+                    ->where('status', '0')
+                    ->sum('price'),2);
+
+                // total pending items i.e no of items that has not been submitted 
+                $record->total_pending_items = DB::table('cart')
+                ->where('dealer', $dealer_id)
+                ->where('status', '0')
+                ->count();
+
                 return $record;
 
             },$all_orders);
