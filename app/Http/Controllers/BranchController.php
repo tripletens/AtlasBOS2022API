@@ -220,21 +220,28 @@ class BranchController extends Controller
                 }
             }
 
+            // return $dealer_array;
+
             $format_dealer_array = array_map(function ($record) {
-                $dealer_id = $record->id;
-                $check_service_parts_count = ServiceParts::where('dealer', $dealer_id)->count();
+                $dealer_id = $record->account_id;
+
+                // return $dealer_id;
+
+                $check_service_parts_count = ServiceParts::where('dealer', $dealer_id)->where('completed',1)->count();
+
+                // return $check_service_parts_count;
 
                 $record->has_service_parts = $check_service_parts_count > 0 ? true : false;
 
                 // check for catalogue products 
 
-                $check_catalogue_products_count = Catalogue_Order::where('dealer', $dealer_id)->count();
+                $check_catalogue_products_count = Catalogue_Order::where('dealer', $dealer_id)->where('completed',1)->count();
 
                 $record->has_catalogue_products = $check_catalogue_products_count > 0 ? true : false;
 
                 // check for carded products 
 
-                $check_carded_products_count = CardedProducts::where('dealer', $dealer_id)->count();
+                $check_carded_products_count = CardedProducts::where('dealer', $dealer_id)->where('completed',1)->count();
 
                 $record->has_carded_products = $check_carded_products_count > 0 ? true : false;
 
@@ -245,13 +252,7 @@ class BranchController extends Controller
                     $record->order_status = 0;
                 }
 
-                // foreach($check_cart as $key => $item){
-                //     $cart_status = $item->status;
-
-                //     if(){
-
-                //     }
-                // }
+               
                 // doesnt have item in the cart and has not submitted return 2 pending 
                 $check_cart = Cart::where('dealer', $dealer_id)->where('status',0)->get();
 
