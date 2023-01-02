@@ -48,6 +48,26 @@ Route::group(
         Route::post('/register-admin', 'AdminController@register_admin');
 
         Route::post(
+            '/admin/upload-dealer-excel',
+            'AdminController@upload_dealer_excel'
+        );
+
+        Route::post(
+            '/admin/upload-regular-products',
+            'AdminController@upload_regular_products'
+        );
+
+        Route::post(
+            '/admin/upload-assorted-products',
+            'AdminController@upload_product_assorted'
+        );
+
+        Route::post(
+            '/admin/upload-special-products',
+            'AdminController@upload_product_special'
+        );
+
+        Route::post(
             '/admin/upload-catalogue-products',
             'AdminController@upload_catalogue_products'
         );
@@ -172,7 +192,7 @@ Route::group(
             'AdminController@restore_product'
         );
 
-        Route::get('/fetch-all-orders', 'AdminController@fetch_all_orders');
+        ////  Route::get('/fetch-all-orders', 'AdminController@fetch_all_orders');
         Route::get(
             '/fetch-all-dealers-with-order',
             'AdminController@fetch_all_dealers_with_orders'
