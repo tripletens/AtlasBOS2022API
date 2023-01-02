@@ -3227,6 +3227,14 @@ class DealerController extends Controller
 
         foreach ($service_orders as $value) {
             $value->data = json_decode($value->data);
+            
+            $value_data = array_map(function ($record) {
+                $atlas_id = $record->atlasId;
+                // fetch the item full details of extra products 
+                $extra_product_details = ExtraProducts::where('item_code', $atlas_id)->get();
+                $record->description = $extra_product_details && count($extra_product_details) ? $extra_product_details[0]->description : "";
+                return $record;
+            },$value->data);
         }
 
         if (!$service_orders) {
