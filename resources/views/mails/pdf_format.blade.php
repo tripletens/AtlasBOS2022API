@@ -138,6 +138,10 @@
 
 
 
+    <div style="margin-top: 50px">
+
+
+
 
 
     {{-- Appliance Table --}}
@@ -838,6 +842,11 @@
             </h5>
         </div>
     @endif
+
+
+
+    
+</div>
 
 </body>
 
