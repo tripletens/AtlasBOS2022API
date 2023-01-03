@@ -750,6 +750,9 @@
                 <tr>
                     <th class="thead-custom">Quantity</th>
                     <th class="thead-custom">Atlas #</th>
+                    <th class="thead-custom">Description</th>
+
+
                 </tr>
             </thead>
             <tbody>
@@ -758,6 +761,7 @@
                         <tr>
                             <td class="table-value-custom">{{ $item['qty'] }}</td>
                             <td class="table-value-custom">{{ $item['atlasId'] }}</td>
+                            <td class="table-value-custom">{{ $item['description'] }}</td>
                         </tr>
                     @endforeach
                 @else
@@ -782,6 +786,8 @@
                 <tr>
                     <th class="thead-custom">Quantity</th>
                     <th class="thead-custom">Atlas #</th>
+                    <th class="thead-custom">Description</th>
+
                 </tr>
             </thead>
             <tbody>
@@ -790,6 +796,8 @@
                         <tr>
                             <td class="table-value-custom">{{ $item['qty'] }}</td>
                             <td class="table-value-custom">{{ $item['atlasId'] }}</td>
+                            <td class="table-value-custom">{{ $item['description'] }}</td>
+
                         </tr>
                     @endforeach
                 @else
@@ -813,6 +821,8 @@
                 <tr>
                     <th class="thead-custom">Quantity</th>
                     <th class="thead-custom">Atlas #</th>
+                    <th class="thead-custom">Description</th>
+
                 </tr>
             </thead>
             <tbody>
@@ -821,6 +831,8 @@
                         <tr>
                             <td class="table-value-custom">{{ $item['qty'] }}</td>
                             <td class="table-value-custom">{{ $item['atlasId'] }}</td>
+                            <td class="table-value-custom">{{ $item['description'] }}</td>
+
                         </tr>
                     @endforeach
                 @else
