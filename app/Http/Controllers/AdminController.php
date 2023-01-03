@@ -2195,11 +2195,28 @@ class AdminController extends Controller
             )->exists();
 
             if (Cart::where('dealer', $id)->exists()) {
-                $total = Cart::where('dealer', $id)->sum('price');
-
+                $total = Cart::where('dealer', $id)
+                    ->where('status', '1')
+                    ->sum('price');
                 $dealer->total_price = $total;
+
+                $dealer->total_item = Cart::where('dealer', $id)
+                    ->where('status', '1')
+                    ->count();
+
+                $dealer->total_pending_item = Cart::where('dealer', $id)
+                    ->where('status', '0')
+                    ->count();
+
+                $dealer->total_pending_amt = DB::table('cart')
+                    ->where('dealer', $id)
+                    ->where('status', '0')
+                    ->sum('price');
             } else {
                 $dealer->total_price = 0;
+                $dealer->total_item = 0;
+                $dealer->total_pending_item = 0;
+                $dealer->total_pending_amt = 0;
             }
 
             if ($check_service_parts) {
