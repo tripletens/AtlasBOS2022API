@@ -2188,18 +2188,17 @@ class AdminController extends Controller
 
         foreach ($dealers as $dealer) {
             $code = $dealer->account_id;
+            $id = $dealer->id;
             $check_service_parts = ServiceParts::where(
                 'dealer',
                 $code
             )->exists();
 
-            if (DealerCart::where('dealer', $dealer)->exists()) {
-                $total = DealerCart::where('dealer', $dealer)->sum('price');
+            if (DealerCart::where('dealer', $id)->exists()) {
+                $total = DealerCart::where('dealer', $id)->sum('price');
 
                 $dealer->total_price = $total;
             } else {
-                $total = DealerCart::where('dealer', $dealer)->sum('price');
-
                 $dealer->total_price = 0;
             }
 
