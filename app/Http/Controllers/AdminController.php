@@ -2194,8 +2194,8 @@ class AdminController extends Controller
                 $code
             )->exists();
 
-            if (DealerCart::where('dealer', $id)->exists()) {
-                $total = DealerCart::where('dealer', $id)->sum('price');
+            if (Cart::where('dealer', $id)->exists()) {
+                $total = Cart::where('dealer', $id)->sum('price');
 
                 $dealer->total_price = $total;
             } else {
