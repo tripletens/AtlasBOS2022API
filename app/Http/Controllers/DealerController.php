@@ -648,7 +648,6 @@ class DealerController extends Controller
         $myData = [];
 
         $data['dealer_updated_at'] = $dealer_updated_at;
-
         $data['dealer_account_id'] = $dealer_account_id;
         $data['email'] = $dealer_email;
         $data['dealer_name'] = $dealer_name;
