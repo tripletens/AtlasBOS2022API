@@ -576,6 +576,8 @@ Route::group(
             'DealerController@submit_service_parts'
         );
 
+        Route::get('/download-pdf/{id}', 'DealerController@download_pdf');
+
         Route::get(
             '/submit_catalogue_order/{dealer}',
             'DealerController@submit_catalogue_order'
