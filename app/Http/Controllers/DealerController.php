@@ -1187,6 +1187,26 @@ class DealerController extends Controller
                     'order_status' => $status,
                     'placed_order_date' => $cur_date,
                 ]);
+
+                // update all the service parts completed to true (1)
+                $update_service_parts = ServiceParts::where('dealer', $dealer_id)->update(
+                    [
+                        'completed' => 1
+                    ]
+                );
+
+                // update all the carded products completed to true (1)
+                $update_carded_product = CardedProducts::where('dealer', $dealer_id)->update(
+                    [
+                        'completed' => 1
+                    ]
+                );
+                // update all the catalogue orders completed to true (1)
+                $update_catalogue_order = ServiceParts::where('dealer', $dealer_id)->update(
+                    [
+                        'completed' => 1
+                    ]
+                );
             } else {
                 $this->result->status = true;
                 $this->result->status_code = 200;
@@ -3227,7 +3247,7 @@ class DealerController extends Controller
 
         foreach ($service_orders as $value) {
             $value->data = json_decode($value->data);
-            
+
             $value_data = array_map(function ($record) {
                 $atlas_id = $record->atlasId;
                 // fetch the item full details of extra products 
@@ -3619,17 +3639,21 @@ class DealerController extends Controller
             return response()->json($this->result);
         } else {
             // $fetch_carded_product[0]->completed = 1;
-            $update_completed_status = $fetch_carded_product[0]->update([
-                'completed' => 1,
-            ]);
 
-            if (!$update_completed_status) {
-                $this->result->status = false;
-                $this->result->status_code = 422;
-                $this->result->message =
-                    'Sorry we cannot submit your order at the moment.';
-                return response()->json($this->result);
+            foreach($fetch_carded_product as $item) {
+                $update_completed_status = $item->update([
+                    'completed' => 1,
+                ]);
+    
+                if (!$update_completed_status) {
+                    $this->result->status = false;
+                    $this->result->status_code = 422;
+                    $this->result->message =
+                        'Sorry we cannot submit your order at the moment.';
+                    return response()->json($this->result);
+                }
             }
+            
 
             $this->result->status = true;
             $this->result->status_code = 200;
@@ -3659,18 +3683,21 @@ class DealerController extends Controller
             return response()->json($this->result);
         } else {
             // $fetch_service_parts[0]->completed = 1;
-            $update_completed_status = $fetch_service_parts[0]->update([
-                'completed' => 1,
-            ]);
 
-            if (!$update_completed_status) {
-                $this->result->status = false;
-                $this->result->status_code = 422;
-                $this->result->message =
-                    'Sorry we cannot submit your order at the moment.';
-                return response()->json($this->result);
+            foreach($fetch_service_parts as $item){
+                $update_completed_status = $item->update([
+                    'completed' => 1,
+                ]);
+    
+                if (!$update_completed_status) {
+                    $this->result->status = false;
+                    $this->result->status_code = 422;
+                    $this->result->message =
+                        'Sorry we cannot submit your order at the moment.';
+                    return response()->json($this->result);
+                }
             }
-
+            
             $this->result->status = true;
             $this->result->status_code = 200;
             $this->result->message =
@@ -3702,18 +3729,21 @@ class DealerController extends Controller
             return response()->json($this->result);
         } else {
             // $fetch_catalogue_order[0]->completed = 1;
-            $update_completed_status = $fetch_catalogue_order[0]->update([
-                'completed' => 1,
-            ]);
 
-            if (!$update_completed_status) {
-                $this->result->status = false;
-                $this->result->status_code = 422;
-                $this->result->message =
-                    'Sorry we cannot submit your order at the moment.';
-                return response()->json($this->result);
+            foreach($fetch_catalogue_order as $item){
+                $update_completed_status = $fetch_catalogue_order->update([
+                    'completed' => 1,
+                ]);
+    
+                if (!$update_completed_status) {
+                    $this->result->status = false;
+                    $this->result->status_code = 422;
+                    $this->result->message =
+                        'Sorry we cannot submit your order at the moment.';
+                    return response()->json($this->result);
+                }
             }
-
+           
             $this->result->status = true;
             $this->result->status_code = 200;
             $this->result->message =
