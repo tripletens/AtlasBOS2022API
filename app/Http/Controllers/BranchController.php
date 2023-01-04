@@ -287,7 +287,12 @@ class BranchController extends Controller
                 return $record;
             }, $dealer_array);
 
-            // dd($fetch_dealers);
+            // lets sort the data via account_id 
+            // return gettype($format_dealer_array);
+
+            usort($format_dealer_array, function ($a, $b) { return strcmp($a["account_id"], $b["account_id"]); });
+
+            // return $format_dealer_array;
 
             $this->result->status = true;
             $this->result->status_code = 200;
@@ -296,6 +301,12 @@ class BranchController extends Controller
             return response()->json($this->result);
         }
     }
+
+    public function sort_data($a, $b, $field)
+    {
+        return strcmp($a[$field], $b[$field]);
+    }
+
 
     public function deactivate_branch($id)
     {
