@@ -86,9 +86,8 @@ class AdminController extends Controller
                 $full_name = $sheet->getCell('B' . $row)->getValue();
                 $email = $sheet->getCell('C' . $row)->getValue();
                 $password = $sheet->getCell('D' . $row)->getValue();
-                $phone = $sheet->getCell('E' . $row)->getValue();
-                $location = $sheet->getCell('F' . $row)->getValue();
-                $company = $sheet->getCell('G' . $row)->getValue();
+                $location = $sheet->getCell('E' . $row)->getValue();
+                $company = $sheet->getCell('F' . $row)->getValue();
 
                 $save_dealer = Dealer::create([
                     'first_name' => $full_name,
@@ -96,7 +95,6 @@ class AdminController extends Controller
                     'email' => $email,
                     'password' => bcrypt($password),
                     'account_id' => $dealer_code,
-                    'phone' => $phone,
                     'location' => $location,
                     'password_clear' => $password,
                     'full_name' => $full_name,
