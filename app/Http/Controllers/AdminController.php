@@ -1074,8 +1074,20 @@ class AdminController extends Controller
 
     public function rollback_order_status($id)
     {
+        $dealer = Dealer::where('id', $id)
+            ->get()
+            ->first();
+        $account = $dealer->account_id;
         Cart::where('dealer', $id)->update(['status' => '0']);
         Dealer::where('id', $id)->update(['order_status' => '0']);
+
+        ServiceParts::where('dealer', $account)->update(['compeleted' => '0']);
+        CardedProducts::where('dealer', $account)->update([
+            'compeleted' => '0',
+        ]);
+        Catalogue_Order::where('dealer', $account)->update([
+            'compeleted' => '0',
+        ]);
 
         $this->result->status = true;
         $this->result->status_code = 200;
