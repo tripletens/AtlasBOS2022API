@@ -220,57 +220,79 @@ class BranchController extends Controller
                 }
             }
 
+            // return $dealer_array;
+
             $format_dealer_array = array_map(function ($record) {
-                $dealer_id = $record->id;
-                $check_service_parts_count = ServiceParts::where('dealer', $dealer_id)->count();
+                $dealer_id = $record->account_id;
+
+                $dealer_user_id = $record->id;
+
+                // return $dealer_id;
+
+                $check_service_parts_count = ServiceParts::where('dealer', $dealer_id)->where('completed',1)->count();
+
+                // return $check_service_parts_count;
 
                 $record->has_service_parts = $check_service_parts_count > 0 ? true : false;
 
                 // check for catalogue products 
 
-                $check_catalogue_products_count = Catalogue_Order::where('dealer', $dealer_id)->count();
+                $check_catalogue_products_count = Catalogue_Order::where('dealer', $dealer_id)->where('completed',1)->count();
 
                 $record->has_catalogue_products = $check_catalogue_products_count > 0 ? true : false;
 
                 // check for carded products 
 
-                $check_carded_products_count = CardedProducts::where('dealer', $dealer_id)->count();
+                $check_carded_products_count = CardedProducts::where('dealer', $dealer_id)->where('completed',1)->count();
 
                 $record->has_carded_products = $check_carded_products_count > 0 ? true : false;
 
                 // check if the dealer has an item in cart return 0  
-                $check_cart = Cart::where('dealer', $dealer_id)->get();
+                $check_cart = Cart::where('dealer', $dealer_user_id)->get();
 
                 if(count($check_cart) == 0 ){
                     $record->order_status = 0;
                 }
-
-                // foreach($check_cart as $key => $item){
-                //     $cart_status = $item->status;
-
-                //     if(){
-
-                //     }
-                // }
+                
                 // doesnt have item in the cart and has not submitted return 2 pending 
-                $check_cart = Cart::where('dealer', $dealer_id)->where('status',0)->get();
+                $check_cart = Cart::where('dealer', $dealer_user_id)->where('status',0)->get();
 
                 if(count($check_cart) > 0 ){
                     $record->order_status = 2;
+
+                    // lets sum the total pending amount 
+                    $sum_pending_amount = Cart::where('dealer', $dealer_user_id)->where('status', 0)->sum('price');
+
+                    $record->pending_total = number_format($sum_pending_amount,2);
+                }else{
+                    $record->pending_total = number_format(0,2);
                 }
                 
                 // check if the person has submitted return 1 
 
-                $check_cart = Cart::where('dealer', $dealer_id)->where('status',1)->get();
+                $check_cart = Cart::where('dealer', $dealer_user_id)->where('status',1)->get();
 
                 if(count($check_cart) > 0 ){
                     $record->order_status = 1;
+
+                    // lets get the total submitted amount 
+                    $sum_submitted_amount = Cart::where('dealer', $dealer_user_id)->where('status', 1)->sum('price');
+
+                    $record->submitted_total = number_format($sum_submitted_amount,2);
+
+                }else{
+                    $record->submitted_total = number_format(0,2);
                 }
 
                 return $record;
             }, $dealer_array);
 
-            // dd($fetch_dealers);
+            // lets sort the data via account_id 
+            // return gettype($format_dealer_array);
+
+            usort($format_dealer_array, function ($a, $b) { return strcmp($a["account_id"], $b["account_id"]); });
+
+            // return $format_dealer_array;
 
             $this->result->status = true;
             $this->result->status_code = 200;
@@ -279,6 +301,12 @@ class BranchController extends Controller
             return response()->json($this->result);
         }
     }
+
+    public function sort_data($a, $b, $field)
+    {
+        return strcmp($a[$field], $b[$field]);
+    }
+
 
     public function deactivate_branch($id)
     {
@@ -799,6 +827,18 @@ class BranchController extends Controller
                 $check_total_price = Cart::where('dealer',$dealer_id)->sum('price');
 
                 $record->total_amount = number_format($check_total_price,2);
+
+                // total pending amount i.e amount of items that has not been submitted 
+                $record->total_pending_amt = number_format(DB::table('cart')
+                    ->where('dealer', $dealer_id)
+                    ->where('status', '0')
+                    ->sum('price'),2);
+
+                // total pending items i.e no of items that has not been submitted 
+                $record->total_pending_items = DB::table('cart')
+                ->where('dealer', $dealer_id)
+                ->where('status', '0')
+                ->count();
 
                 return $record;
 
