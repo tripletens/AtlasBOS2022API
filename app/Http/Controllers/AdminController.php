@@ -1081,13 +1081,23 @@ class AdminController extends Controller
         Cart::where('dealer', $id)->update(['status' => '0']);
         Dealer::where('id', $id)->update(['order_status' => '0']);
 
-        ServiceParts::where('dealer', $account)->update(['completed' => '0']);
-        CardedProducts::where('dealer', $account)->update([
-            'completed' => '0',
-        ]);
-        Catalogue_Order::where('dealer', $account)->update([
-            'completed' => '0',
-        ]);
+        if (ServiceParts::where('dealer', $account)->exists()) {
+            ServiceParts::where('dealer', $account)->update([
+                'completed' => '0',
+            ]);
+        }
+
+        if (CardedProducts::where('dealer', $account)->exists()) {
+            CardedProducts::where('dealer', $account)->update([
+                'completed' => '0',
+            ]);
+        }
+
+        if (Catalogue_Order::where('dealer', $account)->exists()) {
+            Catalogue_Order::where('dealer', $account)->update([
+                'completed' => '0',
+            ]);
+        }
 
         $this->result->status = true;
         $this->result->status_code = 200;
