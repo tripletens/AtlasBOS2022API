@@ -1091,7 +1091,7 @@ class AdminController extends Controller
 
         $this->result->status = true;
         $this->result->status_code = 200;
-        $this->result->data = [];
+        $this->result->data = $dealer;
         $this->result->message = "User's ordering status has been rolled back";
 
         return response()->json($this->result);
