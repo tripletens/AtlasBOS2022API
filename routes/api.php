@@ -587,6 +587,7 @@ Route::group(
             '/get-dealer-order-summary/{dealer}',
             'DealerController@get_dealer_order_summary'
         );
+
         Route::get(
             '/remove-item-cart/{dealer}/{id}/{grouping}',
             'DealerController@remove_item_cart'
@@ -701,4 +702,13 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
         '/get-all-branch-notloggedin-dealers/{branch_id}',
         'BranchController@get_all_branch_notloggedin_dealers'
     );
+
+    // dealer order summary for sales rep 
+    Route::get(
+        '/salesrep/get-dealer-order-summary/{id}',
+        'BranchController@get_dealer_order_summary'
+    );
+
+
+    
 });
