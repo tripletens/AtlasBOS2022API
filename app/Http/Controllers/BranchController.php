@@ -1112,7 +1112,7 @@ class BranchController extends Controller
         $this->result->status = true;
         $this->result->status_code = 200;
         $this->result->data = $fetch_dealer;
-        $this->result->message = 'Sorry we could not fetch the dealer details';
+        $this->result->message = 'Dealer details fetched successfully';
         return response()->json($this->result);
     }
 
