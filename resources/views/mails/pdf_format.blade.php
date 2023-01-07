@@ -124,7 +124,7 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-6">
-                <h2 class="top-title">ATLAS 2022 BOOKING PROGRAM</h2>
+                <h2 class="top-title">ATLAS {{ now()->year }} BOOKING PROGRAM</h2>
                 <h2 class="dealer-name">Dealer Name: {{ $dealer_name }}</h2>
                 <h2 class="dealer-name">Dealer Account #: {{ $dealer_account_id }}</h2>
                 <h2 class="dealer-name">Order Date: {{ $dealer_updated_at }} MST</h2>
