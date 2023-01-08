@@ -156,7 +156,7 @@
                     <th class="thead-custom">Quantity</th>
                     <th class="thead-custom">Atlas #</th>
                     <th class="thead-custom">Description</th>
-                    <th class="thead-custom">Unit Price ($)</th>
+                    <th class="thead-custom">Booking ($)</th>
                     <th class="thead-custom">Extended($)</th>
                 </tr>
             </thead>
@@ -218,7 +218,7 @@
                     <th class="thead-custom">Quantity</th>
                     <th class="thead-custom">Atlas #</th>
                     <th class="thead-custom">Description</th>
-                    <th class="thead-custom">Unit Price ($)</th>
+                    <th class="thead-custom">Booking ($)</th>
                     <th class="thead-custom">Extended($)</th>
                 </tr>
             </thead>
@@ -278,7 +278,7 @@
                     <th class="thead-custom">Atlas #</th>
                     {{-- <th class="thead-custom">Vendor</th> --}}
                     <th class="thead-custom">Description</th>
-                    <th class="thead-custom">Unit Price ($)</th>
+                    <th class="thead-custom">Booking ($)</th>
                     <th class="thead-custom">Extended($)</th>
                 </tr>
             </thead>
@@ -337,7 +337,7 @@
                     <th class="thead-custom">Quantity</th>
                     <th class="thead-custom">Atlas #</th>
                     <th class="thead-custom">Description</th>
-                    <th class="thead-custom">Unit Price ($)</th>
+                    <th class="thead-custom">Booking ($)</th>
                     <th class="thead-custom">Extended($)</th>
                 </tr>
             </thead>
@@ -392,7 +392,7 @@
                     <th class="thead-custom">Atlas #</th>
                     {{-- <th class="thead-custom">Vendor</th> --}}
                     <th class="thead-custom">Description</th>
-                    <th class="thead-custom">Unit Price ($)</th>
+                    <th class="thead-custom">Booking ($)</th>
                     <th class="thead-custom">Extended($)</th>
                 </tr>
             </thead>
@@ -441,7 +441,7 @@
                     <th class="thead-custom">Quantity</th>
                     <th class="thead-custom">Atlas #</th>
                     <th class="thead-custom">Description</th>
-                    <th class="thead-custom">Unit Price ($)</th>
+                    <th class="thead-custom">Booking ($)</th>
                     <th class="thead-custom">Extended($)</th>
                 </tr>
             </thead>
@@ -492,7 +492,7 @@
                     <th class="thead-custom">Atlas #</th>
                     {{-- <th class="thead-custom">Vendor</th> --}}
                     <th class="thead-custom">Description</th>
-                    <th class="thead-custom">Unit Price ($)</th>
+                    <th class="thead-custom">Booking ($)</th>
                     <th class="thead-custom">Extended($)</th>
                 </tr>
             </thead>
@@ -544,7 +544,7 @@
                     <th class="thead-custom">Quantity</th>
                     <th class="thead-custom">Atlas #</th>
                     <th class="thead-custom">Description</th>
-                    <th class="thead-custom">Unit Price ($)</th>
+                    <th class="thead-custom">Booking ($)</th>
                     <th class="thead-custom">Extended($)</th>
                 </tr>
             </thead>
@@ -595,7 +595,7 @@
                     <th class="thead-custom">Quantity</th>
                     <th class="thead-custom">Atlas #</th>
                     <th class="thead-custom">Description</th>
-                    <th class="thead-custom">Unit Price ($)</th>
+                    <th class="thead-custom">Booking ($)</th>
                     <th class="thead-custom">Extended($)</th>
                 </tr>
             </thead>
@@ -645,7 +645,7 @@
                     <th class="thead-custom">Quantity</th>
                     <th class="thead-custom">Atlas #</th>
                     <th class="thead-custom">Description</th>
-                    <th class="thead-custom">Unit Price ($)</th>
+                    <th class="thead-custom">Booking ($)</th>
                     <th class="thead-custom">Extended($)</th>
                 </tr>
             </thead>
@@ -693,7 +693,7 @@
                     <th class="thead-custom">Quantity</th>
                     <th class="thead-custom">Atlas #</th>
                     <th class="thead-custom">Description</th>
-                    <th class="thead-custom">Unit Price ($)</th>
+                    <th class="thead-custom">Booking ($)</th>
                     <th class="thead-custom">Extended($)</th>
                 </tr>
             </thead>
@@ -845,7 +845,7 @@
     @endif
 
 
-    @if (count($outdoor) > 0 || count($propane) > 0 || count($towing_products) > 0 || count($towing_accessories) > 0 || count($accessories) > 0 || count($sealant) > 0 || count($plumbing) > 0 || count($electronics) > 0 || count($vent) > 0 || count($appliance) > 0)
+    {{-- @if (count($outdoor) > 0 || count($propane) > 0 || count($towing_products) > 0 || count($towing_accessories) > 0 || count($accessories) > 0 || count($sealant) > 0 || count($plumbing) > 0 || count($electronics) > 0 || count($vent) > 0 || count($appliance) > 0)
         <div style="width: 100%; text-align: right; border: 1px solid black; margin-top: 20px">
             <h5 class="each-total-cate-text" style="display: inline-block; border-right: 1px solid black">Grand Total:
             </h5>
@@ -853,7 +853,7 @@
                 ${{ number_format($grand_total, 2) }}
             </h5>
         </div>
-    @endif
+    @endif --}}
 
 
 
