@@ -1032,7 +1032,6 @@ class AdminController extends Controller
         $data['catalogue_data'] = $catalogue_order;
         $data['carded_data'] = $carded_products;
         $data['service_data'] = $service_products;
-
         $data['grand_total'] = $grand_total;
 
         $dealerId = $id;
