@@ -1450,7 +1450,7 @@ class AdminController extends Controller
     public function fetch_dealer_catalogue_orders($dealer_id)
     {
         // return $dealer_id;
-        $catalogue_order = Catalogue_Order::where('dealer', $dealer_id)->where('completed',1)->get();
+        $catalogue_order = Catalogue_Order::where('dealer', $dealer_id)->get();
 
         if (!$catalogue_order) {
             $this->result->status = false;
@@ -4215,7 +4215,7 @@ class AdminController extends Controller
 
     public function fetch_carded_products_by_dealer_id($dealer_id)
     {
-        $carded_products = CardedProducts::where('dealer', $dealer_id)->where('completed',1)->get();
+        $carded_products = CardedProducts::where('dealer', $dealer_id)->get();
 
         // get the order date
 
