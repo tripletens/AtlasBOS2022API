@@ -4215,7 +4215,7 @@ class AdminController extends Controller
 
     public function fetch_carded_products_by_dealer_id($dealer_id)
     {
-        $carded_products = CardedProducts::where('dealer', $dealer_id)->get();
+        $carded_products = CardedProducts::where('dealer', $dealer_id)->where('completed',1)->get();
 
         // get the order date
 
