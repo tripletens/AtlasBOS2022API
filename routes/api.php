@@ -708,7 +708,4 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
         '/salesrep/get-dealer-order-summary/{id}',
         'BranchController@get_dealer_order_summary'
     );
-
-
-    
 });

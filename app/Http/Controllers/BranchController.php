@@ -79,6 +79,8 @@ class BranchController extends Controller
         $branch = Branch::where('email', $request->email)->first();
         $branch->role = 'branch';
 
+        // save the branch login 
+
         $this->result->token = $this->respondWithToken($token);
         $this->result->status = true;
         $this->result->data->branch = $branch;
@@ -1120,8 +1122,8 @@ class BranchController extends Controller
     {
         // get all the logged in dealers under a branch 
         $get_branch_details = BranchAssignDealer::where('branch_id', $branch_id)
-            ->join('atlas_dealers', 'atlas_branch_assign_dealers.dealer_id', '=', 'atlas_dealers.id')
-            ->orderby('atlas_dealers.account_id', 'desc')
+            ->join('atlas_dealers', 'atlas_branch_assign_dealers.dealer_id', '=', 'atlas_dealers.account_id')
+            ->orderby('atlas_dealers.account_id', 'asc')
             ->where('atlas_dealers.last_login', '!=', null)
             ->select(
                 'atlas_branch_assign_dealers.dealer_id as branch_dealer_id',
@@ -1163,8 +1165,8 @@ class BranchController extends Controller
     {
         // get all the logged in dealers under a branch 
         $get_branch_details = BranchAssignDealer::where('branch_id', $branch_id)
-            ->join('atlas_dealers', 'atlas_branch_assign_dealers.dealer_id', '=', 'atlas_dealers.id')
-            ->orderby('atlas_dealers.account_id', 'desc')
+            ->join('atlas_dealers', 'atlas_branch_assign_dealers.dealer_id', '=', 'atlas_dealers.account_id')
+            ->orderby('atlas_dealers.account_id', 'asc')
             ->where('atlas_dealers.last_login', '=', null)
             ->select(
                 'atlas_branch_assign_dealers.dealer_id as branch_dealer_id',
