@@ -1326,7 +1326,7 @@ class BranchController extends Controller
         $this->result->status = true;
         $this->result->status_code = 200;
         $this->result->data = $fetch_dealer;
-        $this->result->message = 'Sorry we could not fetch the dealer details';
+        $this->result->message = 'Dealer details fetched successfully';
         return response()->json($this->result);
     }
 
@@ -1511,5 +1511,36 @@ class BranchController extends Controller
         } else {
             return false;
         }
+    }
+
+    public function get_dealer_order_summary($id)
+    {
+        $cart = Cart::where('dealer', '=', $id)
+            ->where('status', '1')
+            ->orderBy('xref', 'asc')
+            ->get();
+
+        if ($cart) {
+            foreach ($cart as $value) {
+                $spec_data = $value->spec_data
+                    ? json_decode($value->spec_data)
+                    : [];
+                $qty = intval($value->qty);
+                $unit_price = floatval($value->unit_price);
+
+                $value->spec_data = $spec_data;
+                $value->qty = $qty;
+                $value->unit_price = $unit_price;
+            }
+        } else {
+            $cart = [];
+        }
+
+        $this->result->status = true;
+        $this->result->status_code = 200;
+        $this->result->data = $cart;
+        $this->result->message = 'User cart items';
+
+        return response()->json($this->result);
     }
 }
