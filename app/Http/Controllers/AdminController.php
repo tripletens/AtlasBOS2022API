@@ -157,7 +157,7 @@ class AdminController extends Controller
                 $booking = $sheet->getCell('H' . $row)->getValue();
                 // $regular = $sheet->getCell('I' . $row)->getValue();
                 $full_desc = $sheet->getCell('I' . $row)->getValue();
-                $category = $sheet->getCell('J' . $row)->getValue();
+                $category = strtolower($sheet->getCell('J' . $row)->getValue());
                 $short_note = $sheet->getCell('K' . $row)->getValue();
 
                 $category_data = Category::where(
@@ -165,6 +165,32 @@ class AdminController extends Controller
                     'LIKE',
                     '%' . $category . '%'
                 )->first();
+
+                switch ($category) {
+                    case 'sealants/cleaners':
+                        $category = 'sealant';
+                        break;
+
+                    case 'towing accessories':
+                        $category = 'towing';
+                        break;
+
+                    case 'hardware':
+                        $category = 'vents';
+                        break;
+
+                    case 'towing products':
+                        $category = 'awning';
+                        break;
+
+                    case 'outdoor products':
+                        $category = 'outdoor';
+                        break;
+
+                    default:
+                        # code...
+                        break;
+                }
 
                 if (!Products::where('atlas_id', $atlas_id)->exists()) {
                     $save_product = Products::create([
@@ -177,7 +203,8 @@ class AdminController extends Controller
                         'xref' => $xref,
                         'um' => $um,
                         'booking' => $booking,
-                        'category' => $category_data->id,
+                        'category' => $category,
+                        'category_id' => $category_data->id,
                         'short_note' => $short_note,
                         'check_new' => 1,
                     ]);
@@ -446,7 +473,7 @@ class AdminController extends Controller
                     '%' . $category . '%'
                 )->first();
 
-                switch ($variable) {
+                switch ($category) {
                     case 'sealants/cleaners':
                         $category = 'sealant';
                         break;
