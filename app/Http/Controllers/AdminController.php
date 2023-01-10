@@ -61,7 +61,7 @@ class AdminController extends Controller
 
     public function upload_dealer_excel(Request $request)
     {
-        $csv = $request->file('csv');
+        $csv = $request->file('excel');
 
         if ($csv == null) {
             $this->result->status = false;
@@ -70,7 +70,7 @@ class AdminController extends Controller
             return response()->json($this->result);
         }
 
-        $the_file = $request->file('csv');
+        $the_file = $request->file('excel');
         try {
             $spreadsheet = IOFactory::load($the_file->getRealPath());
             $sheet = $spreadsheet->getActiveSheet();
