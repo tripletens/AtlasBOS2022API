@@ -82,12 +82,13 @@ class AdminController extends Controller
             $data = [];
 
             foreach ($row_range as $row) {
-                $dealer_code = $sheet->getCell('A' . $row)->getValue();
-                $full_name = $sheet->getCell('B' . $row)->getValue();
-                $email = $sheet->getCell('C' . $row)->getValue();
-                $password = $sheet->getCell('D' . $row)->getValue();
-                $location = $sheet->getCell('E' . $row)->getValue();
-                $company = $sheet->getCell('F' . $row)->getValue();
+                $dealer_code = $sheet->getCell('B' . $row)->getValue();
+                $full_name = $sheet->getCell('C' . $row)->getValue();
+                $email = $sheet->getCell('D' . $row)->getValue();
+                $password = $sheet->getCell('E' . $row)->getValue();
+                $address = $sheet->getCell('F' . $row)->getValue();
+                $location = $sheet->getCell('G' . $row)->getValue();
+                $company = $sheet->getCell('C' . $row)->getValue();
 
                 $save_dealer = Dealer::create([
                     'first_name' => $full_name,
@@ -95,6 +96,7 @@ class AdminController extends Controller
                     'email' => $email,
                     'password' => bcrypt($password),
                     'account_id' => $dealer_code,
+                    'address' => $address,
                     'location' => $location,
                     'password_clear' => $password,
                     'full_name' => $full_name,

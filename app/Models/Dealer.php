@@ -8,7 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
-class Dealer extends Authenticatable implements JWTSubject {
+class Dealer extends Authenticatable implements JWTSubject
+{
     use HasFactory;
 
     protected $table = 'atlas_dealers';
@@ -18,6 +19,7 @@ class Dealer extends Authenticatable implements JWTSubject {
         'last_name',
         'email',
         'password',
+        'address',
         'location',
         'phone',
         'account_id',
@@ -27,17 +29,18 @@ class Dealer extends Authenticatable implements JWTSubject {
         'last_login',
         'company_name',
         'full_name',
-        'placed_order_date'
+        'placed_order_date',
     ];
 
-    protected $hidden = [ 'password', 'password_clear'];
+    protected $hidden = ['password', 'password_clear'];
 
-    public function getJWTIdentifier() {
+    public function getJWTIdentifier()
+    {
         return $this->getKey();
     }
 
-    public function getJWTCustomClaims() {
+    public function getJWTCustomClaims()
+    {
         return [];
     }
-
 }
