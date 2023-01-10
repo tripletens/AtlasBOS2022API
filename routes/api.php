@@ -48,6 +48,11 @@ Route::group(
         Route::post('/register-admin', 'AdminController@register_admin');
 
         Route::post(
+            '/admin/upload-new-products',
+            'AdminController@upload_new_products'
+        );
+
+        Route::post(
             '/admin/upload-dealer-excel',
             'AdminController@upload_dealer_excel'
         );
@@ -711,7 +716,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
         'BranchController@get_all_branch_notloggedin_dealers'
     );
 
-    // dealer order summary for sales rep 
+    // dealer order summary for sales rep
     Route::get(
         '/salesrep/get-dealer-order-summary/{id}',
         'BranchController@get_dealer_order_summary'

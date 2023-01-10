@@ -36,5 +36,6 @@ class Products extends Model
         'spec_data',
         'category',
         'short_note',
+        'check_new',
     ];
 }
