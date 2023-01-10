@@ -90,25 +90,27 @@ class AdminController extends Controller
                 $location = $sheet->getCell('G' . $row)->getValue();
                 $company = $sheet->getCell('C' . $row)->getValue();
 
-                $save_dealer = Dealer::create([
-                    'first_name' => $full_name,
-                    'last_name' => null,
-                    'email' => $email,
-                    'password' => bcrypt($password),
-                    'account_id' => $dealer_code,
-                    'address' => $address,
-                    'location' => $location,
-                    'password_clear' => $password,
-                    'full_name' => $full_name,
-                    'company_name' => $company,
-                ]);
+                if (!Dealer::where('account_id', $dealer_code)->exists()) {
+                    $save_dealer = Dealer::create([
+                        'first_name' => $full_name,
+                        'last_name' => null,
+                        'email' => $email,
+                        'password' => bcrypt($password),
+                        'account_id' => $dealer_code,
+                        'address' => $address,
+                        'location' => $location,
+                        'password_clear' => $password,
+                        'full_name' => $full_name,
+                        'company_name' => $company,
+                    ]);
 
-                if (!$save_dealer) {
-                    $this->result->status = false;
-                    $this->result->status_code = 422;
-                    $this->result->message =
-                        'Sorry File could not be uploaded. Try again later.';
-                    return response()->json($this->result);
+                    if (!$save_dealer) {
+                        $this->result->status = false;
+                        $this->result->status_code = 422;
+                        $this->result->message =
+                            'Sorry File could not be uploaded. Try again later.';
+                        return response()->json($this->result);
+                    }
                 }
             }
         } catch (Exception $e) {
