@@ -2604,6 +2604,8 @@ class AdminController extends Controller
         $update_product = $product->update([
             //'atlas_id' => $request->input( 'atlasId' ),
             'description' => $request->input('desc'),
+            'short_note' => $request->input('shortNote'),
+            'short_note_url' => $request->input('shortNoteUrl'),
 
             // 'img' => $request->input( 'productImgUrl' ),
             'full_desc' => $request->input('fullDesc'),
