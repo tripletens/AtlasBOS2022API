@@ -1265,7 +1265,7 @@ class DealerController extends Controller
 
     public function test_cart($id)
     {
-        set_time_limit(2400); // temporarily increase the timeout limit '
+        set_time_limit(240000000); // temporarily increase the timeout limit '
 
         $categories = Category::all();
         $plumbing = [];

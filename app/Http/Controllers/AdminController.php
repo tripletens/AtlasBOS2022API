@@ -39,6 +39,7 @@ use PhpOffice\PhpSpreadsheet\Reader\Exception;
 use PhpOffice\PhpSpreadsheet\Writer\Xls;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
+
 class AdminController extends Controller
 {
     //
@@ -48,7 +49,7 @@ class AdminController extends Controller
         // $this->middleware('auth:api', [
         //     'except' => ['login', 'register', 'test'],
         // ]);
-
+        set_time_limit(60000000000000);
         $this->result = (object) [
             'status' => false,
             'status_code' => 200,
@@ -61,7 +62,10 @@ class AdminController extends Controller
 
     public function upload_dealer_excel(Request $request)
     {
+        set_time_limit(60000000000000);
+     
         $csv = $request->file('excel');
+
 
         if ($csv == null) {
             $this->result->status = false;
@@ -236,6 +240,8 @@ class AdminController extends Controller
 
     public function upload_product_assorted(Request $request)
     {
+        set_time_limit(60000000000000);
+
         $csv = $request->file('excel');
 
         if ($csv == null) {
@@ -347,7 +353,9 @@ class AdminController extends Controller
 
     public function upload_product_special(Request $request)
     {
+        set_time_limit(60000000000000);
         $csv = $request->file('excel');
+
 
         if ($csv == null) {
             $this->result->status = false;
@@ -436,6 +444,7 @@ class AdminController extends Controller
 
     public function upload_regular_products(Request $request)
     {
+        set_time_limit(60000000000000);
         $the_file = $request->file('excel');
 
         if ($the_file == null) {
