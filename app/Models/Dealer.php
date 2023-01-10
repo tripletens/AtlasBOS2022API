@@ -18,6 +18,7 @@ class Dealer extends Authenticatable implements JWTSubject {
         'last_name',
         'email',
         'password',
+        'address',
         'location',
         'phone',
         'account_id',
