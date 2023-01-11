@@ -39,6 +39,8 @@ use PhpOffice\PhpSpreadsheet\Reader\Exception;
 use PhpOffice\PhpSpreadsheet\Writer\Xls;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
+set_time_limit(60000000000000);
+
 class AdminController extends Controller
 {
     //
@@ -48,6 +50,7 @@ class AdminController extends Controller
         // $this->middleware('auth:api', [
         //     'except' => ['login', 'register', 'test'],
         // ]);
+        set_time_limit(60000000000000);
 
         $this->result = (object) [
             'status' => false,
@@ -3278,28 +3281,33 @@ class AdminController extends Controller
                 'placed_order_date',
                 'account_id'
             )
-            // ->where('order_status', '1')
+            ->where('order_status', '1')
             ->orderBy('placed_order_date', 'desc')
             ->take(5)
             ->get()
             ->toArray();
-        $recent_order = array_map(function ($data) {
-            $dealer_id = $data->id;
-            $account_id = $data->account_id;
-            $dealer_name = $data->full_name;
-            $order_date = $data->placed_order_date;
 
-            return [
-                'id' => $dealer_id,
-                'account_id' => $account_id,
-                'dealer_name' => $dealer_name,
-                'total_item' => Cart::where('dealer', $dealer_id)->count(),
-                'total_amt' => DB::table('cart')
-                    ->where('dealer', $dealer_id)
-                    ->sum('price'),
-                'order_date' => $order_date,
-            ];
-        }, $submitted_dealers);
+        if (count($submitted_dealers) > 0) {
+            $recent_order = array_map(function ($data) {
+                $dealer_id = $data->id;
+                $account_id = $data->account_id;
+                $dealer_name = $data->full_name;
+                $order_date = $data->placed_order_date;
+
+                return [
+                    'id' => $dealer_id,
+                    'account_id' => $account_id,
+                    'dealer_name' => $dealer_name,
+                    'total_item' => Cart::where('dealer', $dealer_id)->count(),
+                    'total_amt' => DB::table('cart')
+                        ->where('dealer', $dealer_id)
+                        ->sum('price'),
+                    'order_date' => $order_date,
+                ];
+            }, $submitted_dealers);
+        } else {
+            $recent_order = [];
+        }
 
         $this->result->status = true;
         $this->result->status_code = 200;
