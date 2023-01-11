@@ -482,6 +482,9 @@ class AdminController extends Controller
                     case 'sealants/cleaners':
                         $category = 'sealant';
                         break;
+                    case 'sealants and cleaners':
+                        $category = 'sealant';
+                        break;
 
                     case 'towing accessories':
                         $category = 'towing';
@@ -516,7 +519,7 @@ class AdminController extends Controller
                         'um' => $um,
                         'booking' => $booking,
                         'category' => $category,
-                        'category_id' => $category_data->id,
+                        /// 'category_id' => $category_data->id,
                         'short_note' => $short_note,
                     ]);
 
