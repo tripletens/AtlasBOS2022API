@@ -3110,11 +3110,9 @@ class AdminController extends Controller
     public function admin_dashboard()
     {
         $dealers = Dealer::all();
-
         $products = Products::all();
 
         $fetch_account_ids = $dealers->pluck('account_id')->toArray();
-
         $all_dealer_ids_order_status = DB::table('atlas_dealers')
             ->wherein('account_id', $fetch_account_ids)
             // ->where('order_status', 1)
@@ -3255,20 +3253,20 @@ class AdminController extends Controller
             }
         }
 
-        if (
-            !$dealers ||
-            !$all_catalogue_orders ||
-            !$products ||
-            !$all_carded_products ||
-            !$all_service_parts ||
-            !$orders
-        ) {
-            $this->result->status = false;
-            $this->result->status_code = 422;
-            $this->result->message =
-                'Sorry we could not fetch all the dashboard details';
-            return response()->json($this->result);
-        }
+        // if (
+        //     !$dealers ||
+        //     !$all_catalogue_orders ||
+        //     !$products ||
+        //     !$all_carded_products ||
+        //     !$all_service_parts ||
+        //     !$orders
+        // ) {
+        //     $this->result->status = false;
+        //     $this->result->status_code = 422;
+        //     $this->result->message =
+        //         'Sorry we could not fetch all the dashboard details';
+        //     return response()->json($this->result);
+        // }
 
         $submitted_dealers = DB::table('atlas_dealers')
             ->select(
