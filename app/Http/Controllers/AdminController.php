@@ -165,14 +165,18 @@ class AdminController extends Controller
                 $category = strtolower($sheet->getCell('J' . $row)->getValue());
                 $short_note = $sheet->getCell('K' . $row)->getValue();
 
-                $category_data = Category::where(
-                    'name',
-                    'LIKE',
-                    '%' . $category . '%'
-                )->first();
+                // $category_data = Category::where(
+                //     'name',
+                //     'LIKE',
+                //     '%' . $category . '%'
+                // )->first();
 
                 switch ($category) {
                     case 'sealants/cleaners':
+                        $category = 'sealant';
+                        break;
+
+                    case 'sealants and cleaners':
                         $category = 'sealant';
                         break;
 
@@ -209,7 +213,7 @@ class AdminController extends Controller
                         'um' => $um,
                         'booking' => $booking,
                         'category' => $category,
-                        'category_id' => $category_data->id,
+                        ///   'category_id' => $category_data->id,
                         'short_note' => $short_note,
                         'check_new' => 1,
                     ]);
