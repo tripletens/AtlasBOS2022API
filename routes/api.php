@@ -721,4 +721,12 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
         '/salesrep/get-dealer-order-summary/{id}',
         'BranchController@get_dealer_order_summary'
     );
+
+    // test for attaching image url to all products individually 
+
+    Route::get(
+        '/attach_img_url_to_products',
+        'DealerController@attach_img_url_to_products'
+    );
+    
 });
