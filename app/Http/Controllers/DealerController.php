@@ -3900,7 +3900,7 @@ class DealerController extends Controller
 
             $new_img_url = "https://atlasbookingprogram.com/assets/2023/products/" . $product_atlas_id . '.jpg';
 
-            $new_vendor_logo = "https://atlasbookingprogram.com/assets/2023/vendors/" . $product_vendor_logo . 'jpg';
+            $new_vendor_logo = "https://atlasbookingprogram.com/assets/2023/vendors/" . $product_vendor_logo ;
             // $record['img'] = $new_img_url;
 
             // update the database 
