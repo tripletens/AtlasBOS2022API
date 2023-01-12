@@ -48,6 +48,11 @@ Route::group(
         Route::post('/register-admin', 'AdminController@register_admin');
 
         Route::post(
+            '/admin/upload-new-products',
+            'AdminController@upload_new_products'
+        );
+
+        Route::post(
             '/admin/upload-dealer-excel',
             'AdminController@upload_dealer_excel'
         );
@@ -409,7 +414,7 @@ Route::group(
             '/check-order-product/{value}/{type}',
             'DealerController@validate_extra_products'
         );
-       
+
         Route::get(
             '/search-product-type/{value}',
             'DealerController@search_product_type'
@@ -444,7 +449,7 @@ Route::group(
         Route::get('/dashboard/{dealer}', 'DealerController@dashboard');
         Route::post('/add-product', 'DealerController@add_product');
         Route::get('/fetch-all-product', 'DealerController@fetch_all_products');
-        
+
         Route::get('/all-category', 'CategoryController@index');
         Route::get(
             '/quick-search-category/{category_name}/{value}',
@@ -576,6 +581,8 @@ Route::group(
             'DealerController@submit_service_parts'
         );
 
+        Route::get('/download-pdf/{id}', 'DealerController@download_pdf');
+
         Route::get(
             '/submit_catalogue_order/{dealer}',
             'DealerController@submit_catalogue_order'
@@ -628,6 +635,12 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
         '/fetch_branch_by_id/{id}',
         'BranchController@fetch_branch_by_id'
     );
+
+    Route::get(
+        '/branch-get-dealer-order-summary/{id}',
+        'BranchController@get_dealer_order_summary'
+    );
+
     Route::get('/fetch_all_branches', 'BranchController@fetch_all_branches');
     Route::post(
         '/assign_dealer_to_branch',
@@ -703,9 +716,17 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
         'BranchController@get_all_branch_notloggedin_dealers'
     );
 
-    // dealer order summary for sales rep 
+    // dealer order summary for sales rep
     Route::get(
         '/salesrep/get-dealer-order-summary/{id}',
         'BranchController@get_dealer_order_summary'
     );
+
+    // test for attaching image url to all products individually 
+
+    Route::get(
+        '/attach_img_url_to_products',
+        'DealerController@attach_img_url_to_products'
+    );
+    
 });

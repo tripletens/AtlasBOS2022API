@@ -124,7 +124,7 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-6">
-                <h2 class="top-title">ATLAS 2022 BOOKING PROGRAM</h2>
+                <h2 class="top-title">ATLAS {{ now()->year }} BOOKING PROGRAM</h2>
                 <h2 class="dealer-name">Dealer Name: {{ $dealer_name }}</h2>
                 <h2 class="dealer-name">Dealer Account #: {{ $dealer_account_id }}</h2>
                 <h2 class="dealer-name">Order Date: {{ $dealer_updated_at }} MST</h2>
@@ -135,6 +135,10 @@
         </div>
     </div>
 
+
+
+
+    <div style="margin-top: 70px">
 
 
 
@@ -152,7 +156,7 @@
                     <th class="thead-custom">Quantity</th>
                     <th class="thead-custom">Atlas #</th>
                     <th class="thead-custom">Description</th>
-                    <th class="thead-custom">Unit Price ($)</th>
+                    <th class="thead-custom">Booking ($)</th>
                     <th class="thead-custom">Extended($)</th>
                 </tr>
             </thead>
@@ -214,7 +218,7 @@
                     <th class="thead-custom">Quantity</th>
                     <th class="thead-custom">Atlas #</th>
                     <th class="thead-custom">Description</th>
-                    <th class="thead-custom">Unit Price ($)</th>
+                    <th class="thead-custom">Booking ($)</th>
                     <th class="thead-custom">Extended($)</th>
                 </tr>
             </thead>
@@ -274,7 +278,7 @@
                     <th class="thead-custom">Atlas #</th>
                     {{-- <th class="thead-custom">Vendor</th> --}}
                     <th class="thead-custom">Description</th>
-                    <th class="thead-custom">Unit Price ($)</th>
+                    <th class="thead-custom">Booking ($)</th>
                     <th class="thead-custom">Extended($)</th>
                 </tr>
             </thead>
@@ -333,7 +337,7 @@
                     <th class="thead-custom">Quantity</th>
                     <th class="thead-custom">Atlas #</th>
                     <th class="thead-custom">Description</th>
-                    <th class="thead-custom">Unit Price ($)</th>
+                    <th class="thead-custom">Booking ($)</th>
                     <th class="thead-custom">Extended($)</th>
                 </tr>
             </thead>
@@ -388,7 +392,7 @@
                     <th class="thead-custom">Atlas #</th>
                     {{-- <th class="thead-custom">Vendor</th> --}}
                     <th class="thead-custom">Description</th>
-                    <th class="thead-custom">Unit Price ($)</th>
+                    <th class="thead-custom">Booking ($)</th>
                     <th class="thead-custom">Extended($)</th>
                 </tr>
             </thead>
@@ -437,7 +441,7 @@
                     <th class="thead-custom">Quantity</th>
                     <th class="thead-custom">Atlas #</th>
                     <th class="thead-custom">Description</th>
-                    <th class="thead-custom">Unit Price ($)</th>
+                    <th class="thead-custom">Booking ($)</th>
                     <th class="thead-custom">Extended($)</th>
                 </tr>
             </thead>
@@ -488,7 +492,7 @@
                     <th class="thead-custom">Atlas #</th>
                     {{-- <th class="thead-custom">Vendor</th> --}}
                     <th class="thead-custom">Description</th>
-                    <th class="thead-custom">Unit Price ($)</th>
+                    <th class="thead-custom">Booking ($)</th>
                     <th class="thead-custom">Extended($)</th>
                 </tr>
             </thead>
@@ -540,7 +544,7 @@
                     <th class="thead-custom">Quantity</th>
                     <th class="thead-custom">Atlas #</th>
                     <th class="thead-custom">Description</th>
-                    <th class="thead-custom">Unit Price ($)</th>
+                    <th class="thead-custom">Booking ($)</th>
                     <th class="thead-custom">Extended($)</th>
                 </tr>
             </thead>
@@ -591,7 +595,7 @@
                     <th class="thead-custom">Quantity</th>
                     <th class="thead-custom">Atlas #</th>
                     <th class="thead-custom">Description</th>
-                    <th class="thead-custom">Unit Price ($)</th>
+                    <th class="thead-custom">Booking ($)</th>
                     <th class="thead-custom">Extended($)</th>
                 </tr>
             </thead>
@@ -641,7 +645,7 @@
                     <th class="thead-custom">Quantity</th>
                     <th class="thead-custom">Atlas #</th>
                     <th class="thead-custom">Description</th>
-                    <th class="thead-custom">Unit Price ($)</th>
+                    <th class="thead-custom">Booking ($)</th>
                     <th class="thead-custom">Extended($)</th>
                 </tr>
             </thead>
@@ -689,7 +693,7 @@
                     <th class="thead-custom">Quantity</th>
                     <th class="thead-custom">Atlas #</th>
                     <th class="thead-custom">Description</th>
-                    <th class="thead-custom">Unit Price ($)</th>
+                    <th class="thead-custom">Booking ($)</th>
                     <th class="thead-custom">Extended($)</th>
                 </tr>
             </thead>
@@ -746,6 +750,9 @@
                 <tr>
                     <th class="thead-custom">Quantity</th>
                     <th class="thead-custom">Atlas #</th>
+                    <th class="thead-custom">Description</th>
+
+
                 </tr>
             </thead>
             <tbody>
@@ -754,6 +761,7 @@
                         <tr>
                             <td class="table-value-custom">{{ $item['qty'] }}</td>
                             <td class="table-value-custom">{{ $item['atlasId'] }}</td>
+                            <td class="table-value-custom">{{ $item['description'] }}</td>
                         </tr>
                     @endforeach
                 @else
@@ -778,6 +786,8 @@
                 <tr>
                     <th class="thead-custom">Quantity</th>
                     <th class="thead-custom">Atlas #</th>
+                    <th class="thead-custom">Description</th>
+
                 </tr>
             </thead>
             <tbody>
@@ -786,6 +796,8 @@
                         <tr>
                             <td class="table-value-custom">{{ $item['qty'] }}</td>
                             <td class="table-value-custom">{{ $item['atlasId'] }}</td>
+                            <td class="table-value-custom">{{ $item['description'] }}</td>
+
                         </tr>
                     @endforeach
                 @else
@@ -809,6 +821,8 @@
                 <tr>
                     <th class="thead-custom">Quantity</th>
                     <th class="thead-custom">Atlas #</th>
+                    <th class="thead-custom">Description</th>
+
                 </tr>
             </thead>
             <tbody>
@@ -817,6 +831,8 @@
                         <tr>
                             <td class="table-value-custom">{{ $item['qty'] }}</td>
                             <td class="table-value-custom">{{ $item['atlasId'] }}</td>
+                            <td class="table-value-custom">{{ $item['description'] }}</td>
+
                         </tr>
                     @endforeach
                 @else
@@ -829,7 +845,7 @@
     @endif
 
 
-    @if (count($outdoor) > 0 || count($propane) > 0 || count($towing_products) > 0 || count($towing_accessories) > 0 || count($accessories) > 0 || count($sealant) > 0 || count($plumbing) > 0 || count($electronics) > 0 || count($vent) > 0 || count($appliance) > 0)
+    {{-- @if (count($outdoor) > 0 || count($propane) > 0 || count($towing_products) > 0 || count($towing_accessories) > 0 || count($accessories) > 0 || count($sealant) > 0 || count($plumbing) > 0 || count($electronics) > 0 || count($vent) > 0 || count($appliance) > 0)
         <div style="width: 100%; text-align: right; border: 1px solid black; margin-top: 20px">
             <h5 class="each-total-cate-text" style="display: inline-block; border-right: 1px solid black">Grand Total:
             </h5>
@@ -837,7 +853,12 @@
                 ${{ number_format($grand_total, 2) }}
             </h5>
         </div>
-    @endif
+    @endif --}}
+
+
+
+    
+</div>
 
 </body>
 

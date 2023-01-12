@@ -35,6 +35,8 @@ class Products extends Model
         'full_desc',
         'spec_data',
         'category',
+        'category_id',
         'short_note',
+        'check_new',
     ];
 }

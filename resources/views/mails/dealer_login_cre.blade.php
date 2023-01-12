@@ -34,7 +34,7 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-6">
-                <h2 class="top-title">ATLAS VIRTUAL SHOW 2022</h2>
+                <h2 class="top-title">ATLAS VIRTUAL SHOW {{ now()->year }}</h2>
                 <h3 class="sub-top-title">Login Details</h3>
                 <h2 class="dealer-name">{{ $dealer_name }}</h2>
             </div>
