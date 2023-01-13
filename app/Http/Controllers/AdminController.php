@@ -39,6 +39,7 @@ use PhpOffice\PhpSpreadsheet\Reader\Exception;
 use PhpOffice\PhpSpreadsheet\Writer\Xls;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
+set_time_limit(60000000000000);
 
 class AdminController extends Controller
 {
@@ -50,6 +51,7 @@ class AdminController extends Controller
         //     'except' => ['login', 'register', 'test'],
         // ]);
         set_time_limit(60000000000000);
+
         $this->result = (object) [
             'status' => false,
             'status_code' => 200,
@@ -63,9 +65,8 @@ class AdminController extends Controller
     public function upload_dealer_excel(Request $request)
     {
         set_time_limit(60000000000000);
-     
-        $csv = $request->file('excel');
 
+        $csv = $request->file('excel');
 
         if ($csv == null) {
             $this->result->status = false;
@@ -166,14 +167,18 @@ class AdminController extends Controller
                 $category = strtolower($sheet->getCell('J' . $row)->getValue());
                 $short_note = $sheet->getCell('K' . $row)->getValue();
 
-                $category_data = Category::where(
-                    'name',
-                    'LIKE',
-                    '%' . $category . '%'
-                )->first();
+                // $category_data = Category::where(
+                //     'name',
+                //     'LIKE',
+                //     '%' . $category . '%'
+                // )->first();
 
                 switch ($category) {
                     case 'sealants/cleaners':
+                        $category = 'sealant';
+                        break;
+
+                    case 'sealants and cleaners':
                         $category = 'sealant';
                         break;
 
@@ -208,9 +213,10 @@ class AdminController extends Controller
                         'vendor_logo' => $vendor_logo,
                         'xref' => $xref,
                         'um' => $um,
+                        'type' => 'regular',
                         'booking' => $booking,
                         'category' => $category,
-                        'category_id' => $category_data->id,
+                        ///   'category_id' => $category_data->id,
                         'short_note' => $short_note,
                         'check_new' => 1,
                     ]);
@@ -356,7 +362,6 @@ class AdminController extends Controller
         set_time_limit(60000000000000);
         $csv = $request->file('excel');
 
-
         if ($csv == null) {
             $this->result->status = false;
             $this->result->status_code = 422;
@@ -488,6 +493,9 @@ class AdminController extends Controller
                     case 'sealants/cleaners':
                         $category = 'sealant';
                         break;
+                    case 'sealants and cleaners':
+                        $category = 'sealant';
+                        break;
 
                     case 'towing accessories':
                         $category = 'towing';
@@ -520,9 +528,10 @@ class AdminController extends Controller
                         'vendor_logo' => $vendor_logo,
                         'xref' => $xref,
                         'um' => $um,
+                        'type' => 'regular',
                         'booking' => $booking,
                         'category' => $category,
-                        'category_id' => $category_data->id,
+                        /// 'category_id' => $category_data->id,
                         'short_note' => $short_note,
                     ]);
 
@@ -3119,11 +3128,9 @@ class AdminController extends Controller
     public function admin_dashboard()
     {
         $dealers = Dealer::all();
-
         $products = Products::all();
 
         $fetch_account_ids = $dealers->pluck('account_id')->toArray();
-
         $all_dealer_ids_order_status = DB::table('atlas_dealers')
             ->wherein('account_id', $fetch_account_ids)
             // ->where('order_status', 1)
@@ -3264,20 +3271,20 @@ class AdminController extends Controller
             }
         }
 
-        if (
-            !$dealers ||
-            !$all_catalogue_orders ||
-            !$products ||
-            !$all_carded_products ||
-            !$all_service_parts ||
-            !$orders
-        ) {
-            $this->result->status = false;
-            $this->result->status_code = 422;
-            $this->result->message =
-                'Sorry we could not fetch all the dashboard details';
-            return response()->json($this->result);
-        }
+        // if (
+        //     !$dealers ||
+        //     !$all_catalogue_orders ||
+        //     !$products ||
+        //     !$all_carded_products ||
+        //     !$all_service_parts ||
+        //     !$orders
+        // ) {
+        //     $this->result->status = false;
+        //     $this->result->status_code = 422;
+        //     $this->result->message =
+        //         'Sorry we could not fetch all the dashboard details';
+        //     return response()->json($this->result);
+        // }
 
         $submitted_dealers = DB::table('atlas_dealers')
             ->select(
@@ -3289,28 +3296,33 @@ class AdminController extends Controller
                 'placed_order_date',
                 'account_id'
             )
-            // ->where('order_status', '1')
+            ->where('order_status', '1')
             ->orderBy('placed_order_date', 'desc')
             ->take(5)
             ->get()
             ->toArray();
-        $recent_order = array_map(function ($data) {
-            $dealer_id = $data->id;
-            $account_id = $data->account_id;
-            $dealer_name = $data->full_name;
-            $order_date = $data->placed_order_date;
 
-            return [
-                'id' => $dealer_id,
-                'account_id' => $account_id,
-                'dealer_name' => $dealer_name,
-                'total_item' => Cart::where('dealer', $dealer_id)->count(),
-                'total_amt' => DB::table('cart')
-                    ->where('dealer', $dealer_id)
-                    ->sum('price'),
-                'order_date' => $order_date,
-            ];
-        }, $submitted_dealers);
+        if (count($submitted_dealers) > 0) {
+            $recent_order = array_map(function ($data) {
+                $dealer_id = $data->id;
+                $account_id = $data->account_id;
+                $dealer_name = $data->full_name;
+                $order_date = $data->placed_order_date;
+
+                return [
+                    'id' => $dealer_id,
+                    'account_id' => $account_id,
+                    'dealer_name' => $dealer_name,
+                    'total_item' => Cart::where('dealer', $dealer_id)->count(),
+                    'total_amt' => DB::table('cart')
+                        ->where('dealer', $dealer_id)
+                        ->sum('price'),
+                    'order_date' => $order_date,
+                ];
+            }, $submitted_dealers);
+        } else {
+            $recent_order = [];
+        }
 
         $this->result->status = true;
         $this->result->status_code = 200;

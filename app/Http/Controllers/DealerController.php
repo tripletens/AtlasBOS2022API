@@ -3894,10 +3894,13 @@ class DealerController extends Controller
             // $product_url = $record['img'];
             $product_atlas_id = $record['atlas_id']; 
 
+            $product_vendor_logo = $record['vendor_logo'];
+
             // https://atlasbookingprogram.com/assets/2023/products/100-18.jpg
 
             $new_img_url = "https://atlasbookingprogram.com/assets/2023/products/" . $product_atlas_id . '.jpg';
 
+            $new_vendor_logo = "https://atlasbookingprogram.com/assets/2023/vendors/" . $product_vendor_logo ;
             // $record['img'] = $new_img_url;
 
             // update the database 
@@ -3906,7 +3909,8 @@ class DealerController extends Controller
 
             $final_update = $update_record->update(
                 [
-                    'img' => $new_img_url
+                    'img' => $new_img_url,
+                    'vendor_logo' => $new_vendor_logo
                 ]
             );
 
