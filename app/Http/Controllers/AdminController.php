@@ -90,7 +90,7 @@ class AdminController extends Controller
 
                 Promotional_ads::create([
                     'name' => $name,
-                    'pdf_url' => $url,
+                    'image_url' => $url,
                     'type' => 'page',
                 ]);
 
