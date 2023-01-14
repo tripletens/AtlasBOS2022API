@@ -274,11 +274,11 @@ class AdminController extends Controller
                 if (Products::where('atlas_id', $atlas_id)->exists()) {
                     $atlas_id = $sheet->getCell('C' . $row)->getValue();
 
-                    $grouping = $sheet->getCell('J' . $row)->getValue();
-                    $condition = $sheet->getCell('K' . $row)->getValue();
-                    $special = $sheet->getCell('H' . $row)->getValue();
-                    $booking = $sheet->getCell('G' . $row)->getValue();
-                    $desc = $sheet->getCell('F' . $row)->getValue();
+                    $grouping = $sheet->getCell('I' . $row)->getValue();
+                    $condition = $sheet->getCell('J' . $row)->getValue();
+                    $special = $sheet->getCell('G' . $row)->getValue();
+                    $booking = $sheet->getCell('F' . $row)->getValue();
+                    $desc = $sheet->getCell('E' . $row)->getValue();
 
                     if (Products::where('atlas_id', $atlas_id)->exists()) {
                         $check_atlas_id = Products::where('atlas_id', $atlas_id)
@@ -359,7 +359,6 @@ class AdminController extends Controller
 
     public function upload_product_special(Request $request)
     {
-        set_time_limit(60000000000000);
         $csv = $request->file('excel');
 
         if ($csv == null) {
@@ -449,7 +448,6 @@ class AdminController extends Controller
 
     public function upload_regular_products(Request $request)
     {
-        set_time_limit(60000000000000);
         $the_file = $request->file('excel');
 
         if ($the_file == null) {
