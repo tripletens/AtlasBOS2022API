@@ -274,11 +274,11 @@ class AdminController extends Controller
                 if (Products::where('atlas_id', $atlas_id)->exists()) {
                     $atlas_id = $sheet->getCell('C' . $row)->getValue();
 
-                    $grouping = $sheet->getCell('J' . $row)->getValue();
-                    $condition = $sheet->getCell('K' . $row)->getValue();
-                    $special = $sheet->getCell('H' . $row)->getValue();
-                    $booking = $sheet->getCell('G' . $row)->getValue();
-                    $desc = $sheet->getCell('F' . $row)->getValue();
+                    $grouping = $sheet->getCell('I' . $row)->getValue();
+                    $condition = $sheet->getCell('J' . $row)->getValue();
+                    $special = $sheet->getCell('G' . $row)->getValue();
+                    $booking = $sheet->getCell('F' . $row)->getValue();
+                    $desc = $sheet->getCell('E' . $row)->getValue();
 
                     if (Products::where('atlas_id', $atlas_id)->exists()) {
                         $check_atlas_id = Products::where('atlas_id', $atlas_id)
