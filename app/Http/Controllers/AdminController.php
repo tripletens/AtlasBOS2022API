@@ -31,7 +31,6 @@ use App\Models\ServiceParts;
 use App\Models\CardedProducts;
 use App\Models\PromotionalCategory;
 use App\Models\ExtraProducts;
-use App\Models\Promotional_ads;
 
 use Barryvdh\DomPDF\Facade as PDF;
 
