@@ -48,6 +48,11 @@ Route::group(
         Route::post('/register-admin', 'AdminController@register_admin');
 
         Route::post(
+            '/admin/update-short-note-url',
+            'AdminController@update_short_note_url'
+        );
+
+        Route::post(
             '/admin/upload-new-products',
             'AdminController@upload_new_products'
         );
@@ -722,11 +727,10 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
         'BranchController@get_dealer_order_summary'
     );
 
-    // test for attaching image url to all products individually 
+    // test for attaching image url to all products individually
 
     Route::get(
         '/attach_img_url_to_products',
         'DealerController@attach_img_url_to_products'
     );
-    
 });
