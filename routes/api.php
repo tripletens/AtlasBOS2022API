@@ -49,7 +49,7 @@ Route::group(
 
         Route::post(
             '/admin/update-short-note-url',
-            'AdminController@update_short_note_url'
+            'AdminController@update_short_note_url_upload'
         );
 
         Route::post(

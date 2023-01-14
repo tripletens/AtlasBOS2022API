@@ -62,7 +62,7 @@ class AdminController extends Controller
         ];
     }
 
-    public function update_short_note_url()
+    public function update_short_note_url_upload()
     {
         $csv = $request->file('excel');
 
