@@ -31,6 +31,7 @@ use App\Models\ServiceParts;
 use App\Models\CardedProducts;
 use App\Models\PromotionalCategory;
 use App\Models\ExtraProducts;
+use App\Models\Promotional_ads;
 
 use Barryvdh\DomPDF\Facade as PDF;
 
@@ -62,6 +63,54 @@ class AdminController extends Controller
         ];
     }
 
+    public function upload_promo_flyer(Request $request)
+    {
+        $csv = $request->file('excel');
+
+        if ($csv == null) {
+            $this->result->status = false;
+            $this->result->status_code = 422;
+            $this->result->message = 'Please upload products in excel format';
+            return response()->json($this->result);
+        }
+
+        $the_file = $request->file('excel');
+        try {
+            $spreadsheet = IOFactory::load($the_file->getRealPath());
+            $sheet = $spreadsheet->getActiveSheet();
+            $row_limit = $sheet->getHighestDataRow();
+            $column_limit = $sheet->getHighestDataColumn();
+            $row_range = range(2, $row_limit);
+            $column_range = range('F', $column_limit);
+            $startcount = 2;
+            $data = [];
+
+            foreach ($row_range as $row) {
+                $name = $sheet->getCell('A' . $row)->getValue();
+                $url = $sheet->getCell('B' . $row)->getValue();
+
+                Promotional_ads::create([
+                    'name' => $name,
+                    'pdf_url' => $url,
+                    'type' => 'page',
+                ]);
+
+                ///  $startcount++;
+            }
+        } catch (Exception $e) {
+            $error_code = $e->errorInfo[1];
+            $this->result->status = false;
+            $this->result->status_code = 404;
+            $this->result->message = 'Something went wrong';
+            return response()->json($this->result);
+        }
+
+        $this->result->status = true;
+        $this->result->status_code = 200;
+        $this->result->message = 'Short Note Url uploaded successfully';
+        return response()->json($this->result);
+    }
+
     public function update_short_note_url_upload(Request $request)
     {
         $csv = $request->file('excel');
@@ -69,7 +118,7 @@ class AdminController extends Controller
         if ($csv == null) {
             $this->result->status = false;
             $this->result->status_code = 422;
-            $this->result->message = 'Please upload products in csv format';
+            $this->result->message = 'Please upload products in excel format';
             return response()->json($this->result);
         }
 

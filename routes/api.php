@@ -53,6 +53,11 @@ Route::group(
         );
 
         Route::post(
+            '/admin/upload-promo-flyer-updated',
+            'AdminController@upload_promo_flyer'
+        );
+
+        Route::post(
             '/admin/upload-new-products',
             'AdminController@upload_new_products'
         );
