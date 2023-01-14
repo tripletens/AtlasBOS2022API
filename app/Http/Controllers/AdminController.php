@@ -359,7 +359,6 @@ class AdminController extends Controller
 
     public function upload_product_special(Request $request)
     {
-        set_time_limit(60000000000000);
         $csv = $request->file('excel');
 
         if ($csv == null) {
@@ -449,7 +448,6 @@ class AdminController extends Controller
 
     public function upload_regular_products(Request $request)
     {
-        set_time_limit(60000000000000);
         $the_file = $request->file('excel');
 
         if ($the_file == null) {
