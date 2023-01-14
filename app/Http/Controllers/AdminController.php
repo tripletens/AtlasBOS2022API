@@ -3468,7 +3468,9 @@ class AdminController extends Controller
 
     public function fetch_all_promo_category()
     {
-        $categories = PromotionalCategory::orderby('id', 'ASC')->get();
+        $categories = PromotionalCategory::where('status', '1')
+            ->orderby('id', 'ASC')
+            ->get();
 
         if (!$categories) {
             $this->result->status = false;
