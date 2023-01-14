@@ -1265,7 +1265,7 @@ class DealerController extends Controller
 
     public function test_cart($id)
     {
-        set_time_limit(2400); // temporarily increase the timeout limit '
+        set_time_limit(240000000); // temporarily increase the timeout limit '
 
         $categories = Category::all();
         $plumbing = [];
@@ -3882,5 +3882,43 @@ class DealerController extends Controller
         $this->result->data = $all_loggedin_dealers;
         $this->result->message = 'All logged in dealers found successfully';
         return response()->json($this->result, 200);
+    }
+
+    public function attach_img_url_to_products(){
+        $all_products = Products::get()->toArray();
+
+        // return $all_products;
+
+        $attach_image_url = array_map(function($record){
+            $product_id = $record['id'];
+            // $product_url = $record['img'];
+            $product_atlas_id = $record['atlas_id']; 
+
+            $product_vendor_logo = $record['vendor_logo'];
+
+            // https://atlasbookingprogram.com/assets/2023/products/100-18.jpg
+
+            $new_img_url = "https://atlasbookingprogram.com/assets/2023/products/" . $product_atlas_id . '.jpg';
+
+            $new_vendor_logo = "https://atlasbookingprogram.com/assets/2023/vendors/" . $product_vendor_logo ;
+            // $record['img'] = $new_img_url;
+
+            // update the database 
+
+            $update_record = Products::find($product_id);
+
+            $final_update = $update_record->update(
+                [
+                    'img' => $new_img_url,
+                    'vendor_logo' => $new_vendor_logo
+                ]
+            );
+
+            return $record;
+
+        },$all_products);
+
+        return $attach_image_url;
+
     }
 }

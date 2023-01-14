@@ -506,7 +506,7 @@ Route::group(
         );
         Route::get(
             '/fetch_all_service_parts',
-            'DealerController@fetch_alfetch_all_dealers_with_active_orderl_service_parts'
+            'DealerController@fetch_all_service_parts'
         );
         Route::get(
             '/fetch_service_parts_by_id/{atlas_id}',
@@ -721,4 +721,12 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
         '/salesrep/get-dealer-order-summary/{id}',
         'BranchController@get_dealer_order_summary'
     );
+
+    // test for attaching image url to all products individually 
+
+    Route::get(
+        '/attach_img_url_to_products',
+        'DealerController@attach_img_url_to_products'
+    );
+    
 });
