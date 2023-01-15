@@ -48,6 +48,11 @@ Route::group(
         Route::post('/register-admin', 'AdminController@register_admin');
 
         Route::post(
+            '/update-vendor-name-vendor-logo',
+            'AdminController@update_vendor_name_vendor_logo'
+        );
+
+        Route::post(
             '/admin/update-short-note-url',
             'AdminController@update_short_note_url_upload'
         );
