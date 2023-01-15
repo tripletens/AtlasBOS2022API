@@ -95,13 +95,13 @@ class AdminController extends Controller
                         'vendor_logo' => $vendor_logo,
                     ]);
 
-                    if (!$save_product) {
-                        $this->result->status = false;
-                        $this->result->status_code = 422;
-                        $this->result->message =
-                            'Sorry File could not be uploaded. Try again later.';
-                        return response()->json($this->result);
-                    }
+                    // if (!$save_product) {
+                    //     $this->result->status = false;
+                    //     $this->result->status_code = 422;
+                    //     $this->result->message =
+                    //         'Sorry File could not be uploaded. Try again later.';
+                    //     return response()->json($this->result);
+                    // }
                 }
 
                 ///  $startcount++;
