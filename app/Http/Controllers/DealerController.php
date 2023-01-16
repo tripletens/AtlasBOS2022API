@@ -891,6 +891,7 @@ class DealerController extends Controller
         $dealer = $request->input('dealer');
 
         $added_item = 0;
+        $in_cart = '';
 
         if (count(json_decode($product_array)) > 0 && $product_array) {
             $decode_product_array = json_decode($product_array);
@@ -925,6 +926,7 @@ class DealerController extends Controller
                         ]);
                     }
                 } else {
+                    $in_cart .= $product->atlasId . ', ';
                 }
             }
         }
@@ -932,6 +934,7 @@ class DealerController extends Controller
         $this->result->status = true;
         $this->result->status_code = 200;
         $this->result->data->added = $added_item;
+        $this->result->data->in_cart = $in_cart;
 
         // $this->result->message = 'Item Already Added to the cart';
         return response()->json($this->result);
@@ -1150,12 +1153,11 @@ class DealerController extends Controller
         $status = 1;
         $dealer = Dealer::where('id', $dealer_id)->get();
 
-        if(count($dealer) == 0 || !$dealer){
+        if (count($dealer) == 0 || !$dealer) {
             $this->result->status = false;
             $this->result->status_code = 200;
-            $this->result->message =
-                'Dealer with id not found';
-            return response()->json($this->result,404);
+            $this->result->message = 'Dealer with id not found';
+            return response()->json($this->result, 404);
         }
 
         $order_status = $dealer[0]->order_status;
@@ -1170,9 +1172,8 @@ class DealerController extends Controller
                 'The Booking Program has been closed, contact support';
             return response()->json($this->result);
         } else {
-
             $dealer_account_id = $dealer[0]->account_id;
-            
+
             $dealer_cart_count = Cart::where('dealer', $dealer_id)->count();
             $carded_products_count = CardedProducts::where(
                 'dealer',
@@ -1198,7 +1199,6 @@ class DealerController extends Controller
                     'order_status' => $status,
                     'placed_order_date' => $cur_date,
                 ]);
-
             } else {
                 $this->result->status = true;
                 $this->result->status_code = 200;
@@ -1223,26 +1223,29 @@ class DealerController extends Controller
                 ]);
 
                 // update all the service parts completed to true (1)
-                $update_service_parts = ServiceParts::where('dealer', $dealer_account_id)->first();
+                $update_service_parts = ServiceParts::where(
+                    'dealer',
+                    $dealer_account_id
+                )->first();
 
-                $submit_service_parts = $update_service_parts->update(
-                    [
-                        'completed' => 1
-                    ]
-                );
+                $submit_service_parts = $update_service_parts->update([
+                    'completed' => 1,
+                ]);
 
                 // update all the carded products completed to true (1)
-                $submit_carded_products = CardedProducts::where('dealer', $dealer_account_id)->update(
-                    [
-                        'completed' => 1
-                    ]
-                );
+                $submit_carded_products = CardedProducts::where(
+                    'dealer',
+                    $dealer_account_id
+                )->update([
+                    'completed' => 1,
+                ]);
                 // update all the catalogue orders completed to true (1)
-                $submit_catalogue_order = Catalogue_Order::where('dealer', $dealer_account_id)->update(
-                    [
-                        'completed' => 1
-                    ]
-                );
+                $submit_catalogue_order = Catalogue_Order::where(
+                    'dealer',
+                    $dealer_account_id
+                )->update([
+                    'completed' => 1,
+                ]);
 
                 if (
                     $submit_carded_products ||
@@ -1952,8 +1955,6 @@ class DealerController extends Controller
         return response()->json($this->result);
     }
 
-   
-
     public function search_product($value)
     {
         $products = DB::table('atlas_products')
@@ -2011,8 +2012,9 @@ class DealerController extends Controller
         return response()->json($this->result);
     }
 
-    public function validate_extra_products($value, $type){
-        // check if the value (atlas_id) is a catalogue, carded or service parts product 
+    public function validate_extra_products($value, $type)
+    {
+        // check if the value (atlas_id) is a catalogue, carded or service parts product
         // `item_code`, `vendor_code`, `description`, `type`, `type_name`,
         $string_value = (string) $value;
 
@@ -3255,11 +3257,17 @@ class DealerController extends Controller
 
             $value_data = array_map(function ($record) {
                 $atlas_id = $record->atlasId;
-                // fetch the item full details of extra products 
-                $extra_product_details = ExtraProducts::where('item_code', $atlas_id)->get();
-                $record->description = $extra_product_details && count($extra_product_details) ? $extra_product_details[0]->description : "";
+                // fetch the item full details of extra products
+                $extra_product_details = ExtraProducts::where(
+                    'item_code',
+                    $atlas_id
+                )->get();
+                $record->description =
+                    $extra_product_details && count($extra_product_details)
+                        ? $extra_product_details[0]->description
+                        : '';
                 return $record;
-            },$value->data);
+            }, $value->data);
         }
 
         if (!$service_orders) {
@@ -3304,8 +3312,6 @@ class DealerController extends Controller
             'dealer' => 'required',
             'data' => 'required',
         ]);
-
-        
 
         if ($validator->fails()) {
             $this->result->status_code = 422;
@@ -3645,11 +3651,11 @@ class DealerController extends Controller
         } else {
             // $fetch_carded_product[0]->completed = 1;
 
-            foreach($fetch_carded_product as $item) {
+            foreach ($fetch_carded_product as $item) {
                 $update_completed_status = $item->update([
                     'completed' => 1,
                 ]);
-    
+
                 if (!$update_completed_status) {
                     $this->result->status = false;
                     $this->result->status_code = 422;
@@ -3658,7 +3664,6 @@ class DealerController extends Controller
                     return response()->json($this->result);
                 }
             }
-            
 
             $this->result->status = true;
             $this->result->status_code = 200;
@@ -3689,11 +3694,11 @@ class DealerController extends Controller
         } else {
             // $fetch_service_parts[0]->completed = 1;
 
-            foreach($fetch_service_parts as $item){
+            foreach ($fetch_service_parts as $item) {
                 $update_completed_status = $item->update([
                     'completed' => 1,
                 ]);
-    
+
                 if (!$update_completed_status) {
                     $this->result->status = false;
                     $this->result->status_code = 422;
@@ -3702,7 +3707,7 @@ class DealerController extends Controller
                     return response()->json($this->result);
                 }
             }
-            
+
             $this->result->status = true;
             $this->result->status_code = 200;
             $this->result->message =
@@ -3735,11 +3740,11 @@ class DealerController extends Controller
         } else {
             // $fetch_catalogue_order[0]->completed = 1;
 
-            foreach($fetch_catalogue_order as $item){
+            foreach ($fetch_catalogue_order as $item) {
                 $update_completed_status = $fetch_catalogue_order->update([
                     'completed' => 1,
                 ]);
-    
+
                 if (!$update_completed_status) {
                     $this->result->status = false;
                     $this->result->status_code = 422;
@@ -3748,7 +3753,7 @@ class DealerController extends Controller
                     return response()->json($this->result);
                 }
             }
-           
+
             $this->result->status = true;
             $this->result->status_code = 200;
             $this->result->message =
@@ -3884,41 +3889,43 @@ class DealerController extends Controller
         return response()->json($this->result, 200);
     }
 
-    public function attach_img_url_to_products(){
+    public function attach_img_url_to_products()
+    {
         $all_products = Products::get()->toArray();
 
         // return $all_products;
 
-        $attach_image_url = array_map(function($record){
+        $attach_image_url = array_map(function ($record) {
             $product_id = $record['id'];
             // $product_url = $record['img'];
-            $product_atlas_id = $record['atlas_id']; 
+            $product_atlas_id = $record['atlas_id'];
 
             $product_vendor_logo = $record['vendor_logo'];
 
             // https://atlasbookingprogram.com/assets/2023/products/100-18.jpg
 
-            $new_img_url = "https://atlasbookingprogram.com/assets/2023/products/" . $product_atlas_id . '.jpg';
+            $new_img_url =
+                'https://atlasbookingprogram.com/assets/2023/products/' .
+                $product_atlas_id .
+                '.jpg';
 
-            $new_vendor_logo = "https://atlasbookingprogram.com/assets/2023/vendors/" . $product_vendor_logo ;
+            $new_vendor_logo =
+                'https://atlasbookingprogram.com/assets/2023/vendors/' .
+                $product_vendor_logo;
             // $record['img'] = $new_img_url;
 
-            // update the database 
+            // update the database
 
             $update_record = Products::find($product_id);
 
-            $final_update = $update_record->update(
-                [
-                    'img' => $new_img_url,
-                    'vendor_logo' => $new_vendor_logo
-                ]
-            );
+            $final_update = $update_record->update([
+                'img' => $new_img_url,
+                'vendor_logo' => $new_vendor_logo,
+            ]);
 
             return $record;
-
-        },$all_products);
+        }, $all_products);
 
         return $attach_image_url;
-
     }
 }
