@@ -52,6 +52,11 @@ Route::group(
             'AdminController@fetch_dealers_by_account'
         );
 
+        Route::get(
+            '/admin/fetch-all-dealer-service-parts',
+            'AdminController@fetch_all_service_parts'
+        );
+
         Route::post(
             '/update-vendor-name-vendor-logo',
             'AdminController@update_vendor_name_vendor_logo'

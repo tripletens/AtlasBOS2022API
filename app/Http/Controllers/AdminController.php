@@ -62,6 +62,60 @@ class AdminController extends Controller
         ];
     }
 
+    public function fetch_all_service_parts()
+    {
+        $service_orders = DB::table('atlas_service_parts')
+            ->join(
+                'atlas_dealers',
+                'atlas_service_parts.dealer',
+                '=',
+                'atlas_dealers.account_id'
+            )
+            ->where('atlas_dealers.order_status', 1)
+            ->orderby('atlas_dealers.placed_order_date', 'desc')
+            ->select(
+                'atlas_service_parts.*',
+                'atlas_dealers.full_name',
+                'atlas_dealers.first_name',
+                'atlas_dealers.last_name',
+                'atlas_dealers.placed_order_date as order_date'
+            )
+            ->get();
+
+        foreach ($service_orders as $value) {
+            $value->data = json_decode($value->data);
+
+            $value_data = array_map(function ($record) {
+                $atlas_id = $record->atlasId;
+                // fetch the item full details of extra products
+                $extra_product_details = ExtraProducts::where(
+                    'item_code',
+                    $atlas_id
+                )->get();
+                $record->description =
+                    $extra_product_details && count($extra_product_details)
+                        ? $extra_product_details[0]->description
+                        : '';
+                return $record;
+            }, $value->data);
+        }
+
+        if (!$service_orders) {
+            $this->result->status = false;
+            $this->result->status_code = 422;
+            $this->result->message =
+                'Sorry we could not fetch all the Service parts';
+            return response()->json($this->result);
+        }
+
+        $this->result->status = true;
+        $this->result->status_code = 200;
+        $this->result->data = $service_orders;
+
+        $this->result->message = 'All service parts fetched successfully';
+        return response()->json($this->result);
+    }
+
     public function fetch_dealers_by_account($dealer_id)
     {
         $fetch_dealer = Dealer::where('account_id', $dealer_id)
