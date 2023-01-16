@@ -62,6 +62,27 @@ class AdminController extends Controller
         ];
     }
 
+    public function fetch_dealers_by_account($dealer_id)
+    {
+        $fetch_dealer = Dealer::where('account_id', $dealer_id)
+            ->get()
+            ->first();
+
+        if (!$fetch_dealer) {
+            $this->result->status = false;
+            $this->result->status_code = 422;
+            $this->result->message =
+                'Sorry we could not fetch the dealer details';
+            return response()->json($this->result);
+        }
+
+        $this->result->status = true;
+        $this->result->status_code = 200;
+        $this->result->data = $fetch_dealer;
+        $this->result->message = 'Dealer details fetched successfully';
+        return response()->json($this->result);
+    }
+
     public function update_vendor_name_vendor_logo(Request $request)
     {
         $csv = $request->file('excel');

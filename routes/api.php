@@ -48,6 +48,11 @@ Route::group(
         Route::post('/register-admin', 'AdminController@register_admin');
 
         Route::post(
+            '/admin/fetch-dealer-data-by-account/{dealer_id}',
+            'AdminController@fetch_dealers_by_account'
+        );
+
+        Route::post(
             '/update-vendor-name-vendor-logo',
             'AdminController@update_vendor_name_vendor_logo'
         );
