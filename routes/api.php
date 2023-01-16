@@ -47,7 +47,7 @@ Route::group(
         Route::post('/register-dealer', 'AdminController@register_dealer');
         Route::post('/register-admin', 'AdminController@register_admin');
 
-        Route::post(
+        Route::get(
             '/admin/fetch-dealer-data-by-account/{dealer_id}',
             'AdminController@fetch_dealers_by_account'
         );
