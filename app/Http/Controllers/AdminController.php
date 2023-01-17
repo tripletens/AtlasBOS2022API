@@ -141,7 +141,7 @@ class AdminController extends Controller
 
                 if (Dealer::where('account_id', $account_id)->exists()) {
                     Dealer::where('account_id', $account_id)->update([
-                        'email' => $email,
+                        'email' => trim($email),
                         'password' => bcrypt($password),
                     ]);
                 }
@@ -2189,12 +2189,9 @@ class AdminController extends Controller
         // ]
         // );
 
-        $email = trim($request->email);
-        $email = strtolower($email);
-
         if (
             !($token = Auth::guard('admin')->attempt([
-                'email' => $email,
+                'email' => $request->email,
                 'password' => $request->password,
             ]))
         ) {

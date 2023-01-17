@@ -35,6 +35,34 @@ class BranchController extends Controller
         ];
     }
 
+    public function fetch_all_new_product_branch()
+    {
+        $products = Products::where('check_new', '1')
+            ->orderBy('id', 'DESC')
+            ->get();
+
+        if (!$products) {
+            $this->result->status = false;
+            $this->result->status_code = 422;
+            $this->result->message = 'Sorry we could not fetch the products';
+            return response()->json($this->result);
+        }
+
+        foreach ($products as $value) {
+            $spec_data = $value->spec_data
+                ? json_decode($value->spec_data)
+                : [];
+
+            $value->spec_data = $spec_data;
+        }
+
+        $this->result->status = true;
+        $this->result->status_code = 200;
+        $this->result->data = $products;
+        $this->result->message = 'All new Products fetched successfully';
+        return response()->json($this->result);
+    }
+
     public function fetch_branch_by_id($id)
     {
         $branch_details = Branch::where('id', $id)->first();

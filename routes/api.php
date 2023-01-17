@@ -667,6 +667,11 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
     );
 
     Route::get(
+        '/branch/fetch-all-new-products',
+        'BranchController@fetch_all_new_product_branch'
+    );
+
+    Route::get(
         '/branch-get-dealer-order-summary/{id}',
         'BranchController@get_dealer_order_summary'
     );
