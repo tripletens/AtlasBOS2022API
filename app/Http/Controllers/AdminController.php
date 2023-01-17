@@ -69,7 +69,8 @@ class AdminController extends Controller
         if ($csv == null) {
             $this->result->status = false;
             $this->result->status_code = 422;
-            $this->result->message = 'Please upload replace data in excel format';
+            $this->result->message =
+                'Please upload replace data in excel format';
             return response()->json($this->result);
         }
 
@@ -93,7 +94,7 @@ class AdminController extends Controller
                     Dealer::where('account_id', $account_id)->update([
                         'email' => $email,
                         'password' => bcrypt($password),
-                    ])
+                    ]);
                 }
 
                 ///  $startcount++;
