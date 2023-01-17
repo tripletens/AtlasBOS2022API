@@ -2075,6 +2075,7 @@ class AdminController extends Controller
         // dd( $category );
 
         $products = Products::where('category', $category)
+            ->where('status', '1')
             ->orderBy('xref', 'asc')
             ->get();
 
@@ -2891,7 +2892,9 @@ class AdminController extends Controller
 
     public function fetch_all_products()
     {
-        $fetch_all_products = Products::orderBy('xref', 'asc')->paginate(100);
+        $fetch_all_products = Products::where('status', '1')
+            ->orderBy('xref', 'asc')
+            ->paginate(100);
         foreach ($fetch_all_products as $value) {
             $spec_data = $value->spec_data
                 ? json_decode($value->spec_data)
