@@ -138,10 +138,11 @@ class AdminController extends Controller
                 $account_id = $sheet->getCell('B' . $row)->getValue();
                 $email = $sheet->getCell('C' . $row)->getValue();
                 $password = $sheet->getCell('D' . $row)->getValue();
+                $email = str_replace(' ', '', $email);
 
                 if (Dealer::where('account_id', $account_id)->exists()) {
                     Dealer::where('account_id', $account_id)->update([
-                        'email' => trim($email),
+                        'email' => $email,
                         'password' => bcrypt($password),
                         'password_clear' => $password,
                     ]);
