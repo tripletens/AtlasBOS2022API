@@ -62,6 +62,56 @@ class AdminController extends Controller
         ];
     }
 
+    public function upload_replaced_dealer_data(Request $request)
+    {
+        $csv = $request->file('excel');
+
+        if ($csv == null) {
+            $this->result->status = false;
+            $this->result->status_code = 422;
+            $this->result->message = 'Please upload replace data in excel format';
+            return response()->json($this->result);
+        }
+
+        $the_file = $request->file('excel');
+        try {
+            $spreadsheet = IOFactory::load($the_file->getRealPath());
+            $sheet = $spreadsheet->getActiveSheet();
+            $row_limit = $sheet->getHighestDataRow();
+            $column_limit = $sheet->getHighestDataColumn();
+            $row_range = range(2, $row_limit);
+            $column_range = range('F', $column_limit);
+            $startcount = 2;
+            $data = [];
+
+            foreach ($row_range as $row) {
+                $account_id = $sheet->getCell('B' . $row)->getValue();
+                $email = $sheet->getCell('C' . $row)->getValue();
+                $password = $sheet->getCell('D' . $row)->getValue();
+
+                if (Dealer::where('account_id', $account_id)->exists()) {
+                    Dealer::where('account_id', $account_id)->update([
+                        'email' => $email,
+                        'password' => bcrypt($password),
+                    ])
+                }
+
+                ///  $startcount++;
+            }
+        } catch (Exception $e) {
+            $error_code = $e->errorInfo[1];
+            $this->result->status = false;
+            $this->result->status_code = 404;
+            $this->result->message = 'Something went wrong';
+            return response()->json($this->result);
+        }
+
+        $this->result->status = true;
+        $this->result->status_code = 200;
+        $this->result->message = 'replace dealer data uploaded successfully';
+        return response()->json($this->result);
+    }
+
     public function fetch_all_service_parts()
     {
         $service_orders = DB::table('atlas_service_parts')
