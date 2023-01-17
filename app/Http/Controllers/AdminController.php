@@ -2189,9 +2189,12 @@ class AdminController extends Controller
         // ]
         // );
 
+        $email = trim($request->email);
+        $email = strtolower($email);
+
         if (
             !($token = Auth::guard('admin')->attempt([
-                'email' => $request->email,
+                'email' => $email,
                 'password' => $request->password,
             ]))
         ) {
