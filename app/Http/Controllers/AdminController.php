@@ -3389,9 +3389,16 @@ class AdminController extends Controller
 
         // return 'hello';
 
+        // $total_amount = DB::table('cart')
+        //     ->wherein('dealer', $all_dealer_ids_order_status)
+        //     ->sum('price');
+
         $total_amount = DB::table('cart')
-            ->wherein('dealer', $all_dealer_ids_order_status)
+            ->where('status', '1')
             ->sum('price');
+
+        // ->wherein('dealer', $all_dealer_ids_order_status)
+        // ->sum('price');
 
         // return $total_amount;
 
