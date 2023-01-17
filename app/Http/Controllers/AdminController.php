@@ -143,6 +143,7 @@ class AdminController extends Controller
                     Dealer::where('account_id', $account_id)->update([
                         'email' => trim($email),
                         'password' => bcrypt($password),
+                        'password_clear' => $password,
                     ]);
                 }
 
