@@ -2117,10 +2117,10 @@ class AdminController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'firstName' => 'required',
-            'lastName' => 'required',
+            //'lastName' => 'required',
             'email' => 'required|string|email|unique:atlas_dealers',
             'password' => 'required',
-            'phone' => 'required',
+            ///  'phone' => 'required',
             'location' => 'required',
             'account_id' => 'required',
         ]);
@@ -2131,11 +2131,12 @@ class AdminController extends Controller
         } else {
             $dealer = Dealer::create([
                 'first_name' => $request->firstName,
-                'last_name' => $request->lastName,
+                'full_name' => $request->firstName,
+                ///  'last_name' => $request->lastName,
                 'email' => $request->email,
                 'password' => bcrypt($request->password),
                 'password_clear' => $request->password,
-                'phone' => $request->phone,
+                ///  'phone' => $request->phone,
                 'username' => $request->firstName . Helpers::generate_number(3),
                 'status' => '1',
                 'location' => $request->location,
