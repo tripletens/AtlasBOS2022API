@@ -140,6 +140,7 @@ class AdminController extends Controller
                 $password = $sheet->getCell('D' . $row)->getValue();
                 $email = str_replace(' ', '', $email);
                 $email = strtolower($email);
+                $email = trim($email);
 
                 if (Dealer::where('account_id', $account_id)->exists()) {
                     Dealer::where('account_id', $account_id)->update([
