@@ -1864,6 +1864,9 @@ class AdminController extends Controller
         $from = $request->query('from') != '' ? $request->query('from') : false;
         $to = $request->query('to') != '' ? $request->query('to') : false;
 
+        $from = Carbon::createFromFormat('Y-m-d', $from)->startOfDay();
+        $to = Carbon::createFromFormat('Y-m-d', $to)->endOfDay();
+
         if ($from && $to) {
             $dealer = Dealer::query()
                 ->where('order_status', '1')
