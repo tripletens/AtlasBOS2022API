@@ -2136,6 +2136,8 @@ class AdminController extends Controller
             $dealer = Dealer::create([
                 'first_name' => $request->firstName,
                 'full_name' => $request->firstName,
+                'company_name' => $request->firstName,
+
                 ///  'last_name' => $request->lastName,
                 'email' => $request->email,
                 'password' => bcrypt($request->password),
