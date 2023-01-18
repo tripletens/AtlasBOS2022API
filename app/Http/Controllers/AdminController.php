@@ -1840,6 +1840,7 @@ class AdminController extends Controller
                         'qty' => $each['qty'],
                         'unit_price' => $each['unit_price'],
                         'price' => $each['price'],
+                        'created_at' => $each['created_at'],
                     ];
                 }, $carts);
 
