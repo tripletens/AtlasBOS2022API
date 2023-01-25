@@ -1790,21 +1790,26 @@ class AdminController extends Controller
     {
         if ($data) {
             global $dealer;
+            global $added_date;
             $tester = [];
             foreach ($data as $value) {
                 $dealer = $value->account_id;
                 $account_id = $value->account_id;
+
                 $carts = Catalogue_Order::query()
                     ->where('dealer', $dealer)
                     ->get()
                     ->first();
 
                 if (!empty($carts['data'])) {
+                    $added_date = $carts['created_at'];
+
                     $cat_data = json_decode($carts['data'], true);
 
                     foreach ($cat_data as $value) {
                         global $dealer;
                         $value['dealer'] = $dealer;
+                        $value['added_date'] = $added_date;
                         array_push($tester, $value);
                     }
                 }
