@@ -1646,6 +1646,8 @@ class AdminController extends Controller
     {
         if ($data) {
             global $dealer;
+            global $added_date;
+
             $tester = [];
             foreach ($data as $value) {
                 $dealer = $value->account_id;
@@ -1657,10 +1659,13 @@ class AdminController extends Controller
 
                 if (!empty($carts['data'])) {
                     $cat_data = json_decode($carts['data'], true);
+                    $added_date = $carts['created_at'];
 
                     foreach ($cat_data as $value) {
                         global $dealer;
                         $value['dealer'] = $dealer;
+                        $value['added_date'] = $added_date;
+
                         array_push($tester, $value);
                     }
                 }
@@ -1718,6 +1723,8 @@ class AdminController extends Controller
     {
         if ($data) {
             global $dealer;
+            global $added_date;
+
             $tester = [];
             foreach ($data as $value) {
                 $dealer = $value->account_id;
@@ -1729,10 +1736,12 @@ class AdminController extends Controller
 
                 if (!empty($carts['data'])) {
                     $cat_data = json_decode($carts['data'], true);
+                    $added_date = $carts['created_at'];
 
                     foreach ($cat_data as $value) {
                         global $dealer;
                         $value['dealer'] = $dealer;
+                        $value['added_date'] = $added_date;
                         array_push($tester, $value);
                     }
                 }
