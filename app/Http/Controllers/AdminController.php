@@ -3529,6 +3529,10 @@ class AdminController extends Controller
             ->where('status', '0')
             ->count();
 
+        $total_not_submitted_in_cart_amt = DB::table('cart')
+            ->where('status', '0')
+            ->sum('price');
+
         // ->wherein('dealer', $all_dealer_ids_order_status)
         // ->sum('price');
 
@@ -3717,6 +3721,8 @@ class AdminController extends Controller
         $this->result->data->total_amount = $total_amount;
 
         $this->result->data->total_not_submitted_in_cart = $total_not_submitted_in_cart;
+
+        $this->result->data->total_not_submitted_in_cart_amt = $total_not_submitted_in_cart_amt;
 
         $this->result->data->total_amount4 = 'tests';
 
