@@ -2726,7 +2726,7 @@ class AdminController extends Controller
         //     )
         //     ->get();
 
-        $dealers = Dealer::where('status', '1')->paginate(20);
+        $dealers = Dealer::where('status', '1')->paginate(100);
 
         $dealers_items = $dealers->items();
 
