@@ -3978,8 +3978,7 @@ class AdminController extends Controller
             )
             ////   ->where('order_status', '1')
             ->orderBy('placed_order_date', 'DESC')
-            ->paginate(100)
-            ->toArray();
+            ->paginate(100);
 
         $submitted_orders_item = $submitted_dealers->items();
 
@@ -4019,6 +4018,7 @@ class AdminController extends Controller
             'per_page' => $submitted_dealers->perPage(),
             'total' => $submitted_dealers->total(),
         ];
+
         // $res_data->data = $all;
         // $res_data->per_page = $submitted_dealers->perPage();
         // $res_data->total = $submitted_dealers->total();
