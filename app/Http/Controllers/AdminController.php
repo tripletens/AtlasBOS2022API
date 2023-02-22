@@ -3978,8 +3978,11 @@ class AdminController extends Controller
             )
             ////   ->where('order_status', '1')
             ->orderBy('placed_order_date', 'DESC')
-            ->get()
+            ->paginate(100)
             ->toArray();
+
+        $submitted_orders_item = $submitted_dealers->items();
+
         $all = array_map(function ($data) {
             $dealer_id = $data->id;
             $dealer_name = $data->full_name;
@@ -4009,7 +4012,7 @@ class AdminController extends Controller
 
                 'order_date' => $order_date,
             ];
-        }, $submitted_dealers);
+        }, $submitted_orders_item);
 
         $this->result->status = true;
         $this->result->status_code = 200;
