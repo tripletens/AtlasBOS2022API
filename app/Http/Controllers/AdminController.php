@@ -2728,11 +2728,11 @@ class AdminController extends Controller
 
         $dealers = Dealer::where('status', '1')->paginate(20);
 
-        $dealers = $dealers->items();
+        $dealers_items = $dealers->items();
 
         $service_parts = 0;
 
-        foreach ($dealers as $dealer) {
+        foreach ($dealers_items as $dealer) {
             $code = $dealer->account_id;
             $id = $dealer->id;
             $check_service_parts = ServiceParts::where(
