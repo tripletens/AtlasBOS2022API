@@ -4014,9 +4014,22 @@ class AdminController extends Controller
             ];
         }, $submitted_orders_item);
 
+        $res_data = [
+            'data' => $all,
+            'per_page' => $submitted_dealers->perPage(),
+            'total' => $submitted_dealers->total(),
+        ];
+        // $res_data->data = $all;
+        // $res_data->per_page = $submitted_dealers->perPage();
+        // $res_data->total = $submitted_dealers->total();
+
+        // $res_data->per_page = $submitted_dealers->perPage();
+
+        //   $submitted_dealers->items() = $all;
+
         $this->result->status = true;
         $this->result->status_code = 200;
-        $this->result->data = $all;
+        $this->result->data = $res_data;
         $this->result->message = 'All Dealers Orders';
         return response()->json($this->result);
     }
