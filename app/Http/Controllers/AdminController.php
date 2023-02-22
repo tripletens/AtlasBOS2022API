@@ -2724,10 +2724,12 @@ class AdminController extends Controller
         //         'atlas_catalogue_orders.completed as catalogue_completed',
         //         'atlas_dealers.*'
         //     )
-
         //     ->get();
 
-        $dealers = Dealer::all();
+        $dealers = Dealer::paginate();
+
+        $dealers = $dealers->items();
+
         $service_parts = 0;
 
         foreach ($dealers as $dealer) {
