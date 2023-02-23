@@ -1860,6 +1860,8 @@ class AdminController extends Controller
 
                 $query_data = array_map(function ($each) {
                     global $account_id;
+                    global $placed_order_date;
+
                     return [
                         'id' => $each['id'],
                         'account_id' => $account_id,
