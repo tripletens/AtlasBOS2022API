@@ -1847,7 +1847,11 @@ class AdminController extends Controller
             foreach ($data as $value) {
                 $dealer = $value->id;
                 global $account_id;
+                global $placed_order_date;
+
                 $account_id = $value->account_id;
+                $placed_order_date = $value->placed_order_date;
+
                 $carts = Cart::query()
                     ->where('dealer', $dealer)
                     ->get()
@@ -1863,7 +1867,7 @@ class AdminController extends Controller
                         'qty' => $each['qty'],
                         'unit_price' => $each['unit_price'],
                         'price' => $each['price'],
-                        'created_at' => $each['created_at'],
+                        'created_at' => $placed_order_date,
                     ];
                 }, $carts);
 
