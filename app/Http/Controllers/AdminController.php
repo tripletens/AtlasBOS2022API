@@ -897,10 +897,36 @@ class AdminController extends Controller
 
         foreach ($dealers as $dealer) {
             $code = $dealer->account_id;
+            $id = $dealer->id;
             $check_service_parts = ServiceParts::where(
                 'dealer',
                 $code
             )->exists();
+
+            if (Cart::where('dealer', $id)->exists()) {
+                $total = Cart::where('dealer', $id)
+                    ->where('status', '1')
+                    ->sum('price');
+                $dealer->total_price = $total;
+
+                $dealer->total_item = Cart::where('dealer', $id)
+                    ->where('status', '1')
+                    ->count();
+
+                $dealer->total_pending_item = Cart::where('dealer', $id)
+                    ->where('status', '0')
+                    ->count();
+
+                $dealer->total_pending_amt = DB::table('cart')
+                    ->where('dealer', $id)
+                    ->where('status', '0')
+                    ->sum('price');
+            } else {
+                $dealer->total_price = 0;
+                $dealer->total_item = 0;
+                $dealer->total_pending_item = 0;
+                $dealer->total_pending_amt = 0;
+            }
 
             if ($check_service_parts) {
                 $service = ServiceParts::where('dealer', $code)
