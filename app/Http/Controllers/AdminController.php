@@ -62,6 +62,28 @@ class AdminController extends Controller
         ];
     }
 
+    public function all_logged_in_dealers()
+    {
+        $logged_in = Dealer::where('last_login', '!=', null)->get();
+
+        $this->result->status = true;
+        $this->result->status_code = 200;
+        $this->result->data = $logged_in;
+        $this->result->message = 'All logged in dealers';
+        return response()->json($this->result);
+    }
+
+    public function all_not_logged_in_dealers()
+    {
+        $not_logged_in = Dealer::where('last_login', '=', null)->get();
+
+        $this->result->status = true;
+        $this->result->status_code = 200;
+        $this->result->data = $not_logged_in;
+        $this->result->message = 'All not logged in dealers';
+        return response()->json($this->result);
+    }
+
     public function upload_replaced_dealer_password_old(Request $request)
     {
         $csv = $request->file('excel');
@@ -3576,36 +3598,6 @@ class AdminController extends Controller
             ->where('status', '0')
             ->sum('price');
 
-        // ->wherein('dealer', $all_dealer_ids_order_status)
-        // ->sum('price');
-
-        // return $total_amount;
-
-        // $sum_total = Cart::where( 'dealer', $dealer_id )->sum( 'price' );
-
-        // return $sum_total;
-
-        // foreach ( $all_catalogue_orders as $item ) {
-        //     $item->data = json_decode( $item->data );
-
-        // }
-
-        // foreach ( $all_service_parts as $item ) {
-        //     $item->data = json_decode( $item->data );
-
-        // }
-
-        // foreach ( $all_carded_products as $item ) {
-        //     $item->data = json_decode( $item->data );
-
-        // }
-
-        // return count( $all_service_parts );
-        // $catalogue_orders = Catalogue_order::all();
-        // $carded_products = CardedProducts::all();
-        // $service_parts = ServiceParts::all();
-        ///// $orders = DealerCart::all();
-
         $total_orders = Dealer::where('order_status', '1')->count();
 
         $cart_orders_ch = Cart::all();
@@ -3620,19 +3612,6 @@ class AdminController extends Controller
 
         $orders = count($dealer_arr);
 
-        //// $orders = Dealer::where('order_status', 1)->get();
-
-        // SELECT ALL THE dealers
-        // count all the items in their orders
-        // fetch the total amount
-
-        // fetch dealers that have completed an order
-
-        // $dealer_with_orders = Dealer::where('order_status', 1)
-        //     ->orderby('id', 'desc')
-        //     ->get()
-        //     ->take(5);
-
         $dealer_with_orders = Dealer::orderby('id', 'desc')
             ->get()
             ->take(5);
@@ -3642,12 +3621,6 @@ class AdminController extends Controller
             ->join('cart', 'atlas_dealers.id', '=', 'cart.dealer')
             ->select('atlas_dealers.account_id', 'cart.price')
             ->sum('cart.price');
-
-        // $fetch_All_amount = Cart::wherein( 'dealer', $all_Dealers_with_orders )->where( 'status', 1 )->sum( 'price' );
-
-        // return $all_Dealers_with_orders;
-
-        // return json_decode( $dealer_with_orders, true );
 
         $get_recent_order_Details = array_map(function ($record) {
             // $record = ( object ) $record;

@@ -47,6 +47,16 @@ Route::group(
         Route::post('/register-dealer', 'AdminController@register_dealer');
         Route::post('/register-admin', 'AdminController@register_admin');
 
+        Route::get(
+            '/admin/logged-in-dealers',
+            'AdminController@all_logged_in_dealers'
+        );
+
+        Route::get(
+            '/admin/not-logged-in-dealers',
+            'AdminController@all_not_logged_in_dealers'
+        );
+
         Route::post(
             '/admin/upload-replaced-dealer-data',
             'AdminController@upload_replaced_dealer_data'
