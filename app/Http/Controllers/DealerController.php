@@ -532,16 +532,19 @@ class DealerController extends Controller
         if ($catalogue_order) {
             $catalogue_order = json_decode($catalogue_order['data'], true);
         } else {
+            $catalogue_order = [];
         }
 
         if ($carded_products) {
             $carded_products = json_decode($carded_products['data'], true);
         } else {
+            $carded_products = [];
         }
 
         if ($service_products) {
             $service_products = json_decode($service_products['data'], true);
         } else {
+            $service_products = [];
         }
 
         $grand_total = 0;
