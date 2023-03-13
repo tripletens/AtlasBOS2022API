@@ -908,21 +908,21 @@ class DealerController extends Controller
                         $added_item++;
                         $create_carded_product = Cart::create([
                             'dealer' => $dealer,
-                            'atlas_id' => $product->atlasId,
-                            'desc' => $product->desc,
-                            'pro_img' => $product->proImg,
-                            'vendor_img' => $product->vendorImg,
-                            'qty' => $product->quantity,
-                            'price' => $product->price,
-                            'unit_price' => $product->unitPrice,
-                            'spec_data' => json_encode($product->spec_data),
-                            'grouping' => $product->grouping,
-                            'type' => $product->type,
-                            'xref' => $product->xref,
-                            'pro_id' => $product->id,
-                            'booking' => $product->booking,
-                            'category' => $product->category,
-                            'um' => $product->um,
+                            'atlas_id' => $product->atlasId ? $product->atlasId : null,
+                            'desc' => $product->desc ? $product->desc : null,
+                            'pro_img' => $product->proImg ? $product->proImg : null,
+                            'vendor_img' => $product->vendorImg ? $product->vendorImg : null,
+                            'qty' => $product->quantity ? $product->quantity : null,
+                            'price' => $product->price ? $product->price : null,
+                            'unit_price' => $product->unitPrice ? $product->unitPrice : null,
+                            'spec_data' => $product->spec_data ? json_encode($product->spec_data) : null,
+                            'grouping' => $product->grouping ? $product->grouping : null,
+                            'type' => $product->type ? $product->type : null,
+                            'xref' => $product->xref ? $product->xref :  null,
+                            'pro_id' => $product->id ? $product->id : null,
+                            'booking' => $product->booking ? $product->booking : null,
+                            'category' => $product->category ? $product->category :null,
+                            'um' => $product->um ? $product->um : null
                         ]);
                     }
                 } else {
@@ -1268,6 +1268,26 @@ class DealerController extends Controller
             return response()->json($this->result);
         }
     }
+
+
+    // submit carded products to cart 
+
+    public function submit_carded_products_to_cart (Request $request){
+        return "submit carded products to cart";
+    }
+
+    // submit service parts products to cart 
+
+    public function submit_service_parts_products_to_cart (Request $request){
+        return "submit service parts products to cart";
+    }
+
+    // submit catalogue products to cart 
+
+    public function submit_catalogue_products_to_cart (Request $request){
+        return "submit catalogue products to cart";
+    }
+
 
     public function test_cart($id)
     {
