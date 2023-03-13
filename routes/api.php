@@ -426,7 +426,6 @@ Route::group(
         // Route::get('/dashboard/dealer', 'DealerController@dealer_de');
 
         Route::post('/dealer-login', 'DealerController@login');
-
         Route::get('/dashboard/{dealer}', 'DealerController@dashboard');
         Route::post('/add-product', 'DealerController@add_product');
         Route::get('/fetch-all-product', 'DealerController@fetch_all_products');
