@@ -1109,13 +1109,13 @@ class DealerController extends Controller
     {
         //valid credential
         $this->validate($request, [
-            'email' => 'required|email',
+            'account_id' => 'required',
             'password' => 'required|min:6',
         ]);
 
         if (
             !($token = Auth::guard('api')->attempt([
-                'email' => $request->email,
+                'account_id' => $request->account_id,
                 'password' => $request->password,
             ]))
         ) {
@@ -1125,7 +1125,7 @@ class DealerController extends Controller
         }
 
         $active_staff = Dealer::query()
-            ->where('email', $request->email)
+            ->where('account_id', $request->account_id)
             ->get()
             ->first();
 
@@ -1135,10 +1135,10 @@ class DealerController extends Controller
             return response()->json($this->result);
         }
 
-        $dealer = Dealer::where('email', $request->email)->first();
+        $dealer = Dealer::where('account_id', $request->account_id)->first();
         $dealer->role = 'dealer';
 
-        $dealer_details = Dealer::where('email', $request->email)->get();
+        $dealer_details = Dealer::where('account_id', $request->account_id)->get();
 
         $dealer_details[0]->update([
             'last_login' => Carbon::now(),
