@@ -665,6 +665,13 @@ Route::group(
             '/get-all-loggedin-dealers',
             'DealerController@get_all_loggedin_dealers'
         );
+
+        // submit carded products to cart 
+        Route::post(
+            '/add-carded-product-to-cart',
+            'DealerController@add_carded_product_to_cart'
+        );
+        
     }
 );
 

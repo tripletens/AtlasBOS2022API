@@ -3931,4 +3931,46 @@ class DealerController extends Controller
 
         return $attach_image_url;
     }
+
+    public function add_carded_product_to_cart(Request $request){
+        $validator = Validator::make($request->all(), [
+            'dealer' => 'required',
+            'data' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            $this->result->status_code = 422;
+            $this->result->message = [
+                'dealer' => $validator->errors()->get('dealer'),
+                'data' => $validator->errors()->get('data'),
+            ];
+            return response()->json($this->result);
+        } else {
+            $dealer_id = $request->input('dealer');
+            $new_data = $request->input('data');
+
+            // `id`, `dealer`, `pro_id`, `atlas_id`, `qty`, `price`, `unit_price`,
+            //  `status`, `created_at`, `updated_at`, `desc`, `pro_img`, 
+            // `vendor_img`, `spec_data`, `grouping`, `booking`, `category`, `um`, `xref`
+
+            $add_carded_to_cart = Cart::create([
+                "dealer" => $dealer_id,
+                "status" => true,
+                "carded_data" => json_encode($new_data)
+            ]);
+
+            if(!$add_carded_to_cart){
+                $this->result->status = false;
+                $this->result->status_code = 422;
+                $this->result->message = 'Sorry we could not add the carded product to cart';
+                return response()->json($this->result, 422);
+            }
+
+            $this->result->status = true;
+            $this->result->status_code = 200;
+            $this->result->data = $add_carded_to_cart;
+            $this->result->message = 'Carded Product added to cart successfully';
+            return response()->json($this->result, 200);
+        }
+    }
 }
