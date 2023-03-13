@@ -532,16 +532,19 @@ class DealerController extends Controller
         if ($catalogue_order) {
             $catalogue_order = json_decode($catalogue_order['data'], true);
         } else {
+            $catalogue_order = [];
         }
 
         if ($carded_products) {
             $carded_products = json_decode($carded_products['data'], true);
         } else {
+            $carded_products = [];
         }
 
         if ($service_products) {
             $service_products = json_decode($service_products['data'], true);
         } else {
+            $service_products = [];
         }
 
         $grand_total = 0;
@@ -908,21 +911,21 @@ class DealerController extends Controller
                         $added_item++;
                         $create_carded_product = Cart::create([
                             'dealer' => $dealer,
-                            'atlas_id' => $product->atlasId ? $product->atlasId : null,
-                            'desc' => $product->desc ? $product->desc : null,
-                            'pro_img' => $product->proImg ? $product->proImg : null,
-                            'vendor_img' => $product->vendorImg ? $product->vendorImg : null,
-                            'qty' => $product->quantity ? $product->quantity : null,
-                            'price' => $product->price ? $product->price : null,
-                            'unit_price' => $product->unitPrice ? $product->unitPrice : null,
-                            'spec_data' => $product->spec_data ? json_encode($product->spec_data) : null,
-                            'grouping' => $product->grouping ? $product->grouping : null,
-                            'type' => $product->type ? $product->type : null,
-                            'xref' => $product->xref ? $product->xref :  null,
-                            'pro_id' => $product->id ? $product->id : null,
-                            'booking' => $product->booking ? $product->booking : null,
-                            'category' => $product->category ? $product->category :null,
-                            'um' => $product->um ? $product->um : null
+                            'atlas_id' => $product->atlasId,
+                            'desc' => $product->desc,
+                            'pro_img' => $product->proImg,
+                            'vendor_img' => $product->vendorImg,
+                            'qty' => $product->quantity,
+                            'price' => $product->price,
+                            'unit_price' => $product->unitPrice,
+                            'spec_data' => json_encode($product->spec_data),
+                            'grouping' => $product->grouping,
+                            'type' => $product->type,
+                            'xref' => $product->xref,
+                            'pro_id' => $product->id,
+                            'booking' => $product->booking,
+                            'category' => $product->category,
+                            'um' => $product->um,
                         ]);
                     }
                 } else {
@@ -1104,18 +1107,15 @@ class DealerController extends Controller
 
     public function login(Request $request)
     {
-
-        // return "test";
-
         //valid credential
         $this->validate($request, [
-            'account_id' => 'required',
+            'email' => 'required',
             'password' => 'required|min:6',
         ]);
 
         if (
             !($token = Auth::guard('api')->attempt([
-                'account_id' => $request->account_id,
+                'email' => $request->email,
                 'password' => $request->password,
             ]))
         ) {
@@ -1125,7 +1125,7 @@ class DealerController extends Controller
         }
 
         $active_staff = Dealer::query()
-            ->where('account_id', $request->account_id)
+            ->where('email', $request->email)
             ->get()
             ->first();
 
@@ -1135,10 +1135,10 @@ class DealerController extends Controller
             return response()->json($this->result);
         }
 
-        $dealer = Dealer::where('account_id', $request->account_id)->first();
+        $dealer = Dealer::where('email', $request->email)->first();
         $dealer->role = 'dealer';
 
-        $dealer_details = Dealer::where('account_id', $request->account_id)->get();
+        $dealer_details = Dealer::where('email', $request->email)->get();
 
         $dealer_details[0]->update([
             'last_login' => Carbon::now(),
@@ -1268,26 +1268,6 @@ class DealerController extends Controller
             return response()->json($this->result);
         }
     }
-
-
-    // submit carded products to cart 
-
-    public function submit_carded_products_to_cart (Request $request){
-        return "submit carded products to cart";
-    }
-
-    // submit service parts products to cart 
-
-    public function submit_service_parts_products_to_cart (Request $request){
-        return "submit service parts products to cart";
-    }
-
-    // submit catalogue products to cart 
-
-    public function submit_catalogue_products_to_cart (Request $request){
-        return "submit catalogue products to cart";
-    }
-
 
     public function test_cart($id)
     {
