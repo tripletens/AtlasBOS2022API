@@ -671,7 +671,13 @@ Route::group(
             '/add-carded-product-to-cart',
             'DealerController@add_carded_product_to_cart'
         );
-        
+
+        // submit other products to cart i.e carded, catalogue and carded products 
+
+        Route::post(
+            '/add-other-product-type-to-cart',
+            'DealerController@add_other_product_type_to_cart'
+        );
     }
 );
 

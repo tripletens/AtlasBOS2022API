@@ -1672,9 +1672,9 @@ class DealerController extends Controller
             'access_token' => $token,
             'token_type' => 'bearer',
             'expires_in' =>
-                auth()
-                    ->factory()
-                    ->getTTL() * 60,
+            auth()
+                ->factory()
+                ->getTTL() * 60,
         ]);
     }
 
@@ -1792,8 +1792,8 @@ class DealerController extends Controller
                     10,
                     $record['atlas_id']
                 ) == true
-                    ? true
-                    : false;
+                ? true
+                : false;
 
             return array_merge(
                 [
@@ -1924,8 +1924,8 @@ class DealerController extends Controller
                     10,
                     $record['atlas_id']
                 ) == true
-                    ? true
-                    : false;
+                ? true
+                : false;
             // if(intval($this->check_if_its_new($record['created_at'], 10,$record['atlas_id']))){
 
             // }
@@ -1983,8 +1983,8 @@ class DealerController extends Controller
                     10,
                     $record['atlas_id']
                 ) == true
-                    ? true
-                    : false;
+                ? true
+                : false;
 
             return array_merge(
                 [
@@ -3267,8 +3267,8 @@ class DealerController extends Controller
                 )->get();
                 $record->description =
                     $extra_product_details && count($extra_product_details)
-                        ? $extra_product_details[0]->description
-                        : '';
+                    ? $extra_product_details[0]->description
+                    : '';
                 return $record;
             }, $value->data);
         }
@@ -3582,7 +3582,7 @@ class DealerController extends Controller
 
                 if (
                     count(json_decode($check_catalogue_order[0]->data, true)) ==
-                        0 ||
+                    0 ||
                     empty($check_catalogue_order[0]->data) == true
                 ) {
                     $check_catalogue_order[0]->delete();
@@ -3932,7 +3932,8 @@ class DealerController extends Controller
         return $attach_image_url;
     }
 
-    public function add_carded_product_to_cart(Request $request){
+    public function add_carded_product_to_cart(Request $request)
+    {
         $validator = Validator::make($request->all(), [
             'dealer' => 'required',
             'data' => 'required',
@@ -3959,7 +3960,7 @@ class DealerController extends Controller
                 "carded_data" => json_encode($new_data)
             ]);
 
-            if(!$add_carded_to_cart){
+            if (!$add_carded_to_cart) {
                 $this->result->status = false;
                 $this->result->status_code = 422;
                 $this->result->message = 'Sorry we could not add the carded product to cart';
@@ -3970,6 +3971,72 @@ class DealerController extends Controller
             $this->result->status_code = 200;
             $this->result->data = $add_carded_to_cart;
             $this->result->message = 'Carded Product added to cart successfully';
+            return response()->json($this->result, 200);
+        }
+    }
+
+    public function add_other_product_type_to_cart(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'dealer' => 'required',
+            'data' => 'required',
+            'type' => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            $this->result->status_code = 422;
+            $this->result->message = [
+                'dealer' => $validator->errors()->get('dealer'),
+                'data' => $validator->errors()->get('data'),
+                'type' => $validator->errors()->get('type'),
+            ];
+            return response()->json($this->result);
+        } else {
+            $dealer_id = $request->input('dealer');
+            $new_data = $request->input('data');
+            $type = $request->input('type');
+
+            switch ($type) {
+                case 'carded_products':
+                    $add_carded_to_cart = Cart::create([
+                        "dealer" => $dealer_id,
+                        "status" => true,
+                        "carded_data" => json_encode($new_data)
+                    ]);
+                    break;
+                case 'service_parts_products':
+                    $add_carded_to_cart = Cart::create([
+                        "dealer" => $dealer_id,
+                        "status" => true,
+                        "service_data" => json_encode($new_data)
+                    ]);
+                    break;
+                case 'catalogue_products':
+                    $add_carded_to_cart = Cart::create([
+                        "dealer" => $dealer_id,
+                        "status" => true,
+                        "catalogue_data" => json_encode($new_data)
+                    ]);
+                    break;
+                default: 
+                    $this->result->status = false;
+                    $this->result->status_code = 422;
+                    $this->result->message = 'please add a valid type ie. carded_products,service_parts_products, or catalogue_products';
+                    return response()->json($this->result, 422);
+                break;
+            }
+            
+            if (!$add_carded_to_cart) {
+                $this->result->status = false;
+                $this->result->status_code = 422;
+                $this->result->message = 'Sorry we could not add the carded product to cart';
+                return response()->json($this->result, 422);
+            }
+
+            $this->result->status = true;
+            $this->result->status_code = 200;
+            $this->result->data = $add_carded_to_cart;
+            $this->result->message = ucwords(str_replace('_',' ',$type)) . ' added to cart successfully';
             return response()->json($this->result, 200);
         }
     }
