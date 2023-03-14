@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\PasswordResetEmailCode;
 use Illuminate\Http\Request;
 use App\Models\Dealer;
 use Illuminate\Support\Facades\Auth;
@@ -28,6 +29,7 @@ use App\Models\CardedProducts;
 use App\Models\ServiceParts;
 use App\Models\Cart;
 use App\Models\ExtraProducts;
+use App\Models\ResetPassword;
 
 set_time_limit(2500000000000000);
 
@@ -4041,6 +4043,81 @@ class DealerController extends Controller
         }
     }
 
+    public function reset_password_send_code_email(Request $request){
+        $validator = Validator::make($request->all(), [
+            'email' => 'required',
+            'reset_url'=> 'required'
+        ]);
+
+        if ($validator->fails()) {
+            $this->result->status_code = 422;
+            $this->result->message = [
+                'email' => $validator->errors()->get('email'),
+                'reset_url' => $validator->errors()->get('reset_url'),
+            ];
+            return response()->json($this->result);
+        } else {
+            $email = $request->input('email');
+
+            $reset_url = $request->input('reset_url');
+            // check if email exists in the db 
+
+            $check_email = $dealer_details = Dealer::where('email', $email)->get();
+
+            if(!$check_email){
+                $this->result->status = false;
+                $this->result->status_code = 422;
+                $this->result->message = 'Sorry Email could not be verified';
+                return response()->json($this->result);
+            }
+
+            // check if the email exists 
+            if(count($check_email) == 0){
+                $this->result->status = false;
+                $this->result->status_code = 422;
+                $this->result->message = 'Sorry Email does\'t exists in our records';
+                return response()->json($this->result);
+            }else{
+                // email exists 
+
+                // generate code 
+                $code = Str::random(10);
+
+                // get dealer's credentials 
+                $dealer_email = $check_email[0]->email;
+                $dealer_id = $check_email[0]->id;
+
+                // save the details 
+                $save_details = ResetPassword::create([
+                    'dealer_id'=> $dealer_id, 'code' => $code, 'email' => $dealer_email,
+                ]);
+
+                if(!$save_details){
+                    $this->result->status = false;
+                    $this->result->status_code = 422;
+                    $this->result->message = 'Sorry we could not generate code.';
+                    return response()->json($this->result);
+                }
+
+                // send the email 
+
+                $data = [
+                    'code' => $code,
+                    'reset_url' => $reset_url
+                ];
+
+                Mail::to($dealer_email)->send(new PasswordResetEmailCode($data));
+                
+                // send the code reset_url
+                
+                $this->result->status = true;
+                $this->result->status_code = 200;
+                $this->result->message = 'Email Code generated and sent successfully';
+                return response()->json($this->result);
+            }
+        }
+    }
+
     public function reset_dealer_password(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -4086,4 +4163,7 @@ class DealerController extends Controller
   
         dd($result);
     }
+
+
+
 }

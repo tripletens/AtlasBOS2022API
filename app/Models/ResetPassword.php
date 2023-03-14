@@ -9,14 +9,11 @@ class ResetPassword extends Model
 {
     use HasFactory;
 
+    protected $table = "reset_dealer_passwords";
     protected $fillable = [
         'dealer_id',
-        'account_id',
         'email',
-        'password',
-        'location',
-        'phone',
-        'account_id',
+        'code',
         'status'
     ];
 }

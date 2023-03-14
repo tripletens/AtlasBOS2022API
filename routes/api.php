@@ -685,6 +685,12 @@ Route::group(
             'DealerController@reset_dealer_password'
         );
         
+        // send code to user 
+
+        Route::post(
+            '/reset-password-send-code-email',
+            'DealerController@reset_password_send_code_email'
+        );
         
     }
 );

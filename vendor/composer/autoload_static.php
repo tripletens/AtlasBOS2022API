@@ -356,8 +356,8 @@ class ComposerStaticInit139105d52f428235a3bd77bdbdbb53dc
         ),
         'Psr\\Http\\Message\\' => 
         array (
-            0 => __DIR__ . '/..' . '/psr/http-message/src',
-            1 => __DIR__ . '/..' . '/psr/http-factory/src',
+            0 => __DIR__ . '/..' . '/psr/http-factory/src',
+            1 => __DIR__ . '/..' . '/psr/http-message/src',
         ),
         'Psr\\Http\\Client\\' => 
         array (
@@ -632,6 +632,7 @@ class ComposerStaticInit139105d52f428235a3bd77bdbdbb53dc
         'App\\Models\\Products' => __DIR__ . '/../..' . '/app/Models/Products.php',
         'App\\Models\\PromotionalCategory' => __DIR__ . '/../..' . '/app/Models/PromotionalCategory.php',
         'App\\Models\\Promotional_ads' => __DIR__ . '/../..' . '/app/Models/Promotional_ads.php',
+        'App\\Models\\ResetPassword' => __DIR__ . '/../..' . '/app/Models/ResetPassword.php',
         'App\\Models\\SalesRep' => __DIR__ . '/../..' . '/app/Models/SalesRep.php',
         'App\\Models\\ServiceParts' => __DIR__ . '/../..' . '/app/Models/ServiceParts.php',
         'App\\Models\\User' => __DIR__ . '/../..' . '/app/Models/User.php',
