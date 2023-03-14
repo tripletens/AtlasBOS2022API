@@ -4118,6 +4118,53 @@ class DealerController extends Controller
         }
     }
 
+    public function reset_password_verify_code_email(Request $request){
+        $validator = Validator::make($request->all(), [
+            'email' => 'required',
+            'code'=> 'required'
+        ]);
+
+        if ($validator->fails()) {
+            $this->result->status_code = 422;
+            $this->result->message = [
+                'email' => $validator->errors()->get('email'),
+                'code' => $validator->errors()->get('code'),
+            ];
+            return response()->json($this->result);
+        } else {
+            $email = $request->input('email');
+
+            $code = $request->input('code');
+            // check if email exists in the db 
+
+            // $check_code = ResetPassword::where('email',$email)->where('code',$code)->first();
+            
+            $check_code = ResetPassword::where('email',$email)->get()->last();
+
+            if(!$check_code){
+                $this->result->status = false;
+                $this->result->status_code = 422;
+                $this->result->message = 'Sorry Email could not be verified';
+                return response()->json($this->result);
+            }
+
+            // check if the codes match 
+
+            if($check_code->code !== $code){
+                // code is incorrect 
+                $this->result->status = false;
+                $this->result->status_code = 422;
+                $this->result->message = 'Wrong Code, Kindly verify code and try again.';
+                return response()->json($this->result);
+            }
+
+            $this->result->status = true;
+            $this->result->status_code = 200;
+            $this->result->message = 'Password reset code verified successfully';
+            return response()->json($this->result);
+        }
+    }
+
     public function reset_dealer_password(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -4157,6 +4204,8 @@ class DealerController extends Controller
             }
         }
     }
+
+    
 
     public function test(){
         $result = (new AdminController)->fetch_locations();

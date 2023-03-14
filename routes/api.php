@@ -691,6 +691,14 @@ Route::group(
             '/reset-password-send-code-email',
             'DealerController@reset_password_send_code_email'
         );
+
+        // verify code password reset 
+
+        Route::post(
+            '/reset-password-verify-code-email',
+            'DealerController@reset_password_verify_code_email'
+        );
+        
         
     }
 );
