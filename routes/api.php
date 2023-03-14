@@ -678,6 +678,14 @@ Route::group(
             '/add-other-product-type-to-cart',
             'DealerController@add_other_product_type_to_cart'
         );
+
+        // reset dealer email 
+        Route::post(
+            '/reset-dealer-password',
+            'DealerController@reset_dealer_password'
+        );
+        
+        
     }
 );
 

@@ -4040,4 +4040,50 @@ class DealerController extends Controller
             return response()->json($this->result, 200);
         }
     }
+
+    public function reset_dealer_password(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'new_password' => 'required',
+            'email' => 'required',
+            'confirm_new_password' => 'required|same:new',
+        ]);
+
+        if ($validator->fails()) {
+            $this->result->status_code = 422;
+            $this->result->message = [
+                'new_password' => $validator->errors()->get('new_password'),
+                'email' => $validator->errors()->get('email'),
+                'confirm_new_password' => $validator
+                    ->errors()
+                    ->get('confirm_new_password'),
+            ];
+            return response()->json($this->result);
+        } else {
+            $email = $request->input('email');
+            $hash_password = Hash::make($request->input('new_password'));
+
+            $dealer_details = Dealer::where('email', $email)->get();
+            $dealer_details[0]->password = $hash_password;
+            $update_dealer_details = $dealer_details->save();
+
+            if (!$update_dealer_details) {
+                $this->result->status = false;
+                $this->result->status_code = 422;
+                $this->result->message = 'Sorry Password could not be changed';
+                return response()->json($this->result);
+            } else {
+                $this->result->status = true;
+                $this->result->status_code = 200;
+                $this->result->message = 'Password changed successfully';
+                return response()->json($this->result);
+            }
+        }
+    }
+
+    public function test(){
+        $result = (new AdminController)->fetch_locations();
+  
+        dd($result);
+    }
 }
