@@ -4104,7 +4104,8 @@ class DealerController extends Controller
 
                 $data = [
                     'code' => $code,
-                    'reset_url' => $reset_url
+                    'reset_url' => $reset_url,
+                    'email' => $email
                 ];
 
                 Mail::to($dealer_email)->send(new PasswordResetEmailCode($data));
