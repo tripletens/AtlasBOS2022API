@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers;
+use App\Http\Controllers\DealerController;
 
 /*
 |--------------------------------------------------------------------------
@@ -419,7 +420,7 @@ Route::group(
     }
 );
 
-///////////////// Dealer /////////////
+///////////////// Dealer ///////////// 
 Route::group(
     ['namespace' => 'App\Http\Controllers', 'middleware' => 'cors'],
     function () {
@@ -678,6 +679,27 @@ Route::group(
             '/add-other-product-type-to-cart',
             'DealerController@add_other_product_type_to_cart'
         );
+
+        // unautheticated routes
+        // reset dealer email 
+        Route::post(
+            '/reset-dealer-password',
+            [DealerController::class, 'reset_dealer_password']
+        );
+
+        // send code to user 
+
+        Route::post(
+            '/reset-password-send-code-email',
+            [DealerController::class, 'reset_password_send_code_email']
+        );
+
+        // verify code password reset 
+
+        Route::post(
+            '/reset-password-verify-code-email/{email}/{code}',
+            [DealerController::class, 'reset_password_verify_code_email']
+        );
     }
 );
 
@@ -787,25 +809,3 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
         'DealerController@attach_img_url_to_products'
     );
 });
-
-
-// unautheticated routes
- // reset dealer email 
- Route::post(
-    '/reset-dealer-password',
-    'DealerController@reset_dealer_password'
-);
-
-// send code to user 
-
-Route::post(
-    '/reset-password-send-code-email',
-    'DealerController@reset_password_send_code_email'
-);
-
-// verify code password reset 
-
-Route::post(
-    '/reset-password-verify-code-email/{email}/{}',
-    'DealerController@reset_password_verify_code_email'
-);

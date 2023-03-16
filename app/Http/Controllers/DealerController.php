@@ -44,7 +44,7 @@ class DealerController extends Controller
         set_time_limit(2500000000000000);
 
         $this->middleware('auth:api', [
-            'except' => ['login', 'register', 'test'],
+            'except' => ['login', 'register', 'test','reset_password_send_code_email','reset_dealer_password','reset_password_verify_code_email']
         ]);
 
         $this->result = (object) [
@@ -4044,6 +4044,7 @@ class DealerController extends Controller
     }
 
     public function reset_password_send_code_email(Request $request){
+        
         $validator = Validator::make($request->all(), [
             'email' => 'required',
             'reset_url'=> 'required'
@@ -4105,8 +4106,10 @@ class DealerController extends Controller
                 $data = [
                     'code' => $code,
                     'reset_url' => $reset_url,
-                    'email' => $email
+                    'email' => $dealer_email
                 ];
+
+                // return $data;
 
                 Mail::to($dealer_email)->send(new PasswordResetEmailCode($data));
                 
