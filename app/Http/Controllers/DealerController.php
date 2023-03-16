@@ -4095,6 +4095,7 @@ class DealerController extends Controller
                 if(!$save_details){
                     $this->result->status = false;
                     $this->result->status_code = 422;
+                    $this->result->data = $save_details;
                     $this->result->message = 'Sorry we could not generate code.';
                     return response()->json($this->result);
                 }
@@ -4118,26 +4119,26 @@ class DealerController extends Controller
         }
     }
 
-    public function reset_password_verify_code_email(Request $request){
-        $validator = Validator::make($request->all(), [
-            'email' => 'required',
-            'code'=> 'required'
-        ]);
+    public function reset_password_verify_code_email(Request $request,$email,$code){
+        // $validator = Validator::make($request->all(), [
+        //     // 'email' => 'required',
+        //     'code'=> 'required'
+        // ]);
 
-        if ($validator->fails()) {
-            $this->result->status_code = 422;
-            $this->result->message = [
-                'email' => $validator->errors()->get('email'),
-                'code' => $validator->errors()->get('code'),
-            ];
-            return response()->json($this->result);
-        } else {
-            $email = $request->input('email');
+        // if ($validator->fails()) {
+        //     $this->result->status_code = 422;
+        //     $this->result->message = [
+        //         // 'email' => $validator->errors()->get('email'),
+        //         'code' => $validator->errors()->get('code'),
+        //     ];
+        //     return response()->json($this->result);
+        // } else {
+            // $email = $request->input('email');
 
             $code = $request->input('code');
             // check if email exists in the db 
 
-            // $check_code = ResetPassword::where('email',$email)->where('code',$code)->first();
+            $check_code = ResetPassword::where('email',$email)->where('code',$code)->first();
             
             $check_code = ResetPassword::where('email',$email)->get()->last();
 
@@ -4162,7 +4163,7 @@ class DealerController extends Controller
             $this->result->status_code = 200;
             $this->result->message = 'Password reset code verified successfully';
             return response()->json($this->result);
-        }
+        // }
     }
 
     public function reset_dealer_password(Request $request)
