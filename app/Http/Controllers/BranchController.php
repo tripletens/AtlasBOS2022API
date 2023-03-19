@@ -1338,7 +1338,7 @@ class BranchController extends Controller
                 'atlas_dealers.account_id'
             )
             ->orderby('atlas_dealers.account_id', 'asc')
-            ->where('atlas_dealers.last_login', '!=', null)
+            ->whereNotNull('atlas_dealers.last_login')
             ->select(
                 'atlas_branch_assign_dealers.dealer_id as branch_dealer_id',
                 'atlas_dealers.full_name',
@@ -1388,7 +1388,7 @@ class BranchController extends Controller
                 'atlas_dealers.account_id'
             )
             ->orderby('atlas_dealers.account_id', 'asc')
-            ->where('atlas_dealers.last_login', '=', null)
+            ->whereNull('atlas_dealers.last_login')
             ->select(
                 'atlas_branch_assign_dealers.dealer_id as branch_dealer_id',
                 'atlas_dealers.full_name',
@@ -1539,5 +1539,111 @@ class BranchController extends Controller
         $this->result->message = 'User cart items';
 
         return response()->json($this->result);
+    }
+
+    
+    public function loggedin_dealer_data($branch_id){
+        // defaults to not logged in 
+        // get all the logged in dealers under a branch
+        $get_branch_details = BranchAssignDealer::where('branch_id', $branch_id)
+            ->join(
+                'atlas_dealers',
+                'atlas_branch_assign_dealers.dealer_id',
+                '=',
+                'atlas_dealers.account_id'
+            )
+            ->orderby('atlas_dealers.account_id', 'asc')
+            ->whereNotNull('atlas_dealers.last_login')
+            ->select(
+                'atlas_branch_assign_dealers.dealer_id as branch_dealer_id',
+                'atlas_dealers.full_name',
+                'atlas_dealers.first_name',
+                'atlas_dealers.last_name',
+                'atlas_dealers.email',
+                'atlas_dealers.email',
+                'atlas_dealers.email',
+                'atlas_dealers.email',
+                'atlas_dealers.account_id',
+                'atlas_dealers.phone',
+                'atlas_dealers.status',
+                'atlas_dealers.order_status',
+                'atlas_dealers.location',
+                'atlas_dealers.company_name',
+                'atlas_dealers.last_login',
+                'atlas_dealers.placed_order_date',
+                'atlas_dealers.order_pdf'
+            )
+            ->distinct('atlas_branch_assign_dealers.dealer_id')
+            ->get();
+
+        return $get_branch_details;
+    }
+
+    public function notloggedin_dealer_data($branch_id){
+        // defaults to not logged in 
+        // get all the logged in dealers under a branch
+        $get_branch_details = BranchAssignDealer::where('branch_id', $branch_id)
+            ->join(
+                'atlas_dealers',
+                'atlas_branch_assign_dealers.dealer_id',
+                '=',
+                'atlas_dealers.account_id'
+            )
+            ->orderby('atlas_dealers.account_id', 'asc')
+            ->whereNull('atlas_dealers.last_login')
+            ->select(
+                'atlas_branch_assign_dealers.dealer_id as branch_dealer_id',
+                'atlas_dealers.full_name',
+                'atlas_dealers.first_name',
+                'atlas_dealers.last_name',
+                'atlas_dealers.email',
+                'atlas_dealers.email',
+                'atlas_dealers.email',
+                'atlas_dealers.email',
+                'atlas_dealers.account_id',
+                'atlas_dealers.phone',
+                'atlas_dealers.status',
+                'atlas_dealers.order_status',
+                'atlas_dealers.location',
+                'atlas_dealers.company_name',
+                'atlas_dealers.last_login',
+                'atlas_dealers.placed_order_date',
+                'atlas_dealers.order_pdf'
+            )
+            ->distinct('atlas_branch_assign_dealers.dealer_id')
+            ->get();
+
+        return $get_branch_details;
+    }
+
+
+    
+    public function loggedin_and_not_loggedin_dealers($branch_id){
+
+
+        if(!empty($branch_id)){
+
+            $data = [
+                "logged_in_dealers" => $this->loggedin_dealer_data($branch_id),
+                "not_logged_in_dealers" => $this->notloggedin_dealer_data($branch_id)
+            ];
+
+            $this->result->status = true;
+            $this->result->status_code = 200;
+            $this->result->data = $data;
+            $this->result->message = 'Loggedin and not loggedin dealers fetched successfully ';
+        }
+       
+        else{
+
+            $this->result->status = false;
+            $this->result->status_code = 422;
+            $this->result->message = 'Invalid branch';
+        }
+
+        return response()->json($this->result,$this->result->status_code);
+
+        // get_all_branch_notloggedin_dealers
+        // get_all_branch_loggedin_dealers
     }
 }

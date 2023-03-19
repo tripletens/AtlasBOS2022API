@@ -700,6 +700,21 @@ Route::group(
             '/reset-password-verify-code-email/{email}/{code}',
             [DealerController::class, 'reset_password_verify_code_email']
         );
+
+
+        // export_all_cart_orders
+
+        Route::get(
+            '/export-all-cart-orders',
+            [DealerController::class, 'export_all_cart_orders']
+        );
+
+        // TEST 
+
+        Route::get(
+            '/test',
+            [DealerController::class, 'test']
+        );
     }
 );
 
@@ -802,10 +817,22 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
         'BranchController@get_dealer_order_summary'
     );
 
+    // get all the loggedin and not logged in dealers 
+
+    Route::get(
+        '/get-loggedin-and-not-loggedin-dealers/{branch_id}',
+        'BranchController@loggedin_and_not_loggedin_dealers'
+    );
+
+    
+
     // test for attaching image url to all products individually
 
     Route::get(
         '/attach_img_url_to_products',
         'DealerController@attach_img_url_to_products'
     );
+
+
+
 });

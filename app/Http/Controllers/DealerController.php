@@ -4123,7 +4123,7 @@ class DealerController extends Controller
         }
     }
 
-    public function reset_password_verify_code_email(Request $request,$email,$code){
+    public function reset_password_verify_code_email($email,$code){
         // $validator = Validator::make($request->all(), [
         //     // 'email' => 'required',
         //     'code'=> 'required'
@@ -4139,7 +4139,7 @@ class DealerController extends Controller
         // } else {
             // $email = $request->input('email');
 
-            $code = $request->input('code');
+            // $code = $request->input('code');
             // check if email exists in the db 
 
             $check_code = ResetPassword::where('email',$email)->where('code',$code)->first();
@@ -4210,13 +4210,124 @@ class DealerController extends Controller
         }
     }
 
+    public function export_all_carded_orders(Request $request)
+    {
+        $from = $request->query('from') != '' ? $request->query('from') : false;
+        $to = $request->query('to') != '' ? $request->query('to') : false;
+
+        $from = Carbon::createFromFormat('Y-m-d', $from)->startOfDay();
+        $to = Carbon::createFromFormat('Y-m-d', $to)->endOfDay();
+
+        if ($from && $to) {
+            $dealer = Dealer::query()
+                ->where('order_status', '1')
+                ->whereBetween('placed_order_date', [$from, $to])
+                ->get();
+
+            $excel_data = AdminController::load_carded_query($dealer);
+
+            $this->result->status = true;
+            $this->result->data = $excel_data;
+            return response()->json($this->result);
+        } elseif ($from) {
+            $dealer = Dealer::query()
+                ->where('order_status', '1')
+                ->where('placed_order_date', '>=', $from)
+                ->get();
+
+            $excel_data = AdminController::load_carded_query($dealer);
+            $this->result->status = true;
+            $this->result->data = $excel_data;
+            return response()->json($this->result);
+        } elseif ($to) {
+            $this->result->status = true;
+            $this->result->data->result_data = [];
+            return response()->json($this->result);
+        } else {
+            $dealer = Dealer::query()
+                ->where('order_status', '1')
+                ->get();
+
+            $excel_data = AdminController::load_carded_query($dealer);
+            $this->result->status = true;
+            $this->result->data = $excel_data;
+            return response()->json($this->result);
+        }
+    }
+
+    public function export_all_cart_orders(Request $request)
+    {
+
+        $validator = Validator::make($request->all(), [
+            'from' => 'required',
+            'to'=> 'required',
+            'dealer_id' => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            $this->result->status_code = 422;
+            $this->result->message = [
+                'from' => $validator->errors()->get('from'),
+                'to' => $validator->errors()->get('to'),
+            ];
+            return response()->json($this->result);
+        } else {
+
+            $from = $request->input('from') != '' ? $request->input('from') : false;
+            $to = $request->input('to') != '' ? $request->input('to') : false;
+            
+            $from = Carbon::createFromFormat('Y-m-d', $from)->startOfDay();
+            $to = Carbon::createFromFormat('Y-m-d', $to)->endOfDay();
+
+            $dealer_id = $request->input('dealer_id');
+
+            if ($from && $to) {
+                $dealer_cart = Cart::query()
+                    ->where('dealer',$dealer_id)->where('status', '1')
+                    ->whereBetween('created_at', [$from, $to])
+                    ->get();
+
+                foreach($dealer_cart as $item){
+                    $item['spec_data'] = json_decode($item['spec_data']);
+                }
+                
+                $this->result->status = true;
+                $this->result->data = $dealer_cart;
+                return response()->json($this->result);
+            } elseif ($from) {
+                $dealer_cart = Dealer::query()
+                    ->where('dealer',$dealer_id)
+                    ->where('status', '1')
+                    ->where('created_at', '>=', $from)
+                    ->get();
     
+                $this->result->status = true;
+                $this->result->data = $dealer_cart;
+                return response()->json($this->result);
+            } elseif ($to) {
+                $this->result->status = true;
+                $this->result->data = [];
+                return response()->json($this->result);
+            } else {
+                $dealer_cart = Cart::query()
+                    ->where('dealer',$dealer_id)
+                    ->where('status', '1')
+                    ->get();
+
+                $this->result->status = true;
+                $this->result->data = $dealer_cart;
+                return response()->json($this->result);
+            }
+        }   
+    }
 
     public function test(){
         $result = (new AdminController)->fetch_locations();
   
-        dd($result);
+        print($result);
     }
+
+    
 
 
 
