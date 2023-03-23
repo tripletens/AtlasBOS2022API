@@ -128,9 +128,9 @@ class BranchController extends Controller
             'access_token' => $token,
             'token_type' => 'bearer',
             'expires_in' =>
-                auth()
-                    ->factory()
-                    ->getTTL() * 60,
+            auth()
+                ->factory()
+                ->getTTL() * 60,
         ]);
     }
 
@@ -385,9 +385,9 @@ class BranchController extends Controller
             $this->result->data = [
                 'branch' => $fetch_branch_details,
                 'dealers' =>
-                    $format_dealer_array && count($format_dealer_array) > 0
-                        ? $format_dealer_array
-                        : [],
+                $format_dealer_array && count($format_dealer_array) > 0
+                    ? $format_dealer_array
+                    : [],
             ];
             $this->result->message = 'All Branches fetched Successfully';
             return response()->json($this->result);
@@ -1091,6 +1091,166 @@ class BranchController extends Controller
         // send them to the front end
     }
 
+    // get all dealers with pending orders
+    public function fetch_all_dealers_with_pending_order($branch_id)
+    {
+        // fetch all dealers assigned to a branch
+        $fetch_branch_details = Branch::where('id', $branch_id)
+            ->where('status', '1')
+            ->first();
+        // return $fetch_branch_details;
+
+        if (!$fetch_branch_details) {
+            $this->result->status = false;
+            $this->result->status_code = 422;
+            $this->result->data = [];
+            $this->result->message = 'Sorry branch doesnt exist or deactivated';
+            return response()->json($this->result);
+        } else {
+            $fetch_dealers = BranchAssignDealer::where(
+                'branch_id',
+                $branch_id
+            )->get();
+
+            $fetch_account_ids = $fetch_dealers->pluck('dealer_id')->toArray();
+
+            $all_dealer_ids = DB::table('atlas_dealers')
+                ->wherein('account_id', $fetch_account_ids)
+                ->where('order_status', 1)
+                ->pluck('id')
+                ->toArray();
+
+            $all_orders = DB::table('atlas_dealers')
+                ->wherein('id', $all_dealer_ids)
+                ->where('order_status', '1')
+                ->select(
+                    'atlas_dealers.id',
+                    'atlas_dealers.full_name',
+                    'atlas_dealers.first_name',
+                    'atlas_dealers.last_name',
+                    'atlas_dealers.email',
+                    'atlas_dealers.email',
+                    'atlas_dealers.email',
+                    'atlas_dealers.email',
+                    'atlas_dealers.account_id',
+                    'atlas_dealers.phone',
+                    'atlas_dealers.status',
+                    'atlas_dealers.order_status',
+                    'atlas_dealers.location',
+                    'atlas_dealers.company_name',
+                    'atlas_dealers.last_login',
+                    'atlas_dealers.placed_order_date',
+                    'atlas_dealers.order_pdf',
+                    'placed_order_date as order_date'
+                )
+                ->orderby('placed_order_date', 'desc')
+                ->get()
+                ->toArray();
+
+            $format_all_orders = array_map(function ($record) {
+                $dealer_id = $record->id;
+
+                $check_total_price = Cart::where('dealer', $dealer_id)->sum(
+                    'price'
+                );
+
+                $record->total_amount = number_format($check_total_price, 2);
+
+                // total pending amount i.e amount of items that has not been submitted
+                $record->total_pending_amt = number_format(
+                    DB::table('cart')
+                        ->where('dealer', $dealer_id)
+                        ->where('status', '0')
+                        ->sum('price'),
+                    2
+                );
+
+                // total pending items i.e no of items that has not been submitted
+                $record->total_pending_items = DB::table('cart')
+                    ->where('dealer', $dealer_id)
+                    ->where('status', '0')
+                    ->count();
+
+                // list of pending items 
+                $record->total_pending_items = DB::table('cart')
+                    ->where('dealer', $dealer_id)
+                    ->where('status', '0')
+                    ->get();
+
+                foreach ($record->total_pending_items as $item) {
+                    $item->spec_data = json_decode($item->spec_data);
+                }
+
+                // list of completed order items 
+                $record->total_completed_items = DB::table('cart')
+                    ->where('dealer', $dealer_id)
+                    ->where('status', '1')
+                    ->get();
+
+                foreach ($record->total_completed_items as $item) {
+                    $item->spec_data = json_decode($item->spec_data);
+                }
+
+                return $record;
+            }, $all_orders);
+
+            // return $format_all_orders;
+
+            // $dealers_cart_orders = DB::table('atlas_branch_assign_dealers')
+            //     ->where('atlas_dealers.order_status','1')
+            //     ->where('atlas_dealers.status','1')
+            //     ->join( 'atlas_dealers', 'atlas_branch_assign_dealers.dealer_id', '=', 'atlas_dealers.account_id' )
+            //     ->join( 'cart', 'atlas_branch_assign_dealers.dealer_id', '=', 'cart.dealer' )
+            //     ->orderby('atlas_dealers.placed_order_date','desc')
+            //     ->select('atlas_dealers.full_name', 'atlas_dealers.first_name',
+            //     'atlas_dealers.last_name','atlas_dealers.placed_order_date as order_date')
+            //     ->distinct('atlas_branch_assign_dealers.dealer_id')
+            //     ->get();
+
+            if (!$all_orders) {
+                $this->result->status = false;
+                $this->result->status_code = 422;
+                $this->result->message =
+                    'Sorry we could not fetch all the dealers assigned to the branch';
+                return response()->json($this->result);
+            }
+
+            // return $dealers_cart_orders;
+            // $dealer_array = [];
+
+            // return($fetch_dealers);
+
+            // foreach($fetch_dealers as $dealer){
+            //     $dealer = (object)$dealer;
+            //     $fetch_dealer_details = Dealer::where('account_id',$dealer->dealer_id)->where('order_status',1)->first();
+
+            //     if($fetch_dealer_details){
+
+            //         // check if the dealer has a  order
+
+            //         $check_dealer = Cart::where('dealer',$fetch_dealer_details->id)->where('status','1')->get();
+
+            //         if($check_dealer && count($check_dealer) > 0){
+            //             array_push($dealer_array,$fetch_dealer_details);
+            //         }
+            //     }
+            // }
+
+            $this->result->status = true;
+            $this->result->status_code = 200;
+            $this->result->data = $format_all_orders ? $format_all_orders : [];
+            $this->result->message =
+                'All dealers with pending orders fetched successfully';
+            return response()->json($this->result);
+        }
+
+        // check if the dealer has a catalogue order
+
+        // collect all the dealers with catalogue order
+
+        // send them to the front end
+    }
+
     public function fetch_all_dealers_with_active_service_parts_order(
         $branch_id
     ) {
@@ -1453,8 +1613,8 @@ class BranchController extends Controller
                     10,
                     $record['atlas_id']
                 ) == true
-                    ? true
-                    : false;
+                ? true
+                : false;
 
             return array_merge(
                 [
@@ -1541,8 +1701,9 @@ class BranchController extends Controller
         return response()->json($this->result);
     }
 
-    
-    public function loggedin_dealer_data($branch_id){
+
+    public function loggedin_dealer_data($branch_id)
+    {
         // defaults to not logged in 
         // get all the logged in dealers under a branch
         $get_branch_details = BranchAssignDealer::where('branch_id', $branch_id)
@@ -1579,7 +1740,8 @@ class BranchController extends Controller
         return $get_branch_details;
     }
 
-    public function notloggedin_dealer_data($branch_id){
+    public function notloggedin_dealer_data($branch_id)
+    {
         // defaults to not logged in 
         // get all the logged in dealers under a branch
         $get_branch_details = BranchAssignDealer::where('branch_id', $branch_id)
@@ -1617,11 +1779,12 @@ class BranchController extends Controller
     }
 
 
-    
-    public function loggedin_and_not_loggedin_dealers($branch_id){
+
+    public function loggedin_and_not_loggedin_dealers($branch_id)
+    {
 
 
-        if(!empty($branch_id)){
+        if (!empty($branch_id)) {
 
             $data = [
                 "logged_in_dealers" => $this->loggedin_dealer_data($branch_id),
@@ -1632,16 +1795,14 @@ class BranchController extends Controller
             $this->result->status_code = 200;
             $this->result->data = $data;
             $this->result->message = 'Loggedin and not loggedin dealers fetched successfully ';
-        }
-       
-        else{
+        } else {
 
             $this->result->status = false;
             $this->result->status_code = 422;
             $this->result->message = 'Invalid branch';
         }
 
-        return response()->json($this->result,$this->result->status_code);
+        return response()->json($this->result, $this->result->status_code);
 
         // get_all_branch_notloggedin_dealers
         // get_all_branch_loggedin_dealers

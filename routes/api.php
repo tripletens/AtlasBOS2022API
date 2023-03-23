@@ -786,6 +786,11 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
     );
 
     Route::get(
+        '/fetch_all_dealers_with_pending_order/{branch_id}',
+        'BranchController@fetch_all_dealers_with_pending_order'
+    );
+
+    Route::get(
         '/fetch_all_dealers_with_active_carded_products_order/{branch_id}',
         'BranchController@fetch_all_dealers_with_active_carded_products_order'
     );
