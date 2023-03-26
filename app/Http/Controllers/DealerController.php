@@ -44,7 +44,7 @@ class DealerController extends Controller
         set_time_limit(2500000000000000);
 
         $this->middleware('auth:api', [
-            'except' => ['login', 'register', 'test','reset_password_send_code_email','reset_dealer_password','reset_password_verify_code_email']
+            'except' => ['login', 'register', 'test', 'reset_password_send_code_email', 'reset_dealer_password', 'reset_password_verify_code_email']
         ]);
 
         $this->result = (object) [
@@ -4020,14 +4020,14 @@ class DealerController extends Controller
                         "catalogue_data" => json_encode($new_data)
                     ]);
                     break;
-                default: 
+                default:
                     $this->result->status = false;
                     $this->result->status_code = 422;
                     $this->result->message = 'please add a valid type ie. carded_products,service_parts_products, or catalogue_products';
                     return response()->json($this->result, 422);
-                break;
+                    break;
             }
-            
+
             if (!$add_carded_to_cart) {
                 $this->result->status = false;
                 $this->result->status_code = 422;
@@ -4038,16 +4038,17 @@ class DealerController extends Controller
             $this->result->status = true;
             $this->result->status_code = 200;
             $this->result->data = $add_carded_to_cart;
-            $this->result->message = ucwords(str_replace('_',' ',$type)) . ' added to cart successfully';
+            $this->result->message = ucwords(str_replace('_', ' ', $type)) . ' added to cart successfully';
             return response()->json($this->result, 200);
         }
     }
 
-    public function reset_password_send_code_email(Request $request){
-        
+    public function reset_password_send_code_email(Request $request)
+    {
+
         $validator = Validator::make($request->all(), [
             'email' => 'required',
-            'reset_url'=> 'required'
+            'reset_url' => 'required'
         ]);
 
         if ($validator->fails()) {
@@ -4065,7 +4066,7 @@ class DealerController extends Controller
 
             $check_email = $dealer_details = Dealer::where('email', $email)->get();
 
-            if(!$check_email){
+            if (!$check_email) {
                 $this->result->status = false;
                 $this->result->status_code = 422;
                 $this->result->message = 'Sorry Email could not be verified';
@@ -4073,12 +4074,12 @@ class DealerController extends Controller
             }
 
             // check if the email exists 
-            if(count($check_email) == 0){
+            if (count($check_email) == 0) {
                 $this->result->status = false;
                 $this->result->status_code = 422;
                 $this->result->message = 'Sorry Email does\'t exists in our records';
                 return response()->json($this->result);
-            }else{
+            } else {
                 // email exists 
 
                 // generate code 
@@ -4090,10 +4091,10 @@ class DealerController extends Controller
 
                 // save the details 
                 $save_details = ResetPassword::create([
-                    'dealer_id'=> $dealer_id, 'code' => $code, 'email' => $dealer_email,
+                    'dealer_id' => $dealer_id, 'code' => $code, 'email' => $dealer_email,
                 ]);
 
-                if(!$save_details){
+                if (!$save_details) {
                     $this->result->status = false;
                     $this->result->status_code = 422;
                     $this->result->data = $save_details;
@@ -4112,9 +4113,9 @@ class DealerController extends Controller
                 // return $data;
 
                 Mail::to($dealer_email)->send(new PasswordResetEmailCode($data));
-                
+
                 // send the code reset_url
-                
+
                 $this->result->status = true;
                 $this->result->status_code = 200;
                 $this->result->message = 'Email Code generated and sent successfully';
@@ -4123,7 +4124,8 @@ class DealerController extends Controller
         }
     }
 
-    public function reset_password_verify_code_email($email,$code){
+    public function reset_password_verify_code_email($email, $code)
+    {
         // $validator = Validator::make($request->all(), [
         //     // 'email' => 'required',
         //     'code'=> 'required'
@@ -4137,37 +4139,62 @@ class DealerController extends Controller
         //     ];
         //     return response()->json($this->result);
         // } else {
-            // $email = $request->input('email');
+        // $email = $request->input('email');
 
-            // $code = $request->input('code');
-            // check if email exists in the db 
+        // $code = $request->input('code');
+        // check if email exists in the db 
 
-            $check_code = ResetPassword::where('email',$email)->where('code',$code)->first();
-            
-            $check_code = ResetPassword::where('email',$email)->get()->last();
+        $check_code = ResetPassword::where('email', $email)->get()->last();
 
-            if(!$check_code){
-                $this->result->status = false;
-                $this->result->status_code = 422;
-                $this->result->message = 'Sorry Email could not be verified';
-                return response()->json($this->result);
-            }
+        // return $check_code;
 
-            // check if the codes match 
-
-            if($check_code->code !== $code){
-                // code is incorrect 
-                $this->result->status = false;
-                $this->result->status_code = 422;
-                $this->result->message = 'Wrong Code, Kindly verify code and try again.';
-                return response()->json($this->result);
-            }
-
-            $this->result->status = true;
-            $this->result->status_code = 200;
-            $this->result->message = 'Password reset code verified successfully';
+        if (!$check_code) {
+            $this->result->status = false;
+            $this->result->status_code = 422;
+            $this->result->message = 'Sorry Email could not be verified. Try again later.';
             return response()->json($this->result);
-        // }
+        }
+
+        // check the code has expired 
+        if ($check_code->status == 0) {
+            // code is incorrect and has expired
+            $this->result->status = false;
+            $this->result->status_code = 422;
+            $this->result->message = 'Sorry, Code has expired. Try again later. ';
+            return response()->json($this->result);
+        }
+
+        // check if the codes match 
+        if ($check_code->code !== $code) {
+            // code is incorrect 
+            $this->result->status = false;
+            $this->result->status_code = 422;
+            $this->result->message = 'Wrong Code, Kindly verify code and try again.';
+            return response()->json($this->result);
+        }
+
+        // update the record status to 0 
+        // to deactivate the code we change it to 0
+        $update_record_status = ResetPassword::where('email', $email)->where('code', $code)->update(
+            [
+                "status" => 0
+            ]
+        );
+
+        // return $update_record_status;
+
+        if (!$update_record_status) {
+            // we could not update the process status
+            $this->result->status = false;
+            $this->result->status_code = 422;
+            $this->result->message = 'Sorry we could not update the process status, Kindly try again later.';
+            return response()->json($this->result);
+        }
+
+        $this->result->status = true;
+        $this->result->status_code = 200;
+        $this->result->message = 'Password reset code verified successfully';
+        return response()->json($this->result);
     }
 
     public function reset_dealer_password(Request $request)
@@ -4260,7 +4287,7 @@ class DealerController extends Controller
 
         $validator = Validator::make($request->all(), [
             'from' => 'required',
-            'to'=> 'required',
+            'to' => 'required',
             'dealer_id' => 'required'
         ]);
 
@@ -4275,7 +4302,7 @@ class DealerController extends Controller
 
             $from = $request->input('from') != '' ? $request->input('from') : false;
             $to = $request->input('to') != '' ? $request->input('to') : false;
-            
+
             $from = Carbon::createFromFormat('Y-m-d', $from)->startOfDay();
             $to = Carbon::createFromFormat('Y-m-d', $to)->endOfDay();
 
@@ -4283,24 +4310,24 @@ class DealerController extends Controller
 
             if ($from && $to) {
                 $dealer_cart = Cart::query()
-                    ->where('dealer',$dealer_id)->where('status', '1')
+                    ->where('dealer', $dealer_id)->where('status', '1')
                     ->whereBetween('created_at', [$from, $to])
                     ->get();
 
-                foreach($dealer_cart as $item){
+                foreach ($dealer_cart as $item) {
                     $item['spec_data'] = json_decode($item['spec_data']);
                 }
-                
+
                 $this->result->status = true;
                 $this->result->data = $dealer_cart;
                 return response()->json($this->result);
             } elseif ($from) {
                 $dealer_cart = Dealer::query()
-                    ->where('dealer',$dealer_id)
+                    ->where('dealer', $dealer_id)
                     ->where('status', '1')
                     ->where('created_at', '>=', $from)
                     ->get();
-    
+
                 $this->result->status = true;
                 $this->result->data = $dealer_cart;
                 return response()->json($this->result);
@@ -4310,7 +4337,7 @@ class DealerController extends Controller
                 return response()->json($this->result);
             } else {
                 $dealer_cart = Cart::query()
-                    ->where('dealer',$dealer_id)
+                    ->where('dealer', $dealer_id)
                     ->where('status', '1')
                     ->get();
 
@@ -4318,17 +4345,13 @@ class DealerController extends Controller
                 $this->result->data = $dealer_cart;
                 return response()->json($this->result);
             }
-        }   
+        }
     }
 
-    public function test(){
+    public function test()
+    {
         $result = (new AdminController)->fetch_locations();
-  
+
         print($result);
     }
-
-    
-
-
-
 }

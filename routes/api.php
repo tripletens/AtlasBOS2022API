@@ -696,7 +696,7 @@ Route::group(
 
         // verify code password reset 
 
-        Route::post(
+        Route::get(
             '/reset-password-verify-code-email/{email}/{code}',
             [DealerController::class, 'reset_password_verify_code_email']
         );
