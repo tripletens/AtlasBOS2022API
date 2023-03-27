@@ -674,7 +674,6 @@ Route::group(
         );
 
         // submit other products to cart i.e carded, catalogue and carded products 
-
         Route::post(
             '/add-other-product-type-to-cart',
             'DealerController@add_other_product_type_to_cart'
@@ -688,14 +687,12 @@ Route::group(
         );
 
         // send code to user 
-
         Route::post(
             '/reset-password-send-code-email',
             [DealerController::class, 'reset_password_send_code_email']
         );
 
         // verify code password reset 
-
         Route::get(
             '/reset-password-verify-code-email/{email}/{code}',
             [DealerController::class, 'reset_password_verify_code_email']
@@ -703,14 +700,12 @@ Route::group(
 
 
         // export_all_cart_orders
-
         Route::get(
             '/export-all-cart-orders',
             [DealerController::class, 'export_all_cart_orders']
         );
 
         // TEST 
-
         Route::get(
             '/test',
             [DealerController::class, 'test']
