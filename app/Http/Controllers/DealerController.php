@@ -2409,10 +2409,18 @@ class DealerController extends Controller
                 $formated_data = array_merge($old_data, $new_records);
 
                 $check_catalogue_order[0]->data = json_encode($formated_data);
-
+                
                 $update_record = $check_catalogue_order[0]->save();
 
-                if (!$update_record) {
+                // add item to cart here 
+
+                $add_to_cart = Cart::create([
+                    "dealer" => $dealer_id,
+                    "catalogue_data" => json_encode($formated_data)
+                ]);
+
+
+                if (!$update_record || !$add_to_cart) {
                     $this->result->status = false;
                     $this->result->status_code = 422;
                     $this->result->message =
@@ -3358,7 +3366,15 @@ class DealerController extends Controller
 
                 $update_record = $check_dealer[0]->save();
 
-                if (!$update_record) {
+                // add item to cart here 
+
+                $add_to_cart = Cart::create([
+                    "dealer" => $dealer_id,
+                    "carded_data" => json_encode($formated_data)
+                ]);
+                
+
+                if (!$update_record || !$add_to_cart) {
                     $this->result->status = false;
                     $this->result->status_code = 422;
                     $this->result->message =
@@ -3432,7 +3448,14 @@ class DealerController extends Controller
 
                 $update_record = $check_dealer[0]->save();
 
-                if (!$update_record) {
+                // add item to cart here 
+
+                $add_to_cart = Cart::create([
+                    "dealer" => $dealer,
+                    "catalogue_data" => json_encode($formated_data)
+                ]);
+                
+                if (!$update_record || !$add_to_cart) {
                     $this->result->status = false;
                     $this->result->status_code = 422;
                     $this->result->message =
@@ -4005,6 +4028,7 @@ class DealerController extends Controller
                         "status" => true,
                         "carded_data" => json_encode($new_data)
                     ]);
+                    $add_carded_to_cart->carded_data = json_decode($add_carded_to_cart->carded_data);
                     break;
                 case 'service_parts_products':
                     $add_carded_to_cart = Cart::create([
@@ -4012,6 +4036,7 @@ class DealerController extends Controller
                         "status" => true,
                         "service_data" => json_encode($new_data)
                     ]);
+                    $add_carded_to_cart->service_data = json_decode(json_decode($add_carded_to_cart->service_data));
                     break;
                 case 'catalogue_products':
                     $add_carded_to_cart = Cart::create([
@@ -4019,6 +4044,7 @@ class DealerController extends Controller
                         "status" => true,
                         "catalogue_data" => json_encode($new_data)
                     ]);
+                    $add_carded_to_cart->catalogue_data = json_decode($add_carded_to_cart->catalogue_data);
                     break;
                 default:
                     $this->result->status = false;
@@ -4026,7 +4052,7 @@ class DealerController extends Controller
                     $this->result->message = 'please add a valid type ie. carded_products,service_parts_products, or catalogue_products';
                     return response()->json($this->result, 422);
                     break;
-            }
+            }   
 
             if (!$add_carded_to_cart) {
                 $this->result->status = false;
@@ -4034,6 +4060,8 @@ class DealerController extends Controller
                 $this->result->message = 'Sorry we could not add the carded product to cart';
                 return response()->json($this->result, 422);
             }
+
+            
 
             $this->result->status = true;
             $this->result->status_code = 200;
