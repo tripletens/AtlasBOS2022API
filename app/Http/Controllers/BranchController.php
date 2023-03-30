@@ -1251,6 +1251,36 @@ class BranchController extends Controller
         // send them to the front end
     }
 
+    // get all dealers with pending orders
+    public function fetch_dealer_with_pending_order($dealer_id)
+    {
+        //fetch all pending orders of a dealer with dealer_id
+        $dealer_pending_orders = DB::table('cart')
+            ->where('dealer', $dealer_id)
+            ->where('status', '0')
+            ->get();
+
+        if (!$dealer_pending_orders) {
+            $this->result->status = false;
+            $this->result->status_code = 422;
+            $this->result->data = [];
+            $this->result->message = 'Sorry dealer doesnt exist or deactivated';
+            return response()->json($this->result);
+        } else {
+
+            foreach ($dealer_pending_orders as $item) {
+                $item->spec_data = json_decode($item->spec_data);
+            }
+
+            $this->result->status = true;
+            $this->result->status_code = 200;
+            $this->result->data = $dealer_pending_orders ? $dealer_pending_orders : [];
+            $this->result->message =
+                'Dealer pending orders fetched successfully';
+            return response()->json($this->result);
+        }
+    }
+
     public function fetch_all_dealers_with_active_service_parts_order(
         $branch_id
     ) {
