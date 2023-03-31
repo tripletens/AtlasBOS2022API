@@ -3848,6 +3848,54 @@ class AdminController extends Controller
         return response()->json($this->result);
     }
 
+    public function admin_view_dealer_order($id)
+    {
+        $data = DB::table('cart')
+            ->select(
+                'atlas_dealers.account_id',
+                'cart.id',
+                'atlas_dealers.first_name',
+                'atlas_dealers.last_name',
+                'cart.*'
+            )
+            ->join('atlas_dealers', 'cart.dealer', '=', 'atlas_dealers.id')
+            ->where('cart.dealer', $id)
+            ->get();
+
+        $dealer_d = Dealer::where('id', $id)
+            ->get()
+            ->first();
+        $account_id = $dealer_d->account_id;
+        $catalogue_order = Catalogue_Order::where('dealer', $account_id)
+            ->get()
+            ->first();
+        $carded_products = CardedProducts::where('dealer', $account_id)
+            ->get()
+            ->first();
+        $service_products = ServiceParts::where('dealer', $account_id)
+            ->get()
+            ->first();
+
+        if ($data) {
+            foreach ($data as $value) {
+                $spec_data = $value->spec_data
+                    ? json_decode($value->spec_data)
+                    : [];
+                $value->spec_data = $spec_data;
+            }
+        }
+
+        $this->result->status = true;
+        $this->result->status_code = 200;
+        $this->result->data->cart = $data;
+        $this->result->data->service_part = $service_products;
+        $this->result->data->catalogue = $catalogue_order;
+        $this->result->data->carded = $carded_products;
+
+        $this->result->message = 'View Dealer Orders';
+        return response()->json($this->result);
+    }
+
     public function view_order($id)
     {
         // $data =  DB::table( 'atlas_user_cart' )
@@ -3891,12 +3939,6 @@ class AdminController extends Controller
 
     public function view_order_by_dealer_id($dealer_id)
     {
-        // $data =  DB::table( 'atlas_user_cart' )
-        // ->select( 'atlas_user_cart.cart_data', 'atlas_user_cart.user_id', 'atlas_user_cart.id', 'atlas_dealers.first_name', 'atlas_dealers.last_name' )
-        // ->join( 'atlas_dealers', 'atlas_user_cart.user_id', '=', 'atlas_dealers.id' )
-        // ->where( 'atlas_user_cart.id', $id )
-        // ->get();
-
         $data = DB::table('atlas_dealers')
             ->select(
                 'atlas_user_cart.cart_data',

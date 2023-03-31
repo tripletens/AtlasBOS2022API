@@ -279,6 +279,11 @@ Route::group(
         Route::get('/view-order/{id}', 'AdminController@view_order');
 
         Route::get(
+            '/admin-view-dealer-cart/{id}',
+            'AdminController@admin_view_dealer_order'
+        );
+
+        Route::get(
             '/view-order-by-dealer-id/{dealer_id}',
             'AdminController@view_order_by_dealer_id'
         );
