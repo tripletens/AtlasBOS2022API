@@ -861,7 +861,7 @@ class DealerController extends Controller
         $this->result->data->pdf = $bb;
         $this->result->data->dealer = $dealer_name;
 
-        $this->result->message = 'Email has been sent';
+        $this->result->message = 'PDF downloaded';
         return response()->json($this->result);
     }
 
