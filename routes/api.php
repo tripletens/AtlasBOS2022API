@@ -631,6 +631,8 @@ Route::group(
 
         Route::get('/download-pdf/{id}', 'DealerController@download_pdf');
 
+        Route::get('/download-pending-order-pdf/{dealer_id}', 'DealerController@download_pending_order_pdf');
+        
         Route::get(
             '/submit_catalogue_order/{dealer}',
             'DealerController@submit_catalogue_order'
