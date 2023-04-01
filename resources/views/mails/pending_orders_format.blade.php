@@ -125,9 +125,9 @@
         <div class="row">
             <div class="col-6">
                 <h2 class="top-title">ATLAS {{ now()->year }} BOOKING PROGRAM</h2>
-                <h2 class="dealer-name">Dealer Name: {{ $dealer_name }}</h2>
-                <h2 class="dealer-name">Dealer Account #: {{ $dealer_account_id }}</h2>
-                <h2 class="dealer-name">Order Date: {{ $dealer_updated_at }} MST</h2>
+                <h2 class="dealer-name">Dealer Name: {{ $dealer_details[0]['full_name'] }}</h2>
+                <h2 class="dealer-name">Dealer Account #: {{ $dealer_details[0]['account_id'] }}</h2>
+                {{--  <h2 class="dealer-name">Order Date: {{ $dealer_updated_at }} MST</h2>  --}}
             </div>
             <div class="mt-3">
                 <img src="https://atlasbookingprogram.com/assets/new-atlas-logo.png" class="com-logo" alt="">
@@ -139,9 +139,8 @@
 
 
     <div style="margin-top: 70px">
-
     {{-- Pending orders Table --}}
-    @if (count($appliance) > 0)
+    @if ($cart_data && count($cart_data) > 0 )
         <div>
             <h5 class="top-title-table" style="">Pending Orders
             </h5>
@@ -159,9 +158,9 @@
 
             <tbody>
 
-                {{ $appliance_total = 0 }}
-                @foreach ($appliance as $item)
-                    {{ $appliance_total += floatval($item['price']) }}
+                {{ $cart_total = 0 }}
+                @foreach ($cart_data as $item)
+                    {{ $cart_total += floatval($item['price']) }}
                     <tr>
                         <td class="table-value-custom">
                             {{ $item['qty'] }}
@@ -169,9 +168,9 @@
                         <td class="table-value-custom">
                             {{ $item['atlas_id'] }}
                         </td>
-                        {{-- <td>
+                        {{--  <td>
                             <img src="{{ $item['vendor_img'] }}" class="vendor-logo" alt="">
-                        </td> --}}
+                        </td>  --}}
                         <td class="table-value-custom">
                             {{ $item['desc'] }}
                         </td>
@@ -189,11 +188,11 @@
                     <td colspan="4">
                         <h5 class="each-total-cate-text" style="">
                             Total For
-                            Appliance</h5>
+                            Pending Orders</h5>
                     </td>
                     <td>
                         <h5 class="each-total-text" style="">
-                            ${{ number_format($appliance_total, 2) }}</h5>
+                            ${{ number_format($cart_total, 2) }}</h5>
                     </td>
                 </tr>
 
@@ -203,17 +202,17 @@
     @endif
 
 
-    <div style="width: 100%; text-align: right; border: 1px solid black; margin-top: 20px">
+    {{--  <div style="width: 100%; text-align: right; border: 1px solid black; margin-top: 20px">
         <h5 class="each-total-cate-text" style="display: inline-block; border-right: 1px solid black">Grand Total:
         </h5>
         <h5 class="each-total-text" style="display: inline-block; padding-right: 30px">
             ${{ number_format($grand_total, 2) }}
         </h5>
-    </div>
+    </div>  --}}
 
 
     {{-- Catalougue Products Table --}}
-    @if ($catalogue_data)
+    @if ($catalogue_products)
         <div style="margin-top: 30px">
             <h5 class="top-title-table" style="">Catalogue Products</h5>
         </div>
@@ -223,18 +222,31 @@
                     <th class="thead-custom">Quantity</th>
                     <th class="thead-custom">Atlas #</th>
                     <th class="thead-custom">Price ($)</th>
-                    <th class="thead-custom">Description</th>
                 </tr>
             </thead>
             <tbody>
-                @if ($catalogue_data)
-                    @foreach ($catalogue_data as $item)
+                @if ($catalogue_products)
+                    {{ $cart_catalogue_total = 0 }}
+                    @foreach ($catalogue_products as $item)
+                        {{ $cart_catalogue_total += floatval($item['price']) }}
                         <tr>
                             <td class="table-value-custom">{{ $item['qty'] }}</td>
                             <td class="table-value-custom">{{ $item['atlasId'] }}</td>
-                            <td class="table-value-custom">{{ $item['description'] }}</td>
+                            <td class="table-value-custom">$ {{ $item['price'] }}</td>
                         </tr>
                     @endforeach
+
+                    <tr>
+                        <td colspan="2">
+                            <h5 class="each-total-cate-text" style="">
+                                Total For
+                                Pending Catalogue Orders</h5>
+                        </td>
+                        <td>
+                            <h5 class="each-total-text" style="">
+                                ${{ number_format($cart_catalogue_total, 2) }}</h5>
+                        </td>
+                    </tr>
                 @else
                     <tr>
                         <td colspan="2" class="table-value-custom" style="text-align: center">No Catalogue Item</td>
@@ -245,7 +257,7 @@
     @endif
 
     {{-- Carded Products Table --}}
-    @if ($carded_data)
+    @if ($carded_products)
         <div style="margin-top: 30px">
             <h5 class="top-title-table" style="">Carded Products</h5>
         </div>
@@ -255,19 +267,32 @@
                     <th class="thead-custom">Quantity</th>
                     <th class="thead-custom">Atlas #</th>
                     <th class="thead-custom">Price ($)</th>
-                    <th class="thead-custom">Description</th>
                 </tr>
             </thead>
             <tbody>
-                @if ($carded_data)
-                    @foreach ($carded_data as $item)
+                @if ($carded_products)
+                    {{ $cart_carded_total = 0 }}
+                        
+                    @foreach ($carded_products as $item)
+                        {{ $cart_carded_total += floatval($item['price']) }}
                         <tr>
                             <td class="table-value-custom">{{ $item['qty'] }}</td>
                             <td class="table-value-custom">{{ $item['atlasId'] }}</td>
-                            <td class="table-value-custom">{{ $item['description'] }}</td>
+                            <td class="table-value-custom">{{ $item['price'] }}</td>
 
                         </tr>
                     @endforeach
+                    <tr>
+                        <td colspan="2">
+                            <h5 class="each-total-cate-text" style="">
+                                Total For
+                                Pending Carded Products Orders</h5>
+                        </td>
+                        <td>
+                            <h5 class="each-total-text" style="">
+                                ${{ number_format($cart_carded_total, 2) }}</h5>
+                        </td>
+                    </tr>
                 @else
                     <tr>
                         <td colspan="2" class="table-value-custom" style="text-align: center">No Carded Products</td>
@@ -278,7 +303,7 @@
     @endif
 
     {{-- Carded Products Table --}}
-    @if ($service_data)
+    @if ($service_part_products)
         <div style="margin-top: 30px">
             <h5 class="top-title-table" style="">Service Parts</h5>
         </div>
@@ -287,20 +312,32 @@
                 <tr>
                     <th class="thead-custom">Quantity</th>
                     <th class="thead-custom">Atlas #</th>
-                    <th class="thead-custom">Description</th>
+                    <th class="thead-custom">Price</th>
 
                 </tr>
             </thead>
             <tbody>
-                @if ($service_data)
-                    @foreach ($service_data as $item)
+                @if ($service_part_products)
+                    {{ $cart_service_part_total = 0 }}
+                    @foreach ($service_part_products as $item)
+                    {{ $cart_service_part_total += floatval($item['price']) }}
                         <tr>
                             <td class="table-value-custom">{{ $item['qty'] }}</td>
                             <td class="table-value-custom">{{ $item['atlasId'] }}</td>
-                            <td class="table-value-custom">{{ $item['description'] }}</td>
-
+                            <td class="table-value-custom">{{ $item['price'] }}</td>
                         </tr>
                     @endforeach
+                    <tr>
+                        <td colspan="2">
+                            <h5 class="each-total-cate-text" style="">
+                                Total For
+                                Pending Service Parts Orders</h5>
+                        </td>
+                        <td>
+                            <h5 class="each-total-text" style="">
+                                ${{ number_format($cart_service_part_total, 2) }}</h5>
+                        </td>
+                    </tr>
                 @else
                     <tr>
                         <td colspan="2" class="table-value-custom" style="text-align: center">No Service Parts</td>
