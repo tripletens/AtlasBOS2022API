@@ -852,17 +852,19 @@ class DealerController extends Controller
         $pdf = PDF::loadView('mails.pdf_format', $data);
 
         // download PDF file with download method
-        $order_pdf = $pdf->download('pdf_file.pdf');
+        // $order_pdf = $pdf->download('pdf_file.pdf');
+
+        return $pdf->download('pdf_file.pdf');
 
         //$bb = base64_encode($order_pdf);
 
-        $this->result->status = true;
-        $this->result->status_code = 200;
-        $this->result->data->pdf = $order_pdf;
-        $this->result->data->dealer = $dealer_name;
+        // $this->result->status = true;
+        // $this->result->status_code = 200;
+        // $this->result->data->pdf = $order_pdf;
+        // $this->result->data->dealer = $dealer_name;
 
-        $this->result->message = 'PDF downloaded';
-        return response()->json($this->result);
+        // $this->result->message = 'PDF downloaded';
+        // return response()->json($this->result);
     }
 
     public function get_dealer_order_summary($id)
