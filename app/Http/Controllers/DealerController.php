@@ -858,7 +858,7 @@ class DealerController extends Controller
 
         $this->result->status = true;
         $this->result->status_code = 200;
-        $this->result->data->pdf = $order_pdf;
+        $this->result->data->pdf = $bb;
         $this->result->data->dealer = $dealer_name;
 
         $this->result->message = 'PDF downloaded';
