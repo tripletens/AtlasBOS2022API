@@ -852,11 +852,11 @@ class DealerController extends Controller
         $pdf = PDF::loadView('mails.pdf_format', $data);
 
         // download PDF file with download method
-        // $order_pdf = $pdf->download('pdf_file.pdf');
+        $order_pdf = $pdf->download('pdf_file.pdf');
 
-        return $pdf->download('pdf_file.pdf');
+        /// return $pdf->download('pdf_file.pdf');
 
-        //$bb = base64_encode($order_pdf);
+        return $bb = base64_encode($order_pdf);
 
         // $this->result->status = true;
         // $this->result->status_code = 200;
@@ -868,21 +868,26 @@ class DealerController extends Controller
     }
 
     // get all the pending orders by pdf from dealer_id
-    public function download_pending_order_pdf($dealer_id){
-        // get the dealer details 
+    public function download_pending_order_pdf($dealer_id)
+    {
+        // get the dealer details
 
-        $dealer_details = Dealer::where('id',$dealer_id)->where('status',1)->get();
-        
-        if(!$dealer_details){
+        $dealer_details = Dealer::where('id', $dealer_id)
+            ->where('status', 1)
+            ->get();
+
+        if (!$dealer_details) {
             $this->result->status = false;
             $this->result->status_code = 422;
             $this->result->message = 'Sorry Dealer could not be found';
             return response()->json($this->result);
         }
 
-        // else get all the items in cart for the dealer 
+        // else get all the items in cart for the dealer
 
-        $cart_data = Cart::where('dealer',$dealer_id)->where('status',0)->get();
+        $cart_data = Cart::where('dealer', $dealer_id)
+            ->where('status', 0)
+            ->get();
 
         // get all the CP, CD AND SP PRODUCTS
 
@@ -890,36 +895,37 @@ class DealerController extends Controller
         $catalogue_products = [];
         $service_part_products = [];
 
-
-        foreach($cart_data as $record){
+        foreach ($cart_data as $record) {
             $record['spec_data'] = json_decode($record['spec_data']);
 
-            if(!is_null($record['carded_data'])){
+            if (!is_null($record['carded_data'])) {
                 $record['carded_data'] = json_decode($record['carded_data']);
-                array_push($carded_products,$record);
+                array_push($carded_products, $record);
             }
 
-            if(!is_null($record['service_data'])){
+            if (!is_null($record['service_data'])) {
                 $record['service_data'] = json_decode($record['service_data']);
-                array_push($service_part_products,$record);
+                array_push($service_part_products, $record);
             }
 
-            if(!is_null($record['catalogue_data'])){
-                $record['catalogue_data'] = json_decode($record['catalogue_data']);
-                array_push($catalogue_products,$record);
+            if (!is_null($record['catalogue_data'])) {
+                $record['catalogue_data'] = json_decode(
+                    $record['catalogue_data']
+                );
+                array_push($catalogue_products, $record);
             }
-        };
+        }
 
         // foreach($cart_data as $item){
         //     $item['spec_data'] = json_decode($item['spec_data'],true);
         // }
 
         $data = [
-            "cart_data" => $cart_data,
-            "dealer_details" => $dealer_details,
-            "carded_products" => $carded_products,
-            "catalogue_products" => $catalogue_products,
-            "service_part_products" => $service_part_products
+            'cart_data' => $cart_data,
+            'dealer_details' => $dealer_details,
+            'carded_products' => $carded_products,
+            'catalogue_products' => $catalogue_products,
+            'service_part_products' => $service_part_products,
         ];
 
         // return $data;
