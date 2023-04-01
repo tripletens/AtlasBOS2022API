@@ -854,14 +854,14 @@ class DealerController extends Controller
         // download PDF file with download method
         $order_pdf = $pdf->download('pdf_file.pdf');
 
-        $bb = base64_encode($order_pdf);
+        //$bb = base64_encode($order_pdf);
 
         $this->result->status = true;
         $this->result->status_code = 200;
-        $this->result->data->pdf = $bb;
+        $this->result->data->pdf = $order_pdf;
         $this->result->data->dealer = $dealer_name;
 
-        $this->result->message = 'Email has been sent';
+        $this->result->message = 'PDF downloaded';
         return response()->json($this->result);
     }
 
