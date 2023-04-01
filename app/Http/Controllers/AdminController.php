@@ -3303,6 +3303,8 @@ class AdminController extends Controller
             'atlas_id' => 'required',
             'dealer' => 'required',
             'quantity' => 'required|integer',
+            'price' => 'required',
+            'total' => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -3312,6 +3314,8 @@ class AdminController extends Controller
                 'atlas_id' => $validator->errors()->get('atlas_id'),
                 'dealer' => $validator->errors()->get('dealer'),
                 'quantity' => $validator->errors()->get('quantity'),
+                'price' => $validator->errors()->get('total'),
+                'total' => $validator->errors()->get('price'),
             ];
             return response()->json($this->result);
         } else {
@@ -3319,6 +3323,9 @@ class AdminController extends Controller
             $atlas_id = $request->input('atlas_id');
             $dealer = $request->input('dealer');
             $quantity = $request->input('quantity');
+
+            $price = $request->input('price');
+            $total = $request->input('total');
 
             $no_of_catalogue_order = Catalogue_Order::where('id', $id)->get();
 
@@ -3351,6 +3358,8 @@ class AdminController extends Controller
                     $update_quantity = array_push($new_items, [
                         'qty' => $quantity,
                         'atlasId' => $atlas_id,
+                        'price' => $price,
+                        'total' => $total,
                     ]);
 
                     // dd( $new_items );
