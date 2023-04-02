@@ -866,12 +866,13 @@ class DealerController extends Controller
     }
 
     // get all the pending orders by pdf from dealer_id
-    public function download_pending_order_pdf($dealer_id){
+    public function download_pending_order_pdf($dealer_id)
+    {
         // get the dealer details 
 
-        $dealer_details = Dealer::where('id',$dealer_id)->where('status',1)->get();
-        
-        if(!$dealer_details){
+        $dealer_details = Dealer::where('id', $dealer_id)->where('status', 1)->get();
+
+        if (!$dealer_details) {
             $this->result->status = false;
             $this->result->status_code = 422;
             $this->result->message = 'Sorry Dealer could not be found';
@@ -880,7 +881,7 @@ class DealerController extends Controller
 
         // else get all the items in cart for the dealer 
 
-        $cart_data = Cart::where('dealer',$dealer_id)->where('status',0)->get();
+        $cart_data = Cart::where('dealer', $dealer_id)->where('status', 0)->get();
 
         // get all the CP, CD AND SP PRODUCTS
 
@@ -889,22 +890,22 @@ class DealerController extends Controller
         $service_part_products = [];
 
 
-        foreach($cart_data as $record){
+        foreach ($cart_data as $record) {
             $record['spec_data'] = json_decode($record['spec_data']);
 
-            if(!is_null($record['carded_data'])){
+            if (!is_null($record['carded_data'])) {
                 $record['carded_data'] = json_decode($record['carded_data']);
-                array_push($carded_products,$record);
+                array_push($carded_products, $record);
             }
 
-            if(!is_null($record['service_data'])){
+            if (!is_null($record['service_data'])) {
                 $record['service_data'] = json_decode($record['service_data']);
-                array_push($service_part_products,$record);
+                array_push($service_part_products, $record);
             }
 
-            if(!is_null($record['catalogue_data'])){
+            if (!is_null($record['catalogue_data'])) {
                 $record['catalogue_data'] = json_decode($record['catalogue_data']);
-                array_push($catalogue_products,$record);
+                array_push($catalogue_products, $record);
             }
         };
 
@@ -1759,9 +1760,9 @@ class DealerController extends Controller
             'access_token' => $token,
             'token_type' => 'bearer',
             'expires_in' =>
-                auth()
-                    ->factory()
-                    ->getTTL() * 60,
+            auth()
+                ->factory()
+                ->getTTL() * 60,
         ]);
     }
 
@@ -1879,8 +1880,8 @@ class DealerController extends Controller
                     10,
                     $record['atlas_id']
                 ) == true
-                    ? true
-                    : false;
+                ? true
+                : false;
 
             return array_merge(
                 [
@@ -2011,8 +2012,8 @@ class DealerController extends Controller
                     10,
                     $record['atlas_id']
                 ) == true
-                    ? true
-                    : false;
+                ? true
+                : false;
             // if(intval($this->check_if_its_new($record['created_at'], 10,$record['atlas_id']))){
 
             // }
@@ -2070,8 +2071,8 @@ class DealerController extends Controller
                     10,
                     $record['atlas_id']
                 ) == true
-                    ? true
-                    : false;
+                ? true
+                : false;
 
             return array_merge(
                 [
@@ -3380,8 +3381,8 @@ class DealerController extends Controller
                 )->get();
                 $record->description =
                     $extra_product_details && count($extra_product_details)
-                        ? $extra_product_details[0]->description
-                        : '';
+                    ? $extra_product_details[0]->description
+                    : '';
                 return $record;
             }, $value->data);
         }
@@ -3709,7 +3710,7 @@ class DealerController extends Controller
 
                 if (
                     count(json_decode($check_catalogue_order[0]->data, true)) ==
-                        0 ||
+                    0 ||
                     empty($check_catalogue_order[0]->data) == true
                 ) {
                     $check_catalogue_order[0]->delete();
@@ -4357,11 +4358,12 @@ class DealerController extends Controller
         $validator = Validator::make($request->all(), [
             'new_password' => 'required',
             'email' => 'required',
-            'confirm_new_password' => 'required|same:new',
+            'confirm_new_password' => 'required|same:new_password',
         ]);
 
+
         if ($validator->fails()) {
-            $this->result->status_code = 422;
+            $this->result->status_code = 422; // unprocessed entity
             $this->result->message = [
                 'new_password' => $validator->errors()->get('new_password'),
                 'email' => $validator->errors()->get('email'),
@@ -4382,12 +4384,12 @@ class DealerController extends Controller
                 $this->result->status = false;
                 $this->result->status_code = 422;
                 $this->result->message = 'Sorry Password could not be changed';
-                return response()->json($this->result);
+                return response()->json($this->result, 422);
             } else {
                 $this->result->status = true;
                 $this->result->status_code = 200;
                 $this->result->message = 'Password changed successfully';
-                return response()->json($this->result);
+                return response()->json($this->result, 200);
             }
         }
     }
