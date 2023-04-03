@@ -30,6 +30,7 @@ use App\Models\ServiceParts;
 use App\Models\Cart;
 use App\Models\ExtraProducts;
 use App\Models\ResetPassword;
+use Illuminate\Support\Facades\Hash;
 
 set_time_limit(2500000000000000);
 
@@ -4374,11 +4375,18 @@ class DealerController extends Controller
             return response()->json($this->result);
         } else {
             $email = $request->input('email');
+            $password = $request->input('new_password');
             $hash_password = Hash::make($request->input('new_password'));
 
-            $dealer_details = Dealer::where('email', $email)->get();
-            $dealer_details[0]->password = $hash_password;
-            $update_dealer_details = $dealer_details->save();
+            $update_dealer_details = Dealer::where('email', $email)->update([
+                "password" => $hash_password,
+                "password_clear" => $password
+            ]);
+
+            // return $dealer_details;
+            // $dealer_details
+            // $dealer_details[0]->password = $hash_password;
+            // $update_dealer_details = $dealer_details->save();
 
             if (!$update_dealer_details) {
                 $this->result->status = false;
