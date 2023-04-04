@@ -1310,8 +1310,8 @@ class DealerController extends Controller
                 return response()->json($this->result);
             } else {
                 $cur_date = date('Y-m-d H:i:s');
-                $dealer = Dealer::where('id', $dealer_id)->update([
-                    'order_status' => $status,
+                $dealer = Dealer::where('id', $id)->update([
+                    'order_status' => 1,
                     'placed_order_date' => $cur_date,
                 ]);
                 $cart = Cart::where('dealer', $dealer_id)->update([
