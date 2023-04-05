@@ -252,10 +252,28 @@ Route::group(
         );
 
         Route::post('/update_product', 'AdminController@update_product');
+        // Route::get(
+        //     '/delete_catalogue_order/{dealer_id}',
+        //     'AdminController@delete_catalogue_order'
+        // );
+
+        // delete_carded_product
+
         Route::get(
-            '/delete_catalogue_order/{dealer_id}',
+            '/delete-catalogue-order-admin/{dealer_id}/{atlas_id}',
             'AdminController@delete_catalogue_order'
         );
+        Route::get(
+            '/delete-service-part-admin/{dealer_id}/{atlas_id}',
+            'AdminController@delete_service_part'
+        );
+
+        Route::get(
+            '/delete-carded-product-admin/{dealer_id}/{atlas_id}',
+            'AdminController@delete_carded_product'
+        ); // working
+        
+
         Route::get(
             '/restore_catalogue_order/{dealer_id}',
             'AdminController@restore_catalogue_order'
@@ -547,6 +565,7 @@ Route::group(
             '/delete-service-part/{dealer_id}/{atlas_id}',
             'DealerController@delete_service_part'
         );
+
         Route::get(
             '/restore-service-part/{id}',
             'DealerController@restore_service_part'
@@ -598,6 +617,7 @@ Route::group(
             '/delete_catalogue_order_dealer/{dealer_id}/{atlas_id}',
             'DealerController@delete_catalogue_order'
         );
+        
         Route::get(
             '/restore_catalogue_order_dealer/{dealer_id}',
             'DealerController@restore_catalogue_order'
