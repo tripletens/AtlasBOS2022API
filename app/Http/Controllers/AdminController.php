@@ -3350,7 +3350,7 @@ class AdminController extends Controller
                             'qty' => $quantity,
                             'atlasId' => $atlas_id,
                             'price' => $new_price,
-                            'total' => $total,
+                            'total' => $new_price,
                         ]);
                     }
 
@@ -3434,7 +3434,7 @@ class AdminController extends Controller
                             'qty' => $quantity,
                             'atlasId' => $atlas_id,
                             'price' => $new_price,
-                            'total' => $total,
+                            'total' => $new_price,
                         ]);
                     }
 
@@ -3473,7 +3473,7 @@ class AdminController extends Controller
             'id' => 'required',
             'atlas_id' => 'required',
             'dealer' => 'required',
-            'quantity' => 'required|integer',
+            'quantity' => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -3518,7 +3518,7 @@ class AdminController extends Controller
                             'qty' => $quantity,
                             'atlasId' => $atlas_id,
                             'price' => $new_price,
-                            'total' => $total,
+                            'total' => $new_price,
                         ]);
                     }
 
