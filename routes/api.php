@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers;
+use App\Http\Controllers\DealerController;
 
 /*
 |--------------------------------------------------------------------------
@@ -208,10 +209,12 @@ Route::group(
             '/sort_dealer_by_location/{location}',
             'AdminController@sort_dealer_by_location'
         );
+
         Route::post(
             '/edit_catalogue_order',
             'AdminController@edit_catalogue_order'
         );
+
         Route::get(
             '/admin-search-product-by-category/{category}',
             'AdminController@search_category'
@@ -249,10 +252,28 @@ Route::group(
         );
 
         Route::post('/update_product', 'AdminController@update_product');
+        // Route::get(
+        //     '/delete_catalogue_order/{dealer_id}',
+        //     'AdminController@delete_catalogue_order'
+        // );
+
+        // delete_carded_product
+
         Route::get(
-            '/delete_catalogue_order/{dealer_id}',
+            '/delete-catalogue-order-admin/{dealer_id}/{atlas_id}',
             'AdminController@delete_catalogue_order'
         );
+        Route::get(
+            '/delete-service-part-admin/{dealer_id}/{atlas_id}',
+            'AdminController@delete_service_part'
+        );
+
+        Route::get(
+            '/delete-carded-product-admin/{dealer_id}/{atlas_id}',
+            'AdminController@delete_carded_product'
+        ); // working
+        
+
         Route::get(
             '/restore_catalogue_order/{dealer_id}',
             'AdminController@restore_catalogue_order'
@@ -277,6 +298,11 @@ Route::group(
             'AdminController@recent_order_dashboard'
         );
         Route::get('/view-order/{id}', 'AdminController@view_order');
+
+        Route::get(
+            '/admin-view-dealer-cart/{id}',
+            'AdminController@admin_view_dealer_order'
+        );
 
         Route::get(
             '/view-order-by-dealer-id/{dealer_id}',
@@ -539,6 +565,7 @@ Route::group(
             '/delete-service-part/{dealer_id}/{atlas_id}',
             'DealerController@delete_service_part'
         );
+
         Route::get(
             '/restore-service-part/{id}',
             'DealerController@restore_service_part'
@@ -590,6 +617,7 @@ Route::group(
             '/delete_catalogue_order_dealer/{dealer_id}/{atlas_id}',
             'DealerController@delete_catalogue_order'
         );
+        
         Route::get(
             '/restore_catalogue_order_dealer/{dealer_id}',
             'DealerController@restore_catalogue_order'
@@ -622,6 +650,8 @@ Route::group(
 
         Route::get('/download-pdf/{id}', 'DealerController@download_pdf');
 
+        Route::get('/download-pending-order-pdf/{dealer_id}', 'DealerController@download_pending_order_pdf');
+        
         Route::get(
             '/submit_catalogue_order/{dealer}',
             'DealerController@submit_catalogue_order'
@@ -665,13 +695,45 @@ Route::group(
             'DealerController@get_all_loggedin_dealers'
         );
 
-        // submit_carded_products_to_cart
-
+        // submit carded products to cart
         Route::post(
-            '/submit-carded-products-to-cart',
-            'DealerController@submit_carded_products_to_cart'
+            '/add-carded-product-to-cart',
+            'DealerController@add_carded_product_to_cart'
         );
-        
+
+        // submit other products to cart i.e carded, catalogue and carded products
+        Route::post(
+            '/add-other-product-type-to-cart',
+            'DealerController@add_other_product_type_to_cart'
+        );
+
+        // unautheticated routes
+        // reset dealer email
+        Route::post('/reset-dealer-password', [
+            DealerController::class,
+            'reset_dealer_password',
+        ]);
+
+        // send code to user
+        Route::post('/reset-password-send-code-email', [
+            DealerController::class,
+            'reset_password_send_code_email',
+        ]);
+
+        // verify code password reset
+        Route::get('/reset-password-verify-code-email/{email}/{code}', [
+            DealerController::class,
+            'reset_password_verify_code_email',
+        ]);
+
+        // export_all_cart_orders
+        Route::get('/export-all-cart-orders', [
+            DealerController::class,
+            'export_all_cart_orders',
+        ]);
+
+        // TEST
+        Route::get('/test', [DealerController::class, 'test']);
     }
 );
 
@@ -743,6 +805,16 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
     );
 
     Route::get(
+        '/fetch_all_dealers_with_pending_order/{branch_id}',
+        'BranchController@fetch_all_dealers_with_pending_order'
+    );
+
+    Route::get(
+        '/fetch_dealer_with_pending_order/{dealer_id}',
+        'BranchController@fetch_dealer_with_pending_order'
+    );
+
+    Route::get(
         '/fetch_all_dealers_with_active_carded_products_order/{branch_id}',
         'BranchController@fetch_all_dealers_with_active_carded_products_order'
     );
@@ -772,6 +844,13 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
     Route::get(
         '/salesrep/get-dealer-order-summary/{id}',
         'BranchController@get_dealer_order_summary'
+    );
+
+    // get all the loggedin and not logged in dealers
+
+    Route::get(
+        '/get-loggedin-and-not-loggedin-dealers/{branch_id}',
+        'BranchController@loggedin_and_not_loggedin_dealers'
     );
 
     // test for attaching image url to all products individually

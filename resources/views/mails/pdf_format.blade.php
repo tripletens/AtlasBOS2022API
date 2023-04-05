@@ -751,7 +751,8 @@
                     <th class="thead-custom">Quantity</th>
                     <th class="thead-custom">Atlas #</th>
                     <th class="thead-custom">Description</th>
-
+                    <th class="thead-custom">Price</th>
+                    <th class="thead-custom">Total</th>
 
                 </tr>
             </thead>
@@ -762,6 +763,16 @@
                             <td class="table-value-custom">{{ $item['qty'] }}</td>
                             <td class="table-value-custom">{{ $item['atlasId'] }}</td>
                             <td class="table-value-custom">{{ $item['description'] }}</td>
+
+                            @isset($item['price'])
+                                <td class="table-value-custom">${{ number_format($item['price'], 2) }}</td>
+                                <td class="table-value-custom">${{ number_format($item['total'], 2) }}</td>
+                            @endisset
+
+                           
+
+
+
                         </tr>
                     @endforeach
                 @else
@@ -787,6 +798,8 @@
                     <th class="thead-custom">Quantity</th>
                     <th class="thead-custom">Atlas #</th>
                     <th class="thead-custom">Description</th>
+                    <th class="thead-custom">Price</th>
+                    <th class="thead-custom">Total</th>
 
                 </tr>
             </thead>
@@ -797,6 +810,13 @@
                             <td class="table-value-custom">{{ $item['qty'] }}</td>
                             <td class="table-value-custom">{{ $item['atlasId'] }}</td>
                             <td class="table-value-custom">{{ $item['description'] }}</td>
+
+                            @isset($item['price'])
+                                <td class="table-value-custom">${{ number_format($item['price'], 2) }}</td>
+                                <td class="table-value-custom">${{ number_format($item['total'], 2) }}</td>
+                            @endisset
+
+                         
 
                         </tr>
                     @endforeach
@@ -822,6 +842,8 @@
                     <th class="thead-custom">Quantity</th>
                     <th class="thead-custom">Atlas #</th>
                     <th class="thead-custom">Description</th>
+                    <th class="thead-custom">Price</th>
+                    <th class="thead-custom">Total</th>
 
                 </tr>
             </thead>
@@ -832,6 +854,13 @@
                             <td class="table-value-custom">{{ $item['qty'] }}</td>
                             <td class="table-value-custom">{{ $item['atlasId'] }}</td>
                             <td class="table-value-custom">{{ $item['description'] }}</td>
+
+                            @isset($item['price'])
+                                <td class="table-value-custom">${{ number_format($item['price'], 2) }}</td>
+                                <td class="table-value-custom">${{ number_format($item['total'], 2) }}</td>
+                            @endisset
+
+                       
 
                         </tr>
                     @endforeach

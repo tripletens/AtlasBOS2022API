@@ -11,6 +11,6 @@ class Cart extends Model {
     protected $table = 'cart';
 
     protected $fillable = [
-        'dealer', 'pro_id', 'atlas_id', 'qty', 'price', 'unit_price', 'status', 'desc', 'pro_img', 'vendor_img', 'spec_data', 'grouping', 'booking', 'category', 'um', 'xref'
+        'dealer', 'pro_id', 'atlas_id', 'qty', 'price', 'unit_price', 'status', 'desc', 'pro_img', 'vendor_img', 'spec_data', 'grouping', 'booking', 'category', 'um', 'xref','carded_data', 'service_data', 'catalogue_data'
     ];
 }

@@ -42,6 +42,7 @@ return array(
     'App\\Models\\Products' => $baseDir . '/app/Models/Products.php',
     'App\\Models\\PromotionalCategory' => $baseDir . '/app/Models/PromotionalCategory.php',
     'App\\Models\\Promotional_ads' => $baseDir . '/app/Models/Promotional_ads.php',
+    'App\\Models\\ResetPassword' => $baseDir . '/app/Models/ResetPassword.php',
     'App\\Models\\SalesRep' => $baseDir . '/app/Models/SalesRep.php',
     'App\\Models\\ServiceParts' => $baseDir . '/app/Models/ServiceParts.php',
     'App\\Models\\User' => $baseDir . '/app/Models/User.php',
