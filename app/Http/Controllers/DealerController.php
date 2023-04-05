@@ -101,7 +101,7 @@ class DealerController extends Controller
         $this->result->data = $cart;
         $this->result->message = 'User cart items';
 
-        return response()->json($this->result);
+        return response()->json($this->result,200);
     }
 
     public function get_user_cart($id)
