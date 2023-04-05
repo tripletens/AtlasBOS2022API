@@ -869,9 +869,11 @@ class DealerController extends Controller
     // get all the pending orders by pdf from dealer_id
     public function download_pending_order_pdf($dealer_id)
     {
-        // get the dealer details 
+        // get the dealer details
 
-        $dealer_details = Dealer::where('id', $dealer_id)->where('status', 1)->get();
+        $dealer_details = Dealer::where('id', $dealer_id)
+            ->where('status', 1)
+            ->get();
 
         if (!$dealer_details) {
             $this->result->status = false;
@@ -880,16 +882,17 @@ class DealerController extends Controller
             return response()->json($this->result);
         }
 
-        // else get all the items in cart for the dealer 
+        // else get all the items in cart for the dealer
 
-        $cart_data = Cart::where('dealer', $dealer_id)->where('status', 0)->get();
+        $cart_data = Cart::where('dealer', $dealer_id)
+            ->where('status', 0)
+            ->get();
 
         // get all the CP, CD AND SP PRODUCTS
 
         $carded_products = [];
         $catalogue_products = [];
         $service_part_products = [];
-
 
         foreach ($cart_data as $record) {
             $record['spec_data'] = json_decode($record['spec_data']);
@@ -905,21 +908,23 @@ class DealerController extends Controller
             }
 
             if (!is_null($record['catalogue_data'])) {
-                $record['catalogue_data'] = json_decode($record['catalogue_data']);
+                $record['catalogue_data'] = json_decode(
+                    $record['catalogue_data']
+                );
                 array_push($catalogue_products, $record);
             }
-        };
+        }
 
         // foreach($cart_data as $item){
         //     $item['spec_data'] = json_decode($item['spec_data'],true);
         // }
 
         $data = [
-            "cart_data" => $cart_data,
-            "dealer_details" => $dealer_details,
-            "carded_products" => $carded_products,
-            "catalogue_products" => $catalogue_products,
-            "service_part_products" => $service_part_products
+            'cart_data' => $cart_data,
+            'dealer_details' => $dealer_details,
+            'carded_products' => $carded_products,
+            'catalogue_products' => $catalogue_products,
+            'service_part_products' => $service_part_products,
         ];
 
         // return $data;
@@ -1254,6 +1259,7 @@ class DealerController extends Controller
 
         $order_status = $dealer[0]->order_status;
         $close_program = $dealer[0]->close_program;
+        $dealer_account_id = $dealer[0]->account_id;
 
         ///$dealer_status = Cart::where('dealer', $dealer_id)->where('status', $status)->get()->toArray();
 
@@ -1264,41 +1270,41 @@ class DealerController extends Controller
                 'The Booking Program has been closed, contact support';
             return response()->json($this->result);
         } else {
-            $dealer_account_id = $dealer[0]->account_id;
+            ///  $dealer_account_id = $dealer[0]->account_id;
 
-            $dealer_cart_count = Cart::where('dealer', $dealer_id)->count();
-            $carded_products_count = CardedProducts::where(
-                'dealer',
-                $dealer_id
-            )->count();
-            $service_part_count = ServiceParts::where(
-                'dealer',
-                $dealer_id
-            )->count();
-            $catalogue_orders_count = Catalogue_order::where(
-                'dealer',
-                $dealer_id
-            )->count();
+            // $dealer_cart_count = Cart::where('dealer', $dealer_id)->count();
+            // $carded_products_count = CardedProducts::where(
+            //     'dealer',
+            //     $dealer_account_id
+            // )->count();
+            // $service_part_count = ServiceParts::where(
+            //     'dealer',
+            //     $dealer_account_id
+            // )->count();
+            // $catalogue_orders_count = Catalogue_order::where(
+            //     'dealer',
+            //     $dealer_account_id
+            // )->count();
 
-            if (
-                $dealer_cart_count > 0 ||
-                $carded_products_count > 0 ||
-                $service_part_count > 0 ||
-                $catalogue_orders_count > 0
-            ) {
-                $cur_date = date('Y-m-d H:i:s');
-                $dealer = Dealer::where('id', $dealer_id)->update([
-                    'order_status' => $status,
-                    'placed_order_date' => $cur_date,
-                ]);
-            } else {
-                $this->result->status = true;
-                $this->result->status_code = 200;
-                $this->result->message = 'Your Cart is Empty';
-                return response()->json($this->result);
-            }
+            // if (
+            //     $dealer_cart_count > 0 ||
+            //     $carded_products_count > 0 ||
+            //     $service_part_count > 0 ||
+            //     $catalogue_orders_count > 0
+            // ) {
+            //     $cur_date = date('Y-m-d H:i:s');
+            //     $dealer = Dealer::where('id', $dealer_id)->update([
+            //         'order_status' => $status,
+            //         'placed_order_date' => $cur_date,
+            //     ]);
+            // } else {
+            //     $this->result->status = true;
+            //     $this->result->status_code = 200;
+            //     $this->result->message = 'Your Cart is Empty';
+            //     return response()->json($this->result);
+            // }
 
-            if ($order_status == '1') {
+            if ($order_status == 1) {
                 $this->result->status = true;
                 $this->result->status_code = 200;
                 $this->result->debug = $dealer;
@@ -1306,21 +1312,19 @@ class DealerController extends Controller
                 return response()->json($this->result);
             } else {
                 $cur_date = date('Y-m-d H:i:s');
-                $dealer = Dealer::where('id', $dealer_id)->update([
-                    'order_status' => $status,
+                $dealer = Dealer::where('id', $id)->update([
+                    'order_status' => 1,
                     'placed_order_date' => $cur_date,
                 ]);
-                $cart = Cart::where('dealer', $dealer_id)->update([
+                $cart = Cart::where('dealer', $dealer_account_id)->update([
                     'status' => $status,
                 ]);
 
                 // update all the service parts completed to true (1)
-                $update_service_parts = ServiceParts::where(
+                $submit_service_parts = ServiceParts::where(
                     'dealer',
                     $dealer_account_id
-                )->first();
-
-                $submit_service_parts = $update_service_parts->update([
+                )->update([
                     'completed' => 1,
                 ]);
 
@@ -1761,9 +1765,9 @@ class DealerController extends Controller
             'access_token' => $token,
             'token_type' => 'bearer',
             'expires_in' =>
-            auth()
-                ->factory()
-                ->getTTL() * 60,
+                auth()
+                    ->factory()
+                    ->getTTL() * 60,
         ]);
     }
 
@@ -1881,8 +1885,8 @@ class DealerController extends Controller
                     10,
                     $record['atlas_id']
                 ) == true
-                ? true
-                : false;
+                    ? true
+                    : false;
 
             return array_merge(
                 [
@@ -2013,8 +2017,8 @@ class DealerController extends Controller
                     10,
                     $record['atlas_id']
                 ) == true
-                ? true
-                : false;
+                    ? true
+                    : false;
             // if(intval($this->check_if_its_new($record['created_at'], 10,$record['atlas_id']))){
 
             // }
@@ -2072,8 +2076,8 @@ class DealerController extends Controller
                     10,
                     $record['atlas_id']
                 ) == true
-                ? true
-                : false;
+                    ? true
+                    : false;
 
             return array_merge(
                 [
@@ -3382,8 +3386,8 @@ class DealerController extends Controller
                 )->get();
                 $record->description =
                     $extra_product_details && count($extra_product_details)
-                    ? $extra_product_details[0]->description
-                    : '';
+                        ? $extra_product_details[0]->description
+                        : '';
                 return $record;
             }, $value->data);
         }
@@ -3711,7 +3715,7 @@ class DealerController extends Controller
 
                 if (
                     count(json_decode($check_catalogue_order[0]->data, true)) ==
-                    0 ||
+                        0 ||
                     empty($check_catalogue_order[0]->data) == true
                 ) {
                     $check_catalogue_order[0]->delete();
@@ -4362,7 +4366,6 @@ class DealerController extends Controller
             'confirm_new_password' => 'required|same:new_password',
         ]);
 
-
         if ($validator->fails()) {
             $this->result->status_code = 422; // unprocessed entity
             $this->result->message = [
@@ -4379,8 +4382,8 @@ class DealerController extends Controller
             $hash_password = Hash::make($request->input('new_password'));
 
             $update_dealer_details = Dealer::where('email', $email)->update([
-                "password" => $hash_password,
-                "password_clear" => $password
+                'password' => $hash_password,
+                'password_clear' => $password,
             ]);
 
             // return $dealer_details;
