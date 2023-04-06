@@ -1312,7 +1312,10 @@ class DealerController extends Controller
                 return response()->json($this->result);
             } else {
                 $cur_date = date('Y-m-d H:i:s');
-                $dealer = Dealer::where('id', $id)->update([
+                $dealer = Dealer::where(
+                    'account_id',
+                    $dealer_account_id
+                )->update([
                     'order_status' => 1,
                     'placed_order_date' => $cur_date,
                 ]);
@@ -3923,6 +3926,9 @@ class DealerController extends Controller
     {
         // check if the dealer has an item in the cart
         $check_cart = Cart::where('dealer', $dealer_id)->get();
+        $dealer_data = Dealer::where('id', $dealer_id)
+            ->get()
+            ->first();
 
         if (!$check_cart) {
             $this->result->status = false;
@@ -3935,10 +3941,16 @@ class DealerController extends Controller
         if (count($check_cart) == 0) {
             $this->result->status = false;
             $this->result->status_code = 422;
-            $this->result->message = 'Sorry you hacve no item in the cart';
+            $this->result->message = 'Sorry you have no item in the cart';
             return response()->json($this->result);
         } else {
             // delete the items in the cart
+
+            $account_id = $dealer_data->account_id;
+
+            Catalogue_order::where('dealer', $account_id)->delete();
+            ServiceParts::where('dealer', $account_id)->delete();
+            CardedProducts::where('dealer', $account_id)->delete();
 
             foreach ($check_cart as $cart_item) {
                 $delete_item = $cart_item->delete();
