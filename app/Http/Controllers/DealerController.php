@@ -3925,42 +3925,42 @@ class DealerController extends Controller
     public function delete_all_cart_items($dealer_id)
     {
         // check if the dealer has an item in the cart
-        $check_cart = Cart::where('dealer', $dealer_id)->get();
+        $check_cart = Cart::where('dealer', $dealer_id)->delete();
         $dealer_data = Dealer::where('id', $dealer_id)
             ->get()
             ->first();
 
-        if (!$check_cart) {
-            $this->result->status = false;
-            $this->result->status_code = 422;
-            $this->result->message =
-                'Sorry we could not fetch the Cart details';
-            return response()->json($this->result);
-        }
+        // if (!$check_cart) {
+        //     $this->result->status = false;
+        //     $this->result->status_code = 422;
+        //     $this->result->message =
+        //         'Sorry we could not fetch the Cart details';
+        //     return response()->json($this->result);
+        // }
 
-        if (count($check_cart) == 0) {
-            $this->result->status = false;
-            $this->result->status_code = 422;
-            $this->result->message = 'Sorry you have no item in the cart';
-            return response()->json($this->result);
-        } else {
-            // delete the items in the cart
+        // if (count($check_cart) == 0) {
+        //     $this->result->status = false;
+        //     $this->result->status_code = 422;
+        //     $this->result->message = 'Sorry you have no item in the cart';
+        //     return response()->json($this->result);
+        // } else {
 
-            $account_id = $dealer_data->account_id;
+        // delete the items in the cart
+        $account_id = $dealer_data->account_id;
 
-            Catalogue_order::where('dealer', $account_id)->delete();
-            ServiceParts::where('dealer', $account_id)->delete();
-            CardedProducts::where('dealer', $account_id)->delete();
+        Catalogue_order::where('dealer', $account_id)->delete();
+        ServiceParts::where('dealer', $account_id)->delete();
+        CardedProducts::where('dealer', $account_id)->delete();
 
-            foreach ($check_cart as $cart_item) {
-                $delete_item = $cart_item->delete();
-            }
+        // foreach ($check_cart as $cart_item) {
+        //     $delete_item = $cart_item->delete();
+        // }
 
-            $this->result->status = true;
-            $this->result->status_code = 200;
-            $this->result->message = 'All items Successfully deleted from cart';
-            return response()->json($this->result);
-        }
+        $this->result->status = true;
+        $this->result->status_code = 200;
+        $this->result->message = 'All items Successfully deleted from cart';
+        return response()->json($this->result);
+        // }
     }
 
     public function view_dealer_order_by_acct_id($account_id)
