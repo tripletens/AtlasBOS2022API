@@ -3658,7 +3658,7 @@ class AdminController extends Controller
         return response()->json($this->result);
     }
 
-    public function delete_catalogue_order($dealer)
+    public function delete_catalogue_order_old($dealer)
     {
         $check_catalogue_order = Catalogue_order::where('dealer', $dealer)
             ->where('status', '1')
@@ -3683,6 +3683,241 @@ class AdminController extends Controller
             $this->result->status_code = 200;
             $this->result->message =
                 'Catalogue order  has been deleted successfully';
+            return response()->json($this->result);
+        }
+    }
+
+    public function delete_catalogue_order($dealer, $atlas_id)
+    {
+        $check_catalogue_order = Catalogue_order::where('dealer', $dealer)
+            ->where('status', '1')
+            ->get();
+
+        if (!$check_catalogue_order || count($check_catalogue_order) == 0) {
+            // catalogue_order allready deactivated
+            $this->result->status = false;
+            $this->result->status_code = 422;
+            $this->result->message =
+                'Sorry catalogue order doesn\'t exist or has already been deactivated';
+            return response()->json($this->result);
+        }
+
+        $cart_data = json_decode($check_catalogue_order[0]->data, true);
+
+        $new_array = [];
+
+        $atlas_ids = [];
+
+        // print_r($cart_data); exit();
+
+        // print_r($service_parts[0]->data); exit();
+
+        if (is_array($cart_data) && count($cart_data) > 0) {
+            foreach ($cart_data as $key => $value) {
+                $value = (object) $value;
+                $item_atlas_id = $value->atlasId;
+
+                array_push($atlas_ids, $item_atlas_id);
+
+                if ($atlas_id != $item_atlas_id) {
+                    array_push($new_array, $value);
+                }
+            }
+
+            // dd( $atlas_ids );
+
+            // dd( in_array( $atlas_id, $atlas_ids ) );
+
+            if (!in_array($atlas_id, $atlas_ids)) {
+                $this->result->data = false;
+                $this->result->status_code = 422;
+                $this->result->message = 'Item already deleted';
+                return response()->json($this->result);
+            } else {
+                $check_catalogue_order[0]->data = json_encode($new_array);
+
+                $update_order = $check_catalogue_order[0]->save();
+
+                if (!$update_order) {
+                    $this->result->status = false;
+                    $this->result->status_code = 422;
+                    $this->result->message = 'Sorry Item could not be deleted';
+                    return response()->json($this->result);
+                }
+
+                if (
+                    count(json_decode($check_catalogue_order[0]->data, true)) ==
+                    0 ||
+                    empty($check_catalogue_order[0]->data) == true
+                ) {
+                    $check_catalogue_order[0]->delete();
+                }
+
+                $this->result->status = true;
+                $this->result->status_code = 200;
+                $this->result->message =
+                    'Item deleted from Catalogue order successfully';
+                return response()->json($this->result);
+            }
+        } else {
+            $this->result->status = false;
+            $this->result->status_code = 422;
+            $this->result->message = 'Sorry Item could not found';
+            return response()->json($this->result);
+        }
+    }
+
+    // delete carded products
+    public function delete_carded_product($dealer_id, $atlas_id)
+    {
+        $carded_product = CardedProducts::where('dealer', $dealer_id)->get();
+
+        if (!$carded_product || count($carded_product) == 0) {
+            $this->result->status = false;
+            $this->result->status_code = 422;
+            $this->result->message = 'Carded Product not found';
+            return response()->json($this->result);
+        }
+
+        $cart_data = json_decode($carded_product[0]->data, true);
+
+        $new_array = [];
+
+        $atlas_ids = [];
+
+        // print_r($cart_data); exit();
+
+        // print_r($service_parts[0]->data); exit();
+
+        if (is_array($cart_data) && count($cart_data) > 0) {
+            foreach ($cart_data as $key => $value) {
+                $value = (object) $value;
+
+                $item_atlas_id = $value->atlasId;
+
+                array_push($atlas_ids, $item_atlas_id);
+
+                if ($atlas_id != $item_atlas_id) {
+                    array_push($new_array, $value);
+                }
+            }
+
+            // dd( $atlas_ids );
+
+            // dd( in_array( $atlas_id, $atlas_ids ) );
+
+            if (!in_array($atlas_id, $atlas_ids)) {
+                $this->result->data = false;
+                $this->result->status_code = 422;
+                $this->result->message = 'Item already deleted';
+                return response()->json($this->result);
+            } else {
+                $carded_product[0]->data = json_encode($new_array);
+
+                $update_order = $carded_product[0]->save();
+
+                if (!$update_order) {
+                    $this->result->status = false;
+                    $this->result->status_code = 422;
+                    $this->result->message = 'Sorry Item could not be deleted';
+                    return response()->json($this->result);
+                }
+
+                if (
+                    count(json_decode($carded_product[0]->data, true)) == 0 ||
+                    empty($carded_product[0]->data) == true
+                ) {
+                    $carded_product[0]->delete();
+                }
+
+                $this->result->status = true;
+                $this->result->status_code = 200;
+                $this->result->message =
+                    'Item deleted from Carded Products successfully';
+                return response()->json($this->result);
+            }
+        } else {
+            $this->result->status = false;
+            $this->result->status_code = 422;
+            $this->result->message = 'Sorry Item could not found';
+            return response()->json($this->result);
+        }
+    }
+
+    // delete service parts
+    public function delete_service_part($dealer_id, $atlas_id)
+    {
+        $service_parts = ServiceParts::where('dealer', $dealer_id)->get();
+
+        // `dealer`, `data`, `atlasId`
+
+        if (!$service_parts || count($service_parts) == 0) {
+            $this->result->status = false;
+            $this->result->status_code = 422;
+            $this->result->message = 'Service part not found';
+            return response()->json($this->result);
+        }
+
+        $cart_data = json_decode($service_parts[0]->data, true);
+
+        $new_array = [];
+
+        $atlas_ids = [];
+
+        // print_r($cart_data); exit();
+
+        // print_r($service_parts[0]->data); exit();
+
+        if (is_array($cart_data) && count($cart_data) > 0) {
+            foreach ($cart_data as $key => $value) {
+                $value = (object) $value;
+                $item_atlas_id = $value->atlasId;
+
+                array_push($atlas_ids, $item_atlas_id);
+
+                if ($atlas_id != $item_atlas_id) {
+                    array_push($new_array, $value);
+                }
+            }
+
+            // dd( $atlas_ids );
+
+            // dd( in_array( $atlas_id, $atlas_ids ) );
+
+            if (!in_array($atlas_id, $atlas_ids)) {
+                $this->result->data = false;
+                $this->result->status_code = 422;
+                $this->result->message = 'Item already deleted';
+                return response()->json($this->result);
+            } else {
+                $service_parts[0]->data = json_encode($new_array);
+
+                $update_order = $service_parts[0]->save();
+
+                if (!$update_order) {
+                    $this->result->status = false;
+                    $this->result->status_code = 422;
+                    $this->result->message = 'Sorry Item could not be deleted';
+                    return response()->json($this->result);
+                }
+
+                if (
+                    count(json_decode($service_parts[0]->data, true)) == 0 ||
+                    empty($service_parts[0]->data) == true
+                ) {
+                    $service_parts[0]->delete();
+                }
+
+                $this->result->status = true;
+                $this->result->status_code = 200;
+                $this->result->message =
+                    'Item deleted from Service parts successfully';
+                return response()->json($this->result);
+            }
+        } else {
+            $this->result->status = false;
+            $this->result->status_code = 422;
+            $this->result->message = 'Sorry Item could not found';
             return response()->json($this->result);
         }
     }
