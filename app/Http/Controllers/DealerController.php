@@ -866,6 +866,36 @@ class DealerController extends Controller
         return response()->json($this->result);
     }
 
+    // get all dealers with pending orders
+    public function fetch_dealer_with_pending_order_dealer($dealer_id)
+    {
+        //fetch all pending orders of a dealer with dealer_id
+        $dealer_pending_orders = DB::table('cart')
+            ->where('dealer', $dealer_id)
+            ->where('status', '0')
+            ->get();
+
+        if (!$dealer_pending_orders) {
+            $this->result->status = false;
+            $this->result->status_code = 422;
+            $this->result->data = [];
+            $this->result->message = 'Sorry dealer doesnt exist or deactivated';
+            return response()->json($this->result);
+        } else {
+
+            foreach ($dealer_pending_orders as $item) {
+                $item->spec_data = json_decode($item->spec_data);
+            }
+
+            $this->result->status = true;
+            $this->result->status_code = 200;
+            $this->result->data = $dealer_pending_orders ? $dealer_pending_orders : [];
+            $this->result->message =
+                'Dealer pending orders fetched successfully';
+            return response()->json($this->result);
+        }
+    }
+
     // get all the pending orders by pdf from dealer_id
     public function download_pending_order_pdf($dealer_id)
     {
