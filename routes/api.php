@@ -48,6 +48,20 @@ Route::group(
         Route::post('/register-dealer', 'AdminController@register_dealer');
         Route::post('/register-admin', 'AdminController@register_admin');
 
+        Route::post(
+            '/admin/edit-service-parts-orders',
+            'AdminController@admin_edit_service_parts_order'
+        );
+
+        Route::post(
+            '/admin/edit-carded-orders',
+            'AdminController@admin_edit_carded_order'
+        );
+        Route::post(
+            '/admin/edit-catalogue-orders',
+            'AdminController@admin_edit_catalogue_order'
+        );
+
         Route::get(
             '/admin/logged-in-dealers',
             'AdminController@all_logged_in_dealers'
