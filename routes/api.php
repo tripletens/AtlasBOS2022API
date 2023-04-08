@@ -650,6 +650,8 @@ Route::group(
 
         Route::get('/download-pdf/{id}', 'DealerController@download_pdf');
 
+        Route::get('/fetch_dealer_with_pending_order_dealer/{dealer_id}', 'DealerController@fetch_dealer_with_pending_order_dealer');
+
         Route::get('/download-pending-order-pdf/{dealer_id}', 'DealerController@download_pending_order_pdf');
         
         Route::get(
