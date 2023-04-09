@@ -1463,13 +1463,15 @@ class BranchController extends Controller
          // get the dealer details 
  
          $dealer_details = Dealer::where('id', $dealer_id)->where('status', 1)->get();
- 
+        
          if (!$dealer_details) {
              $this->result->status = false;
              $this->result->status_code = 422;
              $this->result->message = 'Sorry Dealer could not be found';
              return response()->json($this->result);
          }
+
+         $account_id = $dealer_details[0]->account_id;
  
          // else get all the items in cart for the dealer 
  
@@ -1481,26 +1483,40 @@ class BranchController extends Controller
          $catalogue_products = [];
          $service_part_products = [];
  
+        // get all the carded products 
+
+        $get_all_carded_products = CardedProducts::where('dealer',$account_id)->where('completed',0)->get();
+        
+        // get all the service parts 
+
+        $get_all_services_parts = ServiceParts::where('dealer',$account_id)->where('completed',0)->get();
+
+        // get all the catalogue orders
+
+        $get_all_catalogue_orders = Catalogue_Order::where('dealer',$account_id)->where('completed',0)->get();
+
+
  
-         foreach ($cart_data as $record) {
-             $record['spec_data'] = json_decode($record['spec_data']);
+        //  foreach ($cart_data as $record) {
+        //      $record['spec_data'] = json_decode($record['spec_data']);
  
-             if (!is_null($record['carded_data'])) {
-                 $record['carded_data'] = json_decode($record['carded_data']);
-                 array_push($carded_products, $record);
-             }
+        //      if (!is_null($record['carded_data'])) {
+        //          $record['carded_data'] = json_decode($record['carded_data']);
+        //          array_push($carded_products, $record);
+        //      }
  
-             if (!is_null($record['service_data'])) {
-                 $record['service_data'] = json_decode($record['service_data']);
-                 array_push($service_part_products, $record);
-             }
+        //      if (!is_null($record['service_data'])) {
+        //          $record['service_data'] = json_decode($record['service_data']);
+        //          array_push($service_part_products, $record);
+        //      }
  
-             if (!is_null($record['catalogue_data'])) {
-                 $record['catalogue_data'] = json_decode($record['catalogue_data']);
-                 array_push($catalogue_products, $record);
-             }
-         };
+        //      if (!is_null($record['catalogue_data'])) {
+        //          $record['catalogue_data'] = json_decode($record['catalogue_data']);
+        //          array_push($catalogue_products, $record);
+        //      }
+        //  };
  
+
          // foreach($cart_data as $item){
          //     $item['spec_data'] = json_decode($item['spec_data'],true);
          // }
@@ -1508,19 +1524,19 @@ class BranchController extends Controller
          $data = [
              "cart_data" => $cart_data,
              "dealer_details" => $dealer_details,
-             "carded_products" => $carded_products,
-             "catalogue_products" => $catalogue_products,
-             "service_part_products" => $service_part_products
+             "carded_products" => $get_all_carded_products && count($get_all_carded_products) > 0 ? json_decode($get_all_carded_products[0]->data) : [],
+             "catalogue_products" => $get_all_catalogue_orders && count($get_all_catalogue_orders) > 0 ? json_decode($get_all_catalogue_orders[0]->data) : [],
+             "service_part_products" => $get_all_services_parts && count($get_all_services_parts) > 0 ? json_decode($get_all_services_parts[0]->data) : [],
          ];
  
-         // return $data;
+        //  return $data['catalogue_products'][0]->description;
  
          $pdf = PDF::loadView('mails.pending_orders_format', $data);
  
          // // download PDF file with download method
          $order_pdf = $pdf->download('pending_order_pdf_file.pdf');
  
-         // return $order_pdf;
+        // return $order_pdf;
  
          $bb = base64_encode($order_pdf);
  
