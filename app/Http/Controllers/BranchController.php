@@ -14,6 +14,7 @@ use App\Models\Catalogue_Order;
 use App\Models\ServiceParts;
 use App\Models\CardedProducts;
 use App\Models\Cart;
+use App\Models\Category;
 use App\Models\Orders;
 use App\Models\Products;
 use Carbon\Carbon;
@@ -1280,6 +1281,256 @@ class BranchController extends Controller
             return response()->json($this->result);
         }
     }
+
+    public function download_pdf_branch($id)
+    {
+        $categories = Category::all();
+        $plumbing = [];
+        $vent = [];
+        $electrical = [];
+        $electronics = [];
+        $propane = [];
+        $accessories = [];
+        $outdoor = [];
+        $sealant = [];
+        $appliance = [];
+        $towing_products = [];
+        $towing_accessories = [];
+        $catalogue_data = [];
+        $carded_data = [];
+        $service_data = [];
+
+        $dealer_d = Dealer::where('id', $id)
+            ->get()
+            ->first();
+        $account_id = $dealer_d->account_id;
+        $catalogue_order = Catalogue_Order::where('dealer', $account_id)
+            ->get()
+            ->first();
+        $carded_products = CardedProducts::where('dealer', $account_id)
+            ->get()
+            ->first();
+        $service_products = ServiceParts::where('dealer', $account_id)
+            ->get()
+            ->first();
+
+        if ($catalogue_order) {
+            $catalogue_order = json_decode($catalogue_order['data'], true);
+        } else {
+        }
+
+        if ($carded_products) {
+            $carded_products = json_decode($carded_products['data'], true);
+        } else {
+        }
+
+        if ($service_products) {
+            $service_products = json_decode($service_products['data'], true);
+        } else {
+        }
+
+        $grand_total = 0;
+        $cart = Cart::where('dealer', $id)
+            ->get()
+            ->toArray();
+        foreach ($cart as $value) {
+            $spea_dat = json_decode($value['spec_data'], true);
+            $value['spec_data'] = $spea_dat;
+
+            $grand_total += floatval($value['price']);
+
+            if ($value['category'] == 'plumbing') {
+                array_push($plumbing, $value);
+            }
+
+            if (
+                $value['category'] == 'vents and hardware' ||
+                $value['category'] == 'vents'
+            ) {
+                array_push($vent, $value);
+            }
+
+            if ($value['category'] == 'electrical') {
+                array_push($electrical, $value);
+            }
+
+            if ($value['category'] == 'electronics') {
+                array_push($electronics, $value);
+            }
+
+            if ($value['category'] == 'propane') {
+                array_push($propane, $value);
+            }
+
+            if ($value['category'] == 'accessories') {
+                array_push($accessories, $value);
+            }
+
+            if (
+                $value['category'] == 'towing accessories' ||
+                $value['category'] == 'towing'
+            ) {
+                array_push($towing_accessories, $value);
+            }
+
+            if (
+                $value['category'] == 'outdoor living' ||
+                $value['category'] == 'outdoor'
+            ) {
+                array_push($outdoor, $value);
+            }
+
+            if (
+                $value['category'] == 'sealant and cleaners' ||
+                $value['category'] == 'sealant'
+            ) {
+                array_push($sealant, $value);
+            }
+
+            if (
+                $value['category'] == 'appliances' ||
+                $value['category'] == 'appliance'
+            ) {
+                array_push($appliance, $value);
+            }
+
+            if (
+                $value['category'] == 'towing products' ||
+                $value['category'] == 'awning'
+            ) {
+                array_push($towing_products, $value);
+            }
+        }
+
+        $data['cart'] = $cart;
+        $data['vent'] = $vent;
+        $data['electrical'] = $electrical;
+        $data['electronics'] = $electronics;
+        $data['propane'] = $propane;
+        $data['accessories'] = $accessories;
+        $data['outdoor'] = $outdoor;
+        $data['sealant'] = $sealant;
+        $data['appliance'] = $appliance;
+        $data['plumbing'] = $plumbing;
+        $data['towing_accessories'] = $towing_accessories;
+        $data['towing_products'] = $towing_products;
+        $data['catalogue_data'] = $catalogue_order;
+        $data['carded_data'] = $carded_products;
+        $data['service_data'] = $service_products;
+
+        $data['grand_total'] = $grand_total;
+
+        $dealerId = $id;
+        $dealer_details = Dealer::where('id', $dealerId)->get();
+        $dealer_name =
+            $dealer_details[0]->first_name .
+            ' ' .
+            $dealer_details[0]->last_name;
+        $dealer_email = $dealer_details[0]->email;
+        $dealer_account_id = $dealer_details[0]->account_id;
+        $dealer_updated_at = $dealer_details[0]->updated_at;
+
+        $myData = [];
+
+        $data['dealer_updated_at'] = $dealer_updated_at;
+
+        $data['dealer_account_id'] = $dealer_account_id;
+        $data['email'] = $dealer_email;
+        $data['dealer_name'] = $dealer_name;
+        $data['title'] = 'Atlas Order Details';
+        $data['order_file_name'] =
+            'atlas-order' . rand(6, 100000000000000) . '.pdf';
+
+        $pdf = PDF::loadView('mails.pdf_format', $data);
+
+        // download PDF file with download method
+        $order_pdf = $pdf->download('pdf_file.pdf');
+
+        $bb = base64_encode($order_pdf);
+
+        $this->result->status = true;
+        $this->result->status_code = 200;
+        $this->result->data->pdf = $bb;
+        $this->result->data->dealer = $dealer_name;
+
+        $this->result->message = 'Email has been sent';
+        return response()->json($this->result);
+    }
+     // get all the pending orders by pdf from dealer_id
+     public function download_pending_order_pdf_branch($dealer_id)
+     {
+         // get the dealer details 
+ 
+         $dealer_details = Dealer::where('id', $dealer_id)->where('status', 1)->get();
+ 
+         if (!$dealer_details) {
+             $this->result->status = false;
+             $this->result->status_code = 422;
+             $this->result->message = 'Sorry Dealer could not be found';
+             return response()->json($this->result);
+         }
+ 
+         // else get all the items in cart for the dealer 
+ 
+         $cart_data = Cart::where('dealer', $dealer_id)->where('status', 0)->get();
+ 
+         // get all the CP, CD AND SP PRODUCTS
+ 
+         $carded_products = [];
+         $catalogue_products = [];
+         $service_part_products = [];
+ 
+ 
+         foreach ($cart_data as $record) {
+             $record['spec_data'] = json_decode($record['spec_data']);
+ 
+             if (!is_null($record['carded_data'])) {
+                 $record['carded_data'] = json_decode($record['carded_data']);
+                 array_push($carded_products, $record);
+             }
+ 
+             if (!is_null($record['service_data'])) {
+                 $record['service_data'] = json_decode($record['service_data']);
+                 array_push($service_part_products, $record);
+             }
+ 
+             if (!is_null($record['catalogue_data'])) {
+                 $record['catalogue_data'] = json_decode($record['catalogue_data']);
+                 array_push($catalogue_products, $record);
+             }
+         };
+ 
+         // foreach($cart_data as $item){
+         //     $item['spec_data'] = json_decode($item['spec_data'],true);
+         // }
+ 
+         $data = [
+             "cart_data" => $cart_data,
+             "dealer_details" => $dealer_details,
+             "carded_products" => $carded_products,
+             "catalogue_products" => $catalogue_products,
+             "service_part_products" => $service_part_products
+         ];
+ 
+         // return $data;
+ 
+         $pdf = PDF::loadView('mails.pending_orders_format', $data);
+ 
+         // // download PDF file with download method
+         $order_pdf = $pdf->download('pending_order_pdf_file.pdf');
+ 
+         // return $order_pdf;
+ 
+         $bb = base64_encode($order_pdf);
+ 
+         $this->result->status = true;
+         $this->result->status_code = 200;
+         $this->result->data->pdf = $bb;
+         $this->result->data->dealer = $dealer_details[0]->full_name;
+ 
+         // // $this->result->message = 'Email has been sent';
+         return response()->json($this->result);
+     }
 
     public function fetch_all_dealers_with_active_service_parts_order(
         $branch_id
