@@ -3747,7 +3747,7 @@ class AdminController extends Controller
 
                 if (
                     count(json_decode($check_catalogue_order[0]->data, true)) ==
-                    0 ||
+                        0 ||
                     empty($check_catalogue_order[0]->data) == true
                 ) {
                     $check_catalogue_order[0]->delete();
@@ -4056,14 +4056,17 @@ class AdminController extends Controller
 
         $all_catalogue_orders = DB::table('atlas_catalogue_orders')
             ->wherein('dealer', $all_dealer_ids_order_status)
+            ->where('completed', '1')
             ->get();
 
         $all_service_parts = DB::table('atlas_service_parts')
             ->wherein('dealer', $all_dealer_ids_order_status)
+            ->where('completed', '1')
             ->get();
 
         $all_carded_products = DB::table('atlas_carded_products')
             ->wherein('dealer', $all_dealer_ids_order_status)
+            ->where('completed', '1')
             ->get();
 
         $fetch_dealer_ids = $dealers->pluck('id')->toArray();
