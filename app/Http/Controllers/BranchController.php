@@ -19,6 +19,7 @@ use App\Models\Orders;
 use App\Models\Products;
 use Carbon\Carbon;
 use DB;
+use Barryvdh\DomPDF\Facade as PDF;
 
 class BranchController extends Controller
 {
