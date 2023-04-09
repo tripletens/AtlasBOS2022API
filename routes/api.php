@@ -772,6 +772,11 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
     );
 
     Route::get('/fetch_all_branches', 'BranchController@fetch_all_branches');
+
+    Route::get('/download-pdf-branch/{id}', 'BranchController@download_pdf_branch');
+
+    Route::get('/download-pending-order-pdf-branch/{dealer_id}', 'BranchController@download_pending_order_pdf_branch');
+        
     Route::post(
         '/assign_dealer_to_branch',
         'BranchController@assign_dealer_to_branch'
