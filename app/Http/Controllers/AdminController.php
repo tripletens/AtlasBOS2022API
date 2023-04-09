@@ -2839,7 +2839,7 @@ class AdminController extends Controller
                     ->first();
                 $dealer->carded_completed = $carded->completed;
             } else {
-                $dealer->carded_completed = 3;
+                $dealer->carded_completed = 3; 
             }
 
             $check_catalogue_parts = Catalogue_Order::where(
