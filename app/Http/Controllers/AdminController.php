@@ -4392,6 +4392,7 @@ class AdminController extends Controller
         $this->result->data->service_part = $service_products;
         $this->result->data->catalogue = $catalogue_order;
         $this->result->data->carded = $carded_products;
+        $this->result->data->dealer = $dealer_d;
 
         $this->result->message = 'View Dealer Orders';
         return response()->json($this->result);
