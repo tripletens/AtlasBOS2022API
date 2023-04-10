@@ -281,41 +281,80 @@ class BranchController extends Controller
 
                 // return $dealer_id;
 
-                $check_service_parts_count = ServiceParts::where(
+                $check_service_parts = ServiceParts::where(
                     'dealer',
                     $dealer_id
-                )
-                    ->where('completed', 1)
-                    ->count();
+                )->get();
 
-                // return $check_service_parts_count;
+                if(count($check_service_parts) == 0 ){
+                    $record->has_service_parts = 0; // doesnt have catalogue orders 
+                }else{
+                    // get the status 
 
-                $record->has_service_parts =
-                    $check_service_parts_count > 0 ? true : false;
+                    $completed_service_parts = $check_service_parts[0]->completed;
+                    if($completed_service_parts == 1){
+                        // active 
+                        $record->has_service_parts = 1;
+                    }
+
+                    if($completed_service_parts == 0){
+                        // pending 
+                        $record->has_service_parts = 2;
+                    }
+                }
+
+                // catalogue starts here 
 
                 // check for catalogue products
-
-                $check_catalogue_products_count = Catalogue_Order::where(
+                $check_catalogue_products = Catalogue_Order::where(
                     'dealer',
                     $dealer_id
-                )
-                    ->where('completed', 1)
-                    ->count();
+                )->get();
 
-                $record->has_catalogue_products =
-                    $check_catalogue_products_count > 0 ? true : false;
+                if(count($check_catalogue_products) == 0 ){
+                    $record->has_catalogue_products = 0; // doesnt have catalogue orders 
+                }else{
+                    // get the status 
+
+                    $completed_catalogue = $check_catalogue_products[0]->completed;
+                    if($completed_catalogue == 1){
+                        // active 
+                        $record->has_catalogue_products = 1;
+                    }
+
+                    if($completed_catalogue == 0){
+                        // pending 
+                        $record->has_catalogue_products = 2;
+                    }
+                }
+
+                // 1 equals active, 0 pending 
 
                 // check for carded products
 
-                $check_carded_products_count = CardedProducts::where(
+                $check_carded_products = CardedProducts::where(
                     'dealer',
                     $dealer_id
                 )
-                    ->where('completed', 1)
-                    ->count();
+                    ->get();
 
-                $record->has_carded_products =
-                    $check_carded_products_count > 0 ? true : false;
+                    if(count($check_carded_products) == 0 ){
+                        $record->has_carded_products = 0; // doesnt have catalogue orders 
+                    }else{
+                        // get the status 
+    
+                        $completed_carded = $check_carded_products[0]->completed;
+                        if($completed_carded == 1){
+                            // active 
+                            $record->has_carded_products = 1;
+                        }
+    
+                        if($completed_carded == 0){
+                            // pending 
+                            $record->has_carded_products = 2;
+                        }
+                    }
+    
 
                 // check if the dealer has an item in cart return 0
                 $check_cart = Cart::where('dealer', $dealer_user_id)->get();
