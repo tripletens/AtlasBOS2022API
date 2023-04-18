@@ -2812,12 +2812,12 @@ class AdminController extends Controller
                     ->where('dealer', $id)
                     ->where('status', '0')
                     ->sum('price');
-                    if($dealer->order_status == '0'){
-                        $dealer->order_status = 2
-                    }
-                    if($dealer->order_status == '1'){
-                        $dealer->order_status = 1
-                    }
+                if ($dealer->order_status == '0') {
+                    $dealer->order_status = 2;
+                }
+                if ($dealer->order_status == '1') {
+                    $dealer->order_status = 1;
+                }
             } else {
                 $dealer->total_price = 0;
                 $dealer->total_item = 0;
@@ -2825,8 +2825,6 @@ class AdminController extends Controller
                 $dealer->total_pending_amt = 0;
 
                 $dealer->order_status = 0;
-
-
             }
 
             if ($check_service_parts) {
@@ -2849,7 +2847,7 @@ class AdminController extends Controller
                     ->first();
                 $dealer->carded_completed = $carded->completed;
             } else {
-                $dealer->carded_completed = 3; 
+                $dealer->carded_completed = 3;
             }
 
             $check_catalogue_parts = Catalogue_Order::where(
