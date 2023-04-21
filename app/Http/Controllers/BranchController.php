@@ -341,6 +341,12 @@ class BranchController extends Controller
                     if(count($check_carded_products) == 0 ){
                         $record->has_carded_products = 0; // doesnt have catalogue orders 
                     }else{
+
+                        // get the carded products data 
+                        $carded_product_data = $check_carded_products[0]->data;
+
+                        return array_column($carded_product_data,'total');
+
                         // get the status 
     
                         $completed_carded = $check_carded_products[0]->completed;

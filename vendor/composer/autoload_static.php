@@ -616,6 +616,7 @@ class ComposerStaticInit139105d52f428235a3bd77bdbdbb53dc
         'App\\Http\\Middleware\\TrustProxies' => __DIR__ . '/../..' . '/app/Http/Middleware/TrustProxies.php',
         'App\\Http\\Middleware\\VerifyCsrfToken' => __DIR__ . '/../..' . '/app/Http/Middleware/VerifyCsrfToken.php',
         'App\\Imports\\ProductsImport' => __DIR__ . '/../..' . '/app/Imports/ProductsImport.php',
+        'App\\Mail\\PasswordResetEmailCode' => __DIR__ . '/../..' . '/app/Mail/PasswordResetEmailCode.php',
         'App\\Mail\\SubmitOrderMail' => __DIR__ . '/../..' . '/app/Mail/SubmitOrderMail.php',
         'App\\Models\\Admin' => __DIR__ . '/../..' . '/app/Models/Admin.php',
         'App\\Models\\AtlasLoginLog' => __DIR__ . '/../..' . '/app/Models/AtlasLoginLog.php',

@@ -4235,6 +4235,7 @@ class DealerController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'email' => 'required',
+            'account_id' => 'required',
             'reset_url' => 'required',
         ]);
 
@@ -4242,24 +4243,25 @@ class DealerController extends Controller
             $this->result->status_code = 422;
             $this->result->message = [
                 'email' => $validator->errors()->get('email'),
+                'account_id' => $validator->errors()->get('account_id'),
                 'reset_url' => $validator->errors()->get('reset_url'),
             ];
             return response()->json($this->result);
         } else {
             $email = $request->input('email');
-
+            $account_id = $request->input('account_id');
             $reset_url = $request->input('reset_url');
             // check if email exists in the db
 
-            $check_email = $dealer_details = Dealer::where(
+            $check_email = Dealer::where(
                 'email',
                 $email
-            )->get();
+            )->where('account_id',$account_id)->get();
 
             if (!$check_email) {
                 $this->result->status = false;
                 $this->result->status_code = 422;
-                $this->result->message = 'Sorry Email could not be verified';
+                $this->result->message = 'Sorry Email with account id could not be verified';
                 return response()->json($this->result);
             }
 
@@ -4268,7 +4270,7 @@ class DealerController extends Controller
                 $this->result->status = false;
                 $this->result->status_code = 422;
                 $this->result->message =
-                    'Sorry Email does\'t exists in our records';
+                    'Sorry Email with account id does\'t exists in our records';
                 return response()->json($this->result);
             } else {
                 // email exists
@@ -4279,11 +4281,13 @@ class DealerController extends Controller
                 // get dealer's credentials
                 $dealer_email = $check_email[0]->email;
                 $dealer_id = $check_email[0]->id;
+                $dealer_account_id = $check_email[0]->account_id;
 
                 // save the details
                 $save_details = ResetPassword::create([
                     'dealer_id' => $dealer_id,
                     'code' => $code,
+                    'account_id' => $dealer_account_id,
                     'email' => $dealer_email,
                 ]);
 
@@ -4301,6 +4305,7 @@ class DealerController extends Controller
                 $data = [
                     'code' => $code,
                     'reset_url' => $reset_url,
+                    'account_id' => $account_id,
                     'email' => $dealer_email,
                 ];
 
@@ -4321,7 +4326,7 @@ class DealerController extends Controller
         }
     }
 
-    public function reset_password_verify_code_email($email, $code)
+    public function reset_password_verify_code_email($email,$account_id, $code)
     {
         // $validator = Validator::make($request->all(), [
         //     // 'email' => 'required',
@@ -4342,6 +4347,7 @@ class DealerController extends Controller
         // check if email exists in the db
 
         $check_code = ResetPassword::where('email', $email)
+            ->where('account_id',$account_id)
             ->get()
             ->last();
 
@@ -4378,6 +4384,7 @@ class DealerController extends Controller
         // update the record status to 0
         // to deactivate the code we change it to 0
         $update_record_status = ResetPassword::where('email', $email)
+            ->where('account_id',$account_id)
             ->where('code', $code)
             ->update([
                 'status' => 0,
@@ -4405,6 +4412,7 @@ class DealerController extends Controller
         $validator = Validator::make($request->all(), [
             'new_password' => 'required',
             'email' => 'required',
+            'account_id' => 'required',
             'confirm_new_password' => 'required|same:new_password',
         ]);
 
@@ -4413,6 +4421,7 @@ class DealerController extends Controller
             $this->result->message = [
                 'new_password' => $validator->errors()->get('new_password'),
                 'email' => $validator->errors()->get('email'),
+                'account_id' => $validator->errors()->get('account_id'),
                 'confirm_new_password' => $validator
                     ->errors()
                     ->get('confirm_new_password'),
@@ -4420,12 +4429,13 @@ class DealerController extends Controller
             return response()->json($this->result);
         } else {
             $email = $request->input('email');
+            $account_id = $request->input('account_id');
             $password = $request->input('new_password');
             $hash_password = Hash::make($request->input('new_password'));
 
-            $update_dealer_details = Dealer::where('email', $email)->update([
-                'password' => $hash_password,
-                'password_clear' => $password,
+            $update_dealer_details = Dealer::where('email', $email)->where('account_id',$account_id)->update([
+                "password" => $hash_password,
+                "password_clear" => $password
             ]);
 
             // return $dealer_details;

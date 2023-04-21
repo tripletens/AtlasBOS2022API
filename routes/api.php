@@ -737,7 +737,7 @@ Route::group(
         ]);
 
         // verify code password reset
-        Route::get('/reset-password-verify-code-email/{email}/{code}', [
+        Route::get('/reset-password-verify-code-email/{email}/{account_id}/{code}', [
             DealerController::class,
             'reset_password_verify_code_email',
         ]);
