@@ -14,6 +14,7 @@ class ResetPassword extends Model
         'dealer_id',
         'email',
         'code',
-        'status'
+        'status',
+        'account_id'
     ];
 }
