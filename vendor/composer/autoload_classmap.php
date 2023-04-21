@@ -26,6 +26,7 @@ return array(
     'App\\Http\\Middleware\\TrustProxies' => $baseDir . '/app/Http/Middleware/TrustProxies.php',
     'App\\Http\\Middleware\\VerifyCsrfToken' => $baseDir . '/app/Http/Middleware/VerifyCsrfToken.php',
     'App\\Imports\\ProductsImport' => $baseDir . '/app/Imports/ProductsImport.php',
+    'App\\Mail\\PasswordResetEmailCode' => $baseDir . '/app/Mail/PasswordResetEmailCode.php',
     'App\\Mail\\SubmitOrderMail' => $baseDir . '/app/Mail/SubmitOrderMail.php',
     'App\\Models\\Admin' => $baseDir . '/app/Models/Admin.php',
     'App\\Models\\AtlasLoginLog' => $baseDir . '/app/Models/AtlasLoginLog.php',

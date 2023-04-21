@@ -132,6 +132,7 @@
             <div class="mt-3">
                 <img src="https://atlasbookingprogram.com/assets/new-atlas-logo.png" class="com-logo" alt="">
             </div>
+
         </div>
     </div>
 
@@ -196,7 +197,6 @@
                     </td>
                 </tr>
 
-
             </tbody>
         </table>
     @endif
@@ -221,23 +221,27 @@
                 <tr>
                     <th class="thead-custom">Quantity</th>
                     <th class="thead-custom">Atlas #</th>
+                    <th class="thead-custom">Description #</th>
                     <th class="thead-custom">Price ($)</th>
                 </tr>
             </thead>
+            
             <tbody>
                 @if ($catalogue_products)
                     {{ $cart_catalogue_total = 0 }}
                     @foreach ($catalogue_products as $item)
-                        {{ $cart_catalogue_total += floatval($item['price']) }}
+                        {{ $cart_catalogue_total += floatval($item->price) }}
                         <tr>
-                            <td class="table-value-custom">{{ $item['qty'] }}</td>
-                            <td class="table-value-custom">{{ $item['atlasId'] }}</td>
-                            <td class="table-value-custom">$ {{ $item['price'] }}</td>
+                            
+                            <td class="table-value-custom">{{ $item->qty }}</td>
+                            <td class="table-value-custom">{{ $item->atlasId }}</td>
+                            <td class="table-value-custom">{{ property_exists($item,'description') ? $item->description : "N/A"}}</td>
+                            <td class="table-value-custom">$ {{ $item->price }}</td>
                         </tr>
                     @endforeach
 
                     <tr>
-                        <td colspan="2">
+                        <td colspan="3">
                             <h5 class="each-total-cate-text" style="">
                                 Total For
                                 Pending Catalogue Orders</h5>
@@ -266,6 +270,7 @@
                 <tr>
                     <th class="thead-custom">Quantity</th>
                     <th class="thead-custom">Atlas #</th>
+                    <th class="thead-custom">Description #</th>
                     <th class="thead-custom">Price ($)</th>
                 </tr>
             </thead>
@@ -274,16 +279,17 @@
                     {{ $cart_carded_total = 0 }}
                         
                     @foreach ($carded_products as $item)
-                        {{ $cart_carded_total += floatval($item['price']) }}
+                        {{ $cart_carded_total += floatval($item->price) }}
                         <tr>
-                            <td class="table-value-custom">{{ $item['qty'] }}</td>
-                            <td class="table-value-custom">{{ $item['atlasId'] }}</td>
-                            <td class="table-value-custom">{{ $item['price'] }}</td>
+                            <td class="table-value-custom">{{ $item->qty }}</td>
+                            <td class="table-value-custom">{{ $item->atlasId }}</td>
+                            <td class="table-value-custom">{{ property_exists($item,'description') ? $item->description : "N/A"}}</td>
+                            <td class="table-value-custom">{{ $item->price }}</td>
 
                         </tr>
                     @endforeach
                     <tr>
-                        <td colspan="2">
+                        <td colspan="3">
                             <h5 class="each-total-cate-text" style="">
                                 Total For
                                 Pending Carded Products Orders</h5>
@@ -312,6 +318,7 @@
                 <tr>
                     <th class="thead-custom">Quantity</th>
                     <th class="thead-custom">Atlas #</th>
+                    <th class="thead-custom">Description</th>
                     <th class="thead-custom">Price</th>
 
                 </tr>
@@ -320,15 +327,16 @@
                 @if ($service_part_products)
                     {{ $cart_service_part_total = 0 }}
                     @foreach ($service_part_products as $item)
-                    {{ $cart_service_part_total += floatval($item['price']) }}
+                    {{ $cart_service_part_total += floatval($item->price) }}
                         <tr>
-                            <td class="table-value-custom">{{ $item['qty'] }}</td>
-                            <td class="table-value-custom">{{ $item['atlasId'] }}</td>
-                            <td class="table-value-custom">{{ $item['price'] }}</td>
+                            <td class="table-value-custom">{{ $item->qty ? $item->qty : "" }}</td>
+                            <td class="table-value-custom">{{ $item->atlasId ? $item->atlasId : ""}}</td>
+                            <td class="table-value-custom">{{ property_exists($item,'description') ? $item->description : "N/A"}}</td>
+                            <td class="table-value-custom">{{ $item->price ? $item->price : ""}}</td>
                         </tr>
                     @endforeach
                     <tr>
-                        <td colspan="2">
+                        <td colspan="3">
                             <h5 class="each-total-cate-text" style="">
                                 Total For
                                 Pending Service Parts Orders</h5>

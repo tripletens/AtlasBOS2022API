@@ -52,6 +52,7 @@
             <div class="col-6">
                 <h2 class="top-title">ATLAS {{ now()->year }} BOOKING PROGRAM</h2>
                 <h2 class="dealer-name-title">Password Reset Code </h2>
+                <h2 class="dealer-name">This is a password reset for account with Account ID - <b>{{ $data['account_id'] }}</b> </h2>
                 <h2 class="dealer-name">Here is your code - {{ $data['code'] }} </h2>
                 <h2 class="dealer-name">Click on this link to reset your password - <a class="btn btn-link" target="_blank" href="{{ $data['reset_url'] . $data['code'] }}"> {{ $data['reset_url'] . $data['code'] }}</a> </h2>
                 
