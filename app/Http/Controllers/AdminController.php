@@ -3360,7 +3360,7 @@ class AdminController extends Controller
                         $update_quantity = array_push($new_items, [
                             'qty' => $quantity,
                             'atlasId' => $atlas_id,
-                            'price' => $new_price,
+                            'price' => $inital_price,
                             'total' => $new_price,
                             'description' => $desc,
                         ]);
@@ -3448,7 +3448,7 @@ class AdminController extends Controller
                         $update_quantity = array_push($new_items, [
                             'qty' => $quantity,
                             'atlasId' => $atlas_id,
-                            'price' => $new_price,
+                            'price' => $inital_price,
                             'total' => $new_price,
                             'description' => $desc,
                         ]);
@@ -3536,7 +3536,7 @@ class AdminController extends Controller
                         $update_quantity = array_push($new_items, [
                             'qty' => $quantity,
                             'atlasId' => $atlas_id,
-                            'price' => $new_price,
+                            'price' => $inital_price,
                             'total' => $new_price,
                             'description' => $desc,
                         ]);
