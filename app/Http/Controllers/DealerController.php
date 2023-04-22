@@ -2936,8 +2936,6 @@ class DealerController extends Controller
                         }
                     }
 
-                    // dd( $new_items );
-
                     $update_quantity = array_push($new_items, [
                         'qty' => $quantity,
                         'atlasId' => $atlas_id,
