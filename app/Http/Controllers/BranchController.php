@@ -345,7 +345,8 @@ class BranchController extends Controller
                         // get the carded products data 
                         $carded_product_data = $check_carded_products[0]->data;
 
-                        return array_column($carded_product_data,'total');
+                        // return $check_carded_products[0]; 
+                        // array_column($carded_product_data,'total');
 
                         // get the status 
     
