@@ -2824,7 +2824,7 @@ class AdminController extends Controller
                 $dealer->total_pending_item = 0;
                 $dealer->total_pending_amt = 0;
 
-                $dealer->order_status = 0;
+                // $dealer->order_status = 0;
             }
 
             if ($check_service_parts) {
