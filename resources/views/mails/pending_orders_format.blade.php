@@ -161,7 +161,7 @@
 
                 {{ $cart_total = 0 }}
                 @foreach ($cart_data as $item)
-                    {{ $cart_total += floatval($item['price']) }}
+                    {{ $cart_total += floatval($item['price'] * $item['qty']) }}
                     <tr>
                         <td class="table-value-custom">
                             {{ $item['qty'] }}
@@ -179,7 +179,7 @@
                             ${{ number_format($item['unit_price'], 2) }}
                         </td>
                         <td class="table-value-custom">
-                            ${{ number_format($item['price'], 2) }}
+                            ${{ number_format($item['price'] * $item['qty'], 2)  }}
                         </td>
                     </tr>
 

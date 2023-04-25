@@ -2885,7 +2885,6 @@ class DealerController extends Controller
             'atlas_id' => 'required',
             'dealer' => 'required',
             'quantity' => 'required|integer',
-
             'price' => 'required',
             'total' => 'required',
         ]);
