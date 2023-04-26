@@ -237,7 +237,7 @@
                             <td class="table-value-custom">{{ $item->atlasId }}</td>
                             <td class="table-value-custom">{{ property_exists($item,'description') ? $item->description : "N/A"}}</td>
                             <td class="table-value-custom">$ {{ number_format($item->price,2) }}</td>
-                            <td class="table-value-custom">$ {{ number_format($item->total,2) }}</td>
+                            <td class="table-value-custom">$ {{ number_format($item->price * $item->qty,2) }}</td>
                         </tr>
                     @endforeach
 
@@ -287,7 +287,7 @@
                             <td class="table-value-custom">{{ $item->atlasId }}</td>
                             <td class="table-value-custom">{{ property_exists($item,'description') ? $item->description : "N/A"}}</td>
                             <td class="table-value-custom">{{ "$" . number_format($item->price,2) }}</td>
-                            <td class="table-value-custom">{{ "$" . number_format($item->total,2) }}</td>
+                            <td class="table-value-custom">{{ "$" . number_format($item->price * $item->qty,2) }}</td>
                         </tr>
                     @endforeach
                     <tr>
@@ -335,7 +335,7 @@
                             <td class="table-value-custom">{{ $item->atlasId ? $item->atlasId : ""}}</td>
                             <td class="table-value-custom">{{ property_exists($item,'description') ? $item->description : "N/A"}}</td>
                             <td class="table-value-custom">{{ $item->price ? number_format($item->price,2) : ""}}</td>
-                            <td class="table-value-custom">{{ $item->total ? number_format($item->total,2) : ""}}</td>
+                            <td class="table-value-custom">{{ $item->total ? number_format($item->price * $item->qty,2) : ""}}</td>
                         </tr>
                     @endforeach
                     <tr>
