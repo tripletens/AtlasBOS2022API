@@ -744,7 +744,7 @@
                     <th class="thead-custom">Quantity</th>
                     <th class="thead-custom">Atlas #</th>
                     <th class="thead-custom">Description</th>
-                    <th class="thead-custom">Price</th>
+                    <th class="thead-custom">Unit Price</th>
                     <th class="thead-custom">Total</th>
 
                 </tr>
@@ -801,7 +801,7 @@
                     <th class="thead-custom">Quantity</th>
                     <th class="thead-custom">Atlas #</th>
                     <th class="thead-custom">Description</th>
-                    <th class="thead-custom">Price</th>
+                    <th class="thead-custom">Unit Price</th>
                     <th class="thead-custom">Total</th>
 
                 </tr>
@@ -858,7 +858,7 @@
                     <th class="thead-custom">Quantity</th>
                     <th class="thead-custom">Atlas #</th>
                     <th class="thead-custom">Description</th>
-                    <th class="thead-custom">Price</th>
+                    <th class="thead-custom">Unit Price</th>
                     <th class="thead-custom">Total</th>
 
                 </tr>
