@@ -731,14 +731,7 @@
     @endif
 
 
-    <div style="width: 100%; text-align: right; border: 1px solid black; margin-top: 20px">
-        <h5 class="each-total-cate-text" style="display: inline-block; border-right: 1px solid black">Grand Total:
-        </h5>
-        <h5 class="each-total-text" style="display: inline-block; padding-right: 30px">
-            ${{ number_format($grand_total, 2) }}
-        </h5>
-    </div>
-
+  
 
     {{-- Catalougue Products Table --}}
     @if ($catalogue_data)
@@ -758,7 +751,10 @@
             </thead>
             <tbody>
                 @if ($catalogue_data)
+                    {{ $catalogue_total = 0 }}
                     @foreach ($catalogue_data as $item)
+                    {{ $catalogue_total+= $item['total'] }}
+
                         <tr>
                             <td class="table-value-custom">{{ $item['qty'] }}</td>
                             <td class="table-value-custom">{{ $item['atlasId'] }}</td>
@@ -769,12 +765,19 @@
                                 <td class="table-value-custom">${{ number_format($item['total'], 2) }}</td>
                             @endisset
 
-                           
-
-
-
                         </tr>
                     @endforeach
+                    <tr>
+                        <td colspan="4">
+                            <h5 class="each-total-cate-text" style="">
+                                Total For
+                                Catalogue Order</h5>
+                        </td>
+                        <td>
+                            <h5 class="each-total-text" style="">
+                                ${{ number_format($catalogue_total, 2) }}</h5>
+                        </td>
+                    </tr>
                 @else
                     <tr>
                         <td colspan="2" class="table-value-custom" style="text-align: center">No Catalogue Item</td>
@@ -805,7 +808,11 @@
             </thead>
             <tbody>
                 @if ($carded_data)
+                {{ $carded_total = 0 }}
+
                     @foreach ($carded_data as $item)
+                    {{ $carded_total+= $item['total'] }}
+
                         <tr>
                             <td class="table-value-custom">{{ $item['qty'] }}</td>
                             <td class="table-value-custom">{{ $item['atlasId'] }}</td>
@@ -816,10 +823,19 @@
                                 <td class="table-value-custom">${{ number_format($item['total'], 2) }}</td>
                             @endisset
 
-                         
-
                         </tr>
                     @endforeach
+                    <tr>
+                        <td colspan="4">
+                            <h5 class="each-total-cate-text" style="">
+                                Total For
+                                Carded Order</h5>
+                        </td>
+                        <td>
+                            <h5 class="each-total-text" style="">
+                                ${{ number_format($carded_total, 2) }}</h5>
+                        </td>
+                    </tr>
                 @else
                     <tr>
                         <td colspan="2" class="table-value-custom" style="text-align: center">No Carded Products</td>
@@ -849,7 +865,11 @@
             </thead>
             <tbody>
                 @if ($service_data)
+                {{ $service_total = 0 }}
+
                     @foreach ($service_data as $item)
+                    {{ $service_total+= $item['total'] }}
+
                         <tr>
                             <td class="table-value-custom">{{ $item['qty'] }}</td>
                             <td class="table-value-custom">{{ $item['atlasId'] }}</td>
@@ -859,11 +879,19 @@
                                 <td class="table-value-custom">${{ number_format($item['price'], 2) }}</td>
                                 <td class="table-value-custom">${{ number_format($item['total'], 2) }}</td>
                             @endisset
-
-                       
-
                         </tr>
                     @endforeach
+                    <tr>
+                        <td colspan="4">
+                            <h5 class="each-total-cate-text" style="">
+                                Total For
+                                Service Parts Order</h5>
+                        </td>
+                        <td>
+                            <h5 class="each-total-text" style="">
+                                ${{ number_format($service_total, 2) }}</h5>
+                        </td>
+                    </tr>
                 @else
                     <tr>
                         <td colspan="2" class="table-value-custom" style="text-align: center">No Service Parts</td>
@@ -872,6 +900,16 @@
             </tbody>
         </table>
     @endif
+
+
+
+    <div style="width: 100%; text-align: right; border: 1px solid black; margin-top: 20px">
+        <h5 class="each-total-cate-text" style="display: inline-block; border-right: 1px solid black">Grand Total:
+        </h5>
+        <h5 class="each-total-text" style="display: inline-block; padding-right: 30px">
+            ${{ number_format($grand_total, 2) }}
+        </h5>
+    </div>
 
 
     {{-- @if (count($outdoor) > 0 || count($propane) > 0 || count($towing_products) > 0 || count($towing_accessories) > 0 || count($accessories) > 0 || count($sealant) > 0 || count($plumbing) > 0 || count($electronics) > 0 || count($vent) > 0 || count($appliance) > 0)
