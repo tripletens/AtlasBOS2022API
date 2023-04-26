@@ -778,6 +778,9 @@
                                 ${{ number_format($catalogue_total, 2) }}</h5>
                         </td>
                     </tr>
+
+                    {{ $grand_total += $catalogue_total }}
+
                 @else
                     <tr>
                         <td colspan="2" class="table-value-custom" style="text-align: center">No Catalogue Item</td>
@@ -834,8 +837,12 @@
                         <td>
                             <h5 class="each-total-text" style="">
                                 ${{ number_format($carded_total, 2) }}</h5>
+
+
                         </td>
                     </tr>
+                    {{ $grand_total += $carded_total }}
+
                 @else
                     <tr>
                         <td colspan="2" class="table-value-custom" style="text-align: center">No Carded Products</td>
@@ -892,6 +899,8 @@
                                 ${{ number_format($service_total, 2) }}</h5>
                         </td>
                     </tr>
+                    {{ $grand_total += $service_total }}
+
                 @else
                     <tr>
                         <td colspan="2" class="table-value-custom" style="text-align: center">No Service Parts</td>
@@ -930,3 +939,5 @@
 </body>
 
 </html>
+
+
