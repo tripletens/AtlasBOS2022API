@@ -230,7 +230,7 @@
                 @if ($catalogue_products)
                     {{ $cart_catalogue_total = 0 }}
                     @foreach ($catalogue_products as $item)
-                        {{ $cart_catalogue_total += floatval($item->total) }}
+                        {{ $cart_catalogue_total += floatval($item->price * $item->qty) }}
                         <tr>
                             
                             <td class="table-value-custom">{{ $item->qty }}</td>
@@ -281,7 +281,7 @@
                     {{ $cart_carded_total = 0 }}
                         
                     @foreach ($carded_products as $item)
-                        {{ $cart_carded_total += floatval($item->total) }}
+                        {{ $cart_carded_total += floatval($item->price * $item->qty) }}
                         <tr>
                             <td class="table-value-custom">{{ $item->qty }}</td>
                             <td class="table-value-custom">{{ $item->atlasId }}</td>
@@ -329,7 +329,7 @@
                 @if ($service_part_products)
                     {{ $cart_service_part_total = 0 }}
                     @foreach ($service_part_products as $item)
-                    {{ $cart_service_part_total += floatval($item->total) }}
+                    {{ $cart_service_part_total += floatval($item->price * $item->qty) }}
                         <tr>
                             <td class="table-value-custom">{{ $item->qty ? $item->qty : "" }}</td>
                             <td class="table-value-custom">{{ $item->atlasId ? $item->atlasId : ""}}</td>
