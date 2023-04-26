@@ -28,11 +28,13 @@
     td {
         font-size: 10px;
         padding-left: 8px;
+        
 
     }
 
     .table-value-custom {
         font-size: 10px;
+        text-align: center;
     }
 
     table {
