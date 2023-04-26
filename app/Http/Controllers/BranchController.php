@@ -1575,6 +1575,8 @@ class BranchController extends Controller
              "service_part_products" => $get_all_services_parts && count($get_all_services_parts) > 0 ? json_decode($get_all_services_parts[0]->data) : [],
          ];
  
+        //  return $data;
+
         //  return $data['catalogue_products'][0]->description;
  
          $pdf = PDF::loadView('mails.pending_orders_format', $data);
@@ -1582,7 +1584,7 @@ class BranchController extends Controller
          // // download PDF file with download method
          $order_pdf = $pdf->download('pending_order_pdf_file.pdf');
  
-        // return $order_pdf;
+        return $order_pdf;
  
          $bb = base64_encode($order_pdf);
  
