@@ -1575,7 +1575,7 @@ class BranchController extends Controller
              "service_part_products" => $get_all_services_parts && count($get_all_services_parts) > 0 ? json_decode($get_all_services_parts[0]->data) : [],
          ];
  
-        //  return $data;
+        //  return $cart_data;
 
         //  return $data['catalogue_products'][0]->description;
  
