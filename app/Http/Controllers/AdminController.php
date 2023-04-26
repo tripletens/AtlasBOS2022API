@@ -2812,11 +2812,19 @@ class AdminController extends Controller
                     ->where('dealer', $id)
                     ->where('status', '0')
                     ->sum('price');
+                if ($dealer->order_status == '0') {
+                    $dealer->order_status = 2;
+                }
+                if ($dealer->order_status == '1') {
+                    $dealer->order_status = 1;
+                }
             } else {
                 $dealer->total_price = 0;
                 $dealer->total_item = 0;
                 $dealer->total_pending_item = 0;
                 $dealer->total_pending_amt = 0;
+
+                $dealer->order_status = 0;
             }
 
             if ($check_service_parts) {
@@ -2839,7 +2847,7 @@ class AdminController extends Controller
                     ->first();
                 $dealer->carded_completed = $carded->completed;
             } else {
-                $dealer->carded_completed = 3; 
+                $dealer->carded_completed = 3;
             }
 
             $check_catalogue_parts = Catalogue_Order::where(
@@ -3296,6 +3304,261 @@ class AdminController extends Controller
         }
     }
 
+    public function admin_edit_service_parts_order(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'id' => 'required',
+            'atlas_id' => 'required',
+            'dealer' => 'required',
+            'quantity' => 'required|integer',
+        ]);
+
+        if ($validator->fails()) {
+            $this->result->status_code = 422;
+            $this->result->message = [
+                'id' => $validator->errors()->get('id'),
+                'atlas_id' => $validator->errors()->get('atlas_id'),
+                'dealer' => $validator->errors()->get('dealer'),
+                'quantity' => $validator->errors()->get('quantity'),
+            ];
+            return response()->json($this->result);
+        } else {
+            $id = $request->input('id');
+            $atlas_id = $request->input('atlas_id');
+            $dealer = $request->input('dealer');
+            $quantity = $request->input('quantity');
+
+            if (ExtraProducts::where('item_code', $atlas_id)->exists()) {
+                $extra_data = ExtraProducts::where('item_code', $atlas_id)
+                    ->get()
+                    ->first();
+                $inital_price = $extra_data->price;
+                $new_price = $inital_price * $quantity;
+
+                if (ServiceParts::where('dealer', $dealer)->exists()) {
+                    $service_parts_order = ServiceParts::where(
+                        'dealer',
+                        $dealer
+                    )
+                        ->get()
+                        ->first();
+                    $data = json_decode($service_parts_order->data);
+                    $status = count($data) > 0 ? true : false;
+                    if ($status) {
+                        $new_items = [];
+
+                        foreach ($data as $value) {
+                            $atlas_id_old = $value->atlasId;
+                            if ($atlas_id_old != $atlas_id) {
+                                array_push($new_items, (array) $value);
+                            }
+                        }
+
+                        $update_quantity = array_push($new_items, [
+                            'qty' => $quantity,
+                            'atlasId' => $atlas_id,
+                            'price' => $new_price,
+                            'total' => $new_price,
+                        ]);
+                    }
+
+                    $data_encode = json_encode($new_items);
+
+                    $update_carded_data = ServiceParts::where(
+                        'dealer',
+                        $dealer
+                    )->update(['data' => $data_encode]);
+
+                    if (!$update_carded_data) {
+                        $this->result->status = false;
+                        $this->result->status_code = 422;
+                        $this->result->message =
+                            'Service Parts Order could not be updated';
+                        return response()->json($this->result);
+                    }
+
+                    $this->result->status = true;
+                    $this->result->status_code = 200;
+                    $this->result->message =
+                        'Service Parts Order updated successfully';
+                    return response()->json($this->result);
+                }
+            } else {
+                $this->result->status_code = 404;
+                $this->result->message = 'Item not found';
+                return response()->json($this->result);
+            }
+        }
+    }
+
+    public function admin_edit_carded_order(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'id' => 'required',
+            'atlas_id' => 'required',
+            'dealer' => 'required',
+            'quantity' => 'required|integer',
+        ]);
+
+        if ($validator->fails()) {
+            $this->result->status_code = 422;
+            $this->result->message = [
+                'id' => $validator->errors()->get('id'),
+                'atlas_id' => $validator->errors()->get('atlas_id'),
+                'dealer' => $validator->errors()->get('dealer'),
+                'quantity' => $validator->errors()->get('quantity'),
+            ];
+            return response()->json($this->result);
+        } else {
+            $id = $request->input('id');
+            $atlas_id = $request->input('atlas_id');
+            $dealer = $request->input('dealer');
+            $quantity = $request->input('quantity');
+
+            if (ExtraProducts::where('item_code', $atlas_id)->exists()) {
+                $extra_data = ExtraProducts::where('item_code', $atlas_id)
+                    ->get()
+                    ->first();
+                $inital_price = $extra_data->price;
+                $new_price = $inital_price * $quantity;
+
+                if (CardedProducts::where('dealer', $dealer)->exists()) {
+                    $carded_order = CardedProducts::where('dealer', $dealer)
+                        ->get()
+                        ->first();
+                    $data = json_decode($carded_order->data);
+                    $status = count($data) > 0 ? true : false;
+                    if ($status) {
+                        $new_items = [];
+
+                        foreach ($data as $value) {
+                            $atlas_id_old = $value->atlasId;
+                            if ($atlas_id_old != $atlas_id) {
+                                array_push($new_items, (array) $value);
+                            }
+                        }
+
+                        $update_quantity = array_push($new_items, [
+                            'qty' => $quantity,
+                            'atlasId' => $atlas_id,
+                            'price' => $new_price,
+                            'total' => $new_price,
+                        ]);
+                    }
+
+                    $data_encode = json_encode($new_items);
+
+                    $update_carded_data = CardedProducts::where(
+                        'dealer',
+                        $dealer
+                    )->update(['data' => $data_encode]);
+
+                    if (!$update_carded_data) {
+                        $this->result->status = false;
+                        $this->result->status_code = 422;
+                        $this->result->message =
+                            'Carded Order could not be updated';
+                        return response()->json($this->result);
+                    }
+
+                    $this->result->status = true;
+                    $this->result->status_code = 200;
+                    $this->result->message =
+                        'Carded Order updated successfully';
+                    return response()->json($this->result);
+                }
+            } else {
+                $this->result->status_code = 404;
+                $this->result->message = 'Item not found';
+                return response()->json($this->result);
+            }
+        }
+    }
+
+    public function admin_edit_catalogue_order(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'id' => 'required',
+            'atlas_id' => 'required',
+            'dealer' => 'required',
+            'quantity' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            $this->result->status_code = 422;
+            $this->result->message = [
+                'id' => $validator->errors()->get('id'),
+                'atlas_id' => $validator->errors()->get('atlas_id'),
+                'dealer' => $validator->errors()->get('dealer'),
+                'quantity' => $validator->errors()->get('quantity'),
+            ];
+            return response()->json($this->result);
+        } else {
+            $id = $request->input('id');
+            $atlas_id = $request->input('atlas_id');
+            $dealer = $request->input('dealer');
+            $quantity = $request->input('quantity');
+
+            if (ExtraProducts::where('item_code', $atlas_id)->exists()) {
+                $extra_data = ExtraProducts::where('item_code', $atlas_id)
+                    ->get()
+                    ->first();
+                $inital_price = $extra_data->price;
+                $new_price = $inital_price * $quantity;
+
+                if (Catalogue_Order::where('dealer', $dealer)->exists()) {
+                    $catalogue_order = Catalogue_Order::where('dealer', $dealer)
+                        ->get()
+                        ->first();
+                    $data = json_decode($catalogue_order->data);
+                    $status = count($data) > 0 ? true : false;
+                    if ($status) {
+                        $new_items = [];
+
+                        foreach ($data as $value) {
+                            $atlas_id_old = $value->atlasId;
+                            if ($atlas_id_old != $atlas_id) {
+                                array_push($new_items, (array) $value);
+                            }
+                        }
+
+                        $update_quantity = array_push($new_items, [
+                            'qty' => $quantity,
+                            'atlasId' => $atlas_id,
+                            'price' => $new_price,
+                            'total' => $new_price,
+                        ]);
+                    }
+
+                    $data_encode = json_encode($new_items);
+
+                    $update_catalogue_data = Catalogue_Order::where(
+                        'dealer',
+                        $dealer
+                    )->update(['data' => $data_encode]);
+
+                    if (!$update_catalogue_data) {
+                        $this->result->status = false;
+                        $this->result->status_code = 422;
+                        $this->result->message =
+                            'Catalogue Order could not be updated';
+                        return response()->json($this->result);
+                    }
+
+                    $this->result->status = true;
+                    $this->result->status_code = 200;
+                    $this->result->message =
+                        'Catalogue Order updated successfully';
+                    return response()->json($this->result);
+                }
+            } else {
+                $this->result->status_code = 404;
+                $this->result->message = 'Item not found';
+                return response()->json($this->result);
+            }
+        }
+    }
+
     public function edit_catalogue_order(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -3323,7 +3586,6 @@ class AdminController extends Controller
             $atlas_id = $request->input('atlas_id');
             $dealer = $request->input('dealer');
             $quantity = $request->input('quantity');
-
             $price = $request->input('price');
             $total = $request->input('total');
 
@@ -3340,8 +3602,6 @@ class AdminController extends Controller
                 $data = json_decode($no_of_catalogue_order[0]['data']);
 
                 $new_items = [];
-
-                // dd( $data );
 
                 if (count($data) > 0) {
                     foreach ($data as $key => $value) {
@@ -3495,7 +3755,7 @@ class AdminController extends Controller
 
                 if (
                     count(json_decode($check_catalogue_order[0]->data, true)) ==
-                    0 ||
+                        0 ||
                     empty($check_catalogue_order[0]->data) == true
                 ) {
                     $check_catalogue_order[0]->delete();
@@ -3804,14 +4064,17 @@ class AdminController extends Controller
 
         $all_catalogue_orders = DB::table('atlas_catalogue_orders')
             ->wherein('dealer', $all_dealer_ids_order_status)
+            ->where('completed', '1')
             ->get();
 
         $all_service_parts = DB::table('atlas_service_parts')
             ->wherein('dealer', $all_dealer_ids_order_status)
+            ->where('completed', '1')
             ->get();
 
         $all_carded_products = DB::table('atlas_carded_products')
             ->wherein('dealer', $all_dealer_ids_order_status)
+            ->where('completed', '1')
             ->get();
 
         $fetch_dealer_ids = $dealers->pluck('id')->toArray();
@@ -4137,6 +4400,7 @@ class AdminController extends Controller
         $this->result->data->service_part = $service_products;
         $this->result->data->catalogue = $catalogue_order;
         $this->result->data->carded = $carded_products;
+        $this->result->data->dealer = $dealer_d;
 
         $this->result->message = 'View Dealer Orders';
         return response()->json($this->result);

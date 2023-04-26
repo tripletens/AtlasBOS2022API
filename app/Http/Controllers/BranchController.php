@@ -345,7 +345,8 @@ class BranchController extends Controller
                         // get the carded products data 
                         $carded_product_data = $check_carded_products[0]->data;
 
-                        return array_column($carded_product_data,'total');
+                        // return $check_carded_products[0]; 
+                        // array_column($carded_product_data,'total');
 
                         // get the status 
     
@@ -1574,6 +1575,8 @@ class BranchController extends Controller
              "service_part_products" => $get_all_services_parts && count($get_all_services_parts) > 0 ? json_decode($get_all_services_parts[0]->data) : [],
          ];
  
+        //  return $cart_data;
+
         //  return $data['catalogue_products'][0]->description;
  
          $pdf = PDF::loadView('mails.pending_orders_format', $data);

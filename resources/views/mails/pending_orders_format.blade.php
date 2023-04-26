@@ -156,12 +156,11 @@
                     <th class="thead-custom">Extended($)</th>
                 </tr>
             </thead>
-
+           
             <tbody>
-
                 {{ $cart_total = 0 }}
                 @foreach ($cart_data as $item)
-                    {{ $cart_total += floatval($item['price']) }}
+                    {{ $cart_total += floatval($item['unit_price'] * $item['qty']) }}
                     <tr>
                         <td class="table-value-custom">
                             {{ $item['qty'] }}
@@ -179,7 +178,7 @@
                             ${{ number_format($item['unit_price'], 2) }}
                         </td>
                         <td class="table-value-custom">
-                            ${{ number_format($item['price'], 2) }}
+                            ${{ number_format($item['unit_price'] * $item['qty'],2)  }}
                         </td>
                     </tr>
 
@@ -222,7 +221,8 @@
                     <th class="thead-custom">Quantity</th>
                     <th class="thead-custom">Atlas #</th>
                     <th class="thead-custom">Description #</th>
-                    <th class="thead-custom">Price ($)</th>
+                    <th class="thead-custom">Unit Price ($)</th>
+                    <th class="thead-custom">Total Price ($)</th>
                 </tr>
             </thead>
             
@@ -230,18 +230,19 @@
                 @if ($catalogue_products)
                     {{ $cart_catalogue_total = 0 }}
                     @foreach ($catalogue_products as $item)
-                        {{ $cart_catalogue_total += floatval($item->price) }}
+                        {{ $cart_catalogue_total += floatval($item->price * $item->qty) }}
                         <tr>
                             
                             <td class="table-value-custom">{{ $item->qty }}</td>
                             <td class="table-value-custom">{{ $item->atlasId }}</td>
                             <td class="table-value-custom">{{ property_exists($item,'description') ? $item->description : "N/A"}}</td>
-                            <td class="table-value-custom">$ {{ $item->price }}</td>
+                            <td class="table-value-custom">$ {{ number_format($item->price,2) }}</td>
+                            <td class="table-value-custom">$ {{ number_format($item->price * $item->qty,2) }}</td>
                         </tr>
                     @endforeach
 
                     <tr>
-                        <td colspan="3">
+                        <td colspan="4">
                             <h5 class="each-total-cate-text" style="">
                                 Total For
                                 Pending Catalogue Orders</h5>
@@ -271,7 +272,8 @@
                     <th class="thead-custom">Quantity</th>
                     <th class="thead-custom">Atlas #</th>
                     <th class="thead-custom">Description #</th>
-                    <th class="thead-custom">Price ($)</th>
+                    <th class="thead-custom">Unit Price ($)</th>
+                    <th class="thead-custom">Total Price ($)</th>
                 </tr>
             </thead>
             <tbody>
@@ -279,17 +281,17 @@
                     {{ $cart_carded_total = 0 }}
                         
                     @foreach ($carded_products as $item)
-                        {{ $cart_carded_total += floatval($item->price) }}
+                        {{ $cart_carded_total += floatval($item->price * $item->qty) }}
                         <tr>
                             <td class="table-value-custom">{{ $item->qty }}</td>
                             <td class="table-value-custom">{{ $item->atlasId }}</td>
                             <td class="table-value-custom">{{ property_exists($item,'description') ? $item->description : "N/A"}}</td>
-                            <td class="table-value-custom">{{ $item->price }}</td>
-
+                            <td class="table-value-custom">{{ "$" . number_format($item->price,2) }}</td>
+                            <td class="table-value-custom">{{ "$" . number_format($item->price * $item->qty,2) }}</td>
                         </tr>
                     @endforeach
                     <tr>
-                        <td colspan="3">
+                        <td colspan="4">
                             <h5 class="each-total-cate-text" style="">
                                 Total For
                                 Pending Carded Products Orders</h5>
@@ -319,24 +321,25 @@
                     <th class="thead-custom">Quantity</th>
                     <th class="thead-custom">Atlas #</th>
                     <th class="thead-custom">Description</th>
-                    <th class="thead-custom">Price</th>
-
+                    <th class="thead-custom">Unit Price ($)</th>
+                    <th class="thead-custom">Total Price ($)</th>
                 </tr>
             </thead>
             <tbody>
                 @if ($service_part_products)
                     {{ $cart_service_part_total = 0 }}
                     @foreach ($service_part_products as $item)
-                    {{ $cart_service_part_total += floatval($item->price) }}
+                    {{ $cart_service_part_total += floatval($item->price * $item->qty) }}
                         <tr>
                             <td class="table-value-custom">{{ $item->qty ? $item->qty : "" }}</td>
                             <td class="table-value-custom">{{ $item->atlasId ? $item->atlasId : ""}}</td>
                             <td class="table-value-custom">{{ property_exists($item,'description') ? $item->description : "N/A"}}</td>
-                            <td class="table-value-custom">{{ $item->price ? $item->price : ""}}</td>
+                            <td class="table-value-custom">{{ $item->price ? number_format($item->price,2) : ""}}</td>
+                            <td class="table-value-custom">{{ $item->total ? number_format($item->price * $item->qty,2) : ""}}</td>
                         </tr>
                     @endforeach
                     <tr>
-                        <td colspan="3">
+                        <td colspan="4">
                             <h5 class="each-total-cate-text" style="">
                                 Total For
                                 Pending Service Parts Orders</h5>
