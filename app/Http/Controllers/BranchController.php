@@ -1584,7 +1584,7 @@ class BranchController extends Controller
          // // download PDF file with download method
          $order_pdf = $pdf->download('pending_order_pdf_file.pdf');
  
-        return $order_pdf;
+        // return $order_pdf;
  
          $bb = base64_encode($order_pdf);
  
