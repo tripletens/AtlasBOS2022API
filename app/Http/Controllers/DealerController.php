@@ -4089,6 +4089,30 @@ class DealerController extends Controller
         $fetch_dealer_cart = Cart::where('dealer', $dealer_id)
             ->where('status', '0')
             ->get();
+            
+        // get all catalogue orders
+        
+        $get_catalogue_orders = Catalogue_Order::where('dealer',$dealer_account_id)->get();
+
+        $format_catalogue_order_data =  json_decode($get_catalogue_orders[0]->data);
+
+        $total_number_catalogue_orders = count($format_catalogue_order_data);
+        
+        // get all the service parts 
+
+        $get_service_parts_orders = ServiceParts::where('dealer',$dealer_account_id)->get();
+
+        $format_service_parts_order_data =  json_decode($get_service_parts_orders[0]->data);
+
+        $total_number_service_parts_orders = count($format_service_parts_order_data);
+
+        // get all the carded products 
+
+        $get_carded_products_orders = CardedProducts::where('dealer',$dealer_account_id)->get();
+
+        $format_carded_products_order_data =  json_decode($get_carded_products_orders[0]->data);
+
+        $total_number_carded_products_orders = count($format_carded_products_order_data);
 
         if (!$fetch_dealer_cart) {
             $this->result->status = false;
@@ -4100,7 +4124,7 @@ class DealerController extends Controller
 
         $this->result->status = true;
         $this->result->status_code = 200;
-        $this->result->data->cart_number = count($fetch_dealer_cart);
+        $this->result->data->cart_number = count($fetch_dealer_cart) + $total_number_carded_products_orders + $total_number_service_parts_orders + $total_number_catalogue_orders;
         $this->result->message = 'Cart number fetched successfully';
         return response()->json($this->result);
     }
