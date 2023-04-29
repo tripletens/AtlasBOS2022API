@@ -1198,7 +1198,55 @@ class DealerController extends Controller
         $total_order = Cart::where('dealer', '=', $dealer)
             ->where('status', '0')
             ->count();
-        $total_price = DB::table('cart')
+
+        $dealer_details = Dealer::where('id', $dealer)->get();
+
+        if(!$dealer_details || count($dealer_details) == 0){
+            $this->result->status_code = 401;
+            $this->result->message = "Dealer with id not found";
+            return response()->json($this->result);
+        }
+
+        $dealer_account_id = $dealer_details[0]->account_id;
+        
+        // get all catalogue orders
+        
+        $get_catalogue_orders = Catalogue_Order::where('dealer',$dealer_account_id)->get();
+
+        $format_catalogue_order_data =  json_decode($get_catalogue_orders[0]->data);
+
+        $total_catalogue_price = 0;
+
+        foreach ($format_catalogue_order_data as $catalogue_product) {
+            $total_catalogue_price += $catalogue_product->total;
+        }
+
+        // get all the service parts 
+
+        $get_service_parts_orders = ServiceParts::where('dealer',$dealer_account_id)->get();
+
+        $format_service_parts_order_data =  json_decode($get_service_parts_orders[0]->data);
+
+        $total_service_parts_price = 0;
+
+        foreach ($format_service_parts_order_data as $service_parts_product) {
+            $total_service_parts_price += $service_parts_product->total;
+        }
+        
+        // get all the carded products 
+
+        $get_carded_products_orders = CardedProducts::where('dealer',$dealer_account_id)->get();
+
+        $format_carded_products_order_data =  json_decode($get_carded_products_orders[0]->data);
+
+        $total_carded_products_price = 0;
+
+        foreach ($format_carded_products_order_data as $carded_products_product) {
+            $total_carded_products_price += $carded_products_product->total;
+        }
+        
+
+        $total_cart_price = DB::table('cart')
             ->where('dealer', $dealer)
             ->where('status', '0')
             ->sum('price');
@@ -1217,7 +1265,7 @@ class DealerController extends Controller
         $this->result->status = true;
         $this->result->status_code = 200;
 
-        $this->result->data->total_price = $total_price;
+        $this->result->data->total_price = $total_cart_price + $total_catalogue_price + $total_service_parts_price + $total_carded_products_price;
         $this->result->data->total_quantity = $total_quantity;
         $this->result->data->new_products = $new_products
             ? count($new_products)
