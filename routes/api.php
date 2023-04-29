@@ -224,11 +224,6 @@ Route::group(
             'AdminController@sort_dealer_by_location'
         );
 
-        Route::post(
-            '/edit_catalogue_order',
-            'AdminController@edit_catalogue_order'
-        );
-
         Route::get(
             '/admin-search-product-by-category/{category}',
             'AdminController@search_category'
@@ -286,7 +281,6 @@ Route::group(
             '/delete-carded-product-admin/{dealer_id}/{atlas_id}',
             'AdminController@delete_carded_product'
         ); // working
-        
 
         Route::get(
             '/restore_catalogue_order/{dealer_id}',
@@ -484,6 +478,11 @@ Route::group(
             'DealerController@search_product'
         );
 
+        Route::post(
+            '/edit_catalogue_order',
+            'DealerController@edit_catalogue_order'
+        );
+
         Route::get(
             '/search-product-by-type-category/{value}/{type}',
             'DealerController@search_product_by_type_category'
@@ -631,7 +630,7 @@ Route::group(
             '/delete_catalogue_order_dealer/{dealer_id}/{atlas_id}',
             'DealerController@delete_catalogue_order'
         );
-        
+
         Route::get(
             '/restore_catalogue_order_dealer/{dealer_id}',
             'DealerController@restore_catalogue_order'
@@ -664,10 +663,16 @@ Route::group(
 
         Route::get('/download-pdf/{id}', 'DealerController@download_pdf');
 
-        Route::get('/fetch_dealer_with_pending_order_dealer/{dealer_id}', 'DealerController@fetch_dealer_with_pending_order_dealer');
+        Route::get(
+            '/fetch_dealer_with_pending_order_dealer/{dealer_id}',
+            'DealerController@fetch_dealer_with_pending_order_dealer'
+        );
 
-        Route::get('/download-pending-order-pdf/{dealer_id}', 'DealerController@download_pending_order_pdf');
-        
+        Route::get(
+            '/download-pending-order-pdf/{dealer_id}',
+            'DealerController@download_pending_order_pdf'
+        );
+
         Route::get(
             '/submit_catalogue_order/{dealer}',
             'DealerController@submit_catalogue_order'
@@ -737,10 +742,10 @@ Route::group(
         ]);
 
         // verify code password reset
-        Route::get('/reset-password-verify-code-email/{email}/{account_id}/{code}', [
-            DealerController::class,
-            'reset_password_verify_code_email',
-        ]);
+        Route::get(
+            '/reset-password-verify-code-email/{email}/{account_id}/{code}',
+            [DealerController::class, 'reset_password_verify_code_email']
+        );
 
         // export_all_cart_orders
         Route::get('/export-all-cart-orders', [
@@ -773,10 +778,16 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
 
     Route::get('/fetch_all_branches', 'BranchController@fetch_all_branches');
 
-    Route::get('/download-pdf-branch/{id}', 'BranchController@download_pdf_branch');
+    Route::get(
+        '/download-pdf-branch/{id}',
+        'BranchController@download_pdf_branch'
+    );
 
-    Route::get('/download-pending-order-pdf-branch/{dealer_id}', 'BranchController@download_pending_order_pdf_branch');
-        
+    Route::get(
+        '/download-pending-order-pdf-branch/{dealer_id}',
+        'BranchController@download_pending_order_pdf_branch'
+    );
+
     Route::post(
         '/assign_dealer_to_branch',
         'BranchController@assign_dealer_to_branch'

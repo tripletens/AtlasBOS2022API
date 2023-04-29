@@ -882,14 +882,15 @@ class DealerController extends Controller
             $this->result->message = 'Sorry dealer doesnt exist or deactivated';
             return response()->json($this->result);
         } else {
-
             foreach ($dealer_pending_orders as $item) {
                 $item->spec_data = json_decode($item->spec_data);
             }
 
             $this->result->status = true;
             $this->result->status_code = 200;
-            $this->result->data = $dealer_pending_orders ? $dealer_pending_orders : [];
+            $this->result->data = $dealer_pending_orders
+                ? $dealer_pending_orders
+                : [];
             $this->result->message =
                 'Dealer pending orders fetched successfully';
             return response()->json($this->result);
@@ -2934,7 +2935,7 @@ class DealerController extends Controller
         }
     }
 
-    public function edit_carded_product(Request $request)
+    public function edit_catalogue_order(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'id' => 'required',
@@ -2943,6 +2944,7 @@ class DealerController extends Controller
             'quantity' => 'required|integer',
             'price' => 'required',
             'total' => 'required',
+            'description' => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -2954,6 +2956,96 @@ class DealerController extends Controller
                 'quantity' => $validator->errors()->get('quantity'),
                 'price' => $validator->errors()->get('price'),
                 'total' => $validator->errors()->get('total'),
+                'description' => $validator->errors()->get('description'),
+            ];
+            return response()->json($this->result);
+        } else {
+            $id = $request->input('id');
+            $atlas_id = $request->input('atlas_id');
+            $dealer = $request->input('dealer');
+            $quantity = $request->input('quantity');
+            $price = $request->input('price');
+            $total = $request->input('total');
+            $desc = $request->input('description');
+
+            $no_of_catalogue_order = Catalogue_Order::where('id', $id)->get();
+
+            if (!$no_of_catalogue_order || count($no_of_catalogue_order) == 0) {
+                $this->result->status = false;
+                $this->result->status_code = 422;
+                $this->result->message = 'Catalogue Order not found';
+                return response()->json($this->result);
+            }
+
+            if (count($no_of_catalogue_order) > 0) {
+                $data = json_decode($no_of_catalogue_order[0]['data']);
+
+                $new_items = [];
+
+                if (count($data) > 0) {
+                    foreach ($data as $key => $value) {
+                        $atlas_id_old = $value->atlasId;
+
+                        if ($atlas_id_old != $atlas_id) {
+                            // same atlas_id
+                            array_push($new_items, (array) $value);
+                        }
+                    }
+
+                    $update_quantity = array_push($new_items, [
+                        'qty' => $quantity,
+                        'atlasId' => $atlas_id,
+                        'price' => $price,
+                        'total' => $total,
+                        'description' => $desc,
+                    ]);
+
+                    // dd( $new_items );
+                    $no_of_catalogue_order[0]->data = $new_items;
+
+                    $update_catalogue_order = $no_of_catalogue_order[0]->save();
+
+                    if (!$update_catalogue_order) {
+                        $this->result->status = false;
+                        $this->result->status_code = 422;
+                        $this->result->message =
+                            'Catalogue Order could not be updated';
+                        return response()->json($this->result);
+                    }
+
+                    $this->result->status = true;
+                    $this->result->status_code = 200;
+                    $this->result->message =
+                        'Catalogue Order updated successfully';
+                    return response()->json($this->result);
+                }
+            }
+        }
+    }
+
+    public function edit_carded_product(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'id' => 'required',
+            'atlas_id' => 'required',
+            'dealer' => 'required',
+            'quantity' => 'required|integer',
+
+            'price' => 'required',
+            'total' => 'required',
+            'description' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            $this->result->status_code = 422;
+            $this->result->message = [
+                'id' => $validator->errors()->get('id'),
+                'atlas_id' => $validator->errors()->get('atlas_id'),
+                'dealer' => $validator->errors()->get('dealer'),
+                'quantity' => $validator->errors()->get('quantity'),
+                'price' => $validator->errors()->get('price'),
+                'total' => $validator->errors()->get('total'),
+                'description' => $validator->errors()->get('total'),
             ];
             return response()->json($this->result);
         } else {
@@ -2964,6 +3056,7 @@ class DealerController extends Controller
 
             $price = $request->input('price');
             $total = $request->input('total');
+            $desc = $request->input('description');
 
             $no_of_carded_product = CardedProducts::where('id', $id)->get();
 
@@ -2998,6 +3091,7 @@ class DealerController extends Controller
                         'atlasId' => $atlas_id,
                         'price' => $price,
                         'total' => $total,
+                        'description' => $desc,
                     ]);
 
                     // dd($new_items);
@@ -3196,6 +3290,7 @@ class DealerController extends Controller
             'id' => 'required',
             'atlas_id' => 'required',
             'dealer' => 'required',
+            'description' => 'required',
             'quantity' => 'required|integer',
             'price' => 'required|integer',
             'total' => 'required|integer',
@@ -3208,6 +3303,7 @@ class DealerController extends Controller
                 'atlas_id' => $validator->errors()->get('atlas_id'),
                 'dealer' => $validator->errors()->get('dealer'),
                 'quantity' => $validator->errors()->get('quantity'),
+                'description' => $validator->errors()->get('description'),
 
                 'price' => $validator->errors()->get('price'),
                 'total' => $validator->errors()->get('total'),
@@ -3220,6 +3316,7 @@ class DealerController extends Controller
             $quantity = $request->input('quantity');
             $price = $request->input('price');
             $total = $request->input('total');
+            $desc = $request->input('description');
 
             $no_of_service_part = ServiceParts::where('id', $id)->get();
 
@@ -3254,6 +3351,7 @@ class DealerController extends Controller
                         'atlasId' => $atlas_id,
                         'price' => $price,
                         'total' => $total,
+                        'description' => $desc,
                     ]);
 
                     // dd($new_items);
@@ -4330,7 +4428,6 @@ class DealerController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'email' => 'required',
-            'account_id' => 'required',
             'reset_url' => 'required',
         ]);
 
@@ -4338,25 +4435,24 @@ class DealerController extends Controller
             $this->result->status_code = 422;
             $this->result->message = [
                 'email' => $validator->errors()->get('email'),
-                'account_id' => $validator->errors()->get('account_id'),
                 'reset_url' => $validator->errors()->get('reset_url'),
             ];
             return response()->json($this->result);
         } else {
             $email = $request->input('email');
-            $account_id = $request->input('account_id');
+
             $reset_url = $request->input('reset_url');
             // check if email exists in the db
 
-            $check_email = Dealer::where(
+            $check_email = $dealer_details = Dealer::where(
                 'email',
-                $email
-            )->where('account_id', $account_id)->get();
+                $email)->where('account_id', $account_id)->get();
+
 
             if (!$check_email) {
                 $this->result->status = false;
                 $this->result->status_code = 422;
-                $this->result->message = 'Sorry Email with account id could not be verified';
+                $this->result->message = 'Sorry Email could not be verified';
                 return response()->json($this->result);
             }
 
@@ -4365,7 +4461,7 @@ class DealerController extends Controller
                 $this->result->status = false;
                 $this->result->status_code = 422;
                 $this->result->message =
-                    'Sorry Email with account id does\'t exists in our records';
+                    'Sorry Email does\'t exists in our records';
                 return response()->json($this->result);
             } else {
                 // email exists
@@ -4376,13 +4472,11 @@ class DealerController extends Controller
                 // get dealer's credentials
                 $dealer_email = $check_email[0]->email;
                 $dealer_id = $check_email[0]->id;
-                $dealer_account_id = $check_email[0]->account_id;
 
                 // save the details
                 $save_details = ResetPassword::create([
                     'dealer_id' => $dealer_id,
                     'code' => $code,
-                    'account_id' => $dealer_account_id,
                     'email' => $dealer_email,
                 ]);
 
@@ -4400,7 +4494,6 @@ class DealerController extends Controller
                 $data = [
                     'code' => $code,
                     'reset_url' => $reset_url,
-                    'account_id' => $account_id,
                     'email' => $dealer_email,
                 ];
 
@@ -4507,7 +4600,6 @@ class DealerController extends Controller
         $validator = Validator::make($request->all(), [
             'new_password' => 'required',
             'email' => 'required',
-            'account_id' => 'required',
             'confirm_new_password' => 'required|same:new_password',
         ]);
 
@@ -4516,7 +4608,6 @@ class DealerController extends Controller
             $this->result->message = [
                 'new_password' => $validator->errors()->get('new_password'),
                 'email' => $validator->errors()->get('email'),
-                'account_id' => $validator->errors()->get('account_id'),
                 'confirm_new_password' => $validator
                     ->errors()
                     ->get('confirm_new_password'),
@@ -4524,7 +4615,6 @@ class DealerController extends Controller
             return response()->json($this->result);
         } else {
             $email = $request->input('email');
-            $account_id = $request->input('account_id');
             $password = $request->input('new_password');
             $hash_password = Hash::make($request->input('new_password'));
 

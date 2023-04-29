@@ -2824,7 +2824,7 @@ class AdminController extends Controller
                 $dealer->total_pending_item = 0;
                 $dealer->total_pending_amt = 0;
 
-                $dealer->order_status = 0;
+                // $dealer->order_status = 0;
             }
 
             if ($check_service_parts) {
@@ -3310,6 +3310,7 @@ class AdminController extends Controller
             'id' => 'required',
             'atlas_id' => 'required',
             'dealer' => 'required',
+            'description' => 'required',
             'quantity' => 'required|integer',
         ]);
 
@@ -3320,6 +3321,7 @@ class AdminController extends Controller
                 'atlas_id' => $validator->errors()->get('atlas_id'),
                 'dealer' => $validator->errors()->get('dealer'),
                 'quantity' => $validator->errors()->get('quantity'),
+                'description' => $validator->errors()->get('description'),
             ];
             return response()->json($this->result);
         } else {
@@ -3327,6 +3329,7 @@ class AdminController extends Controller
             $atlas_id = $request->input('atlas_id');
             $dealer = $request->input('dealer');
             $quantity = $request->input('quantity');
+            $desc = $request->input('description');
 
             if (ExtraProducts::where('item_code', $atlas_id)->exists()) {
                 $extra_data = ExtraProducts::where('item_code', $atlas_id)
@@ -3357,8 +3360,9 @@ class AdminController extends Controller
                         $update_quantity = array_push($new_items, [
                             'qty' => $quantity,
                             'atlasId' => $atlas_id,
-                            'price' => $new_price,
+                            'price' => $inital_price,
                             'total' => $new_price,
+                            'description' => $desc,
                         ]);
                     }
 
@@ -3398,6 +3402,7 @@ class AdminController extends Controller
             'atlas_id' => 'required',
             'dealer' => 'required',
             'quantity' => 'required|integer',
+            'description' => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -3407,6 +3412,7 @@ class AdminController extends Controller
                 'atlas_id' => $validator->errors()->get('atlas_id'),
                 'dealer' => $validator->errors()->get('dealer'),
                 'quantity' => $validator->errors()->get('quantity'),
+                'description' => $validator->errors()->get('description'),
             ];
             return response()->json($this->result);
         } else {
@@ -3414,6 +3420,7 @@ class AdminController extends Controller
             $atlas_id = $request->input('atlas_id');
             $dealer = $request->input('dealer');
             $quantity = $request->input('quantity');
+            $desc = $request->input('description');
 
             if (ExtraProducts::where('item_code', $atlas_id)->exists()) {
                 $extra_data = ExtraProducts::where('item_code', $atlas_id)
@@ -3441,8 +3448,9 @@ class AdminController extends Controller
                         $update_quantity = array_push($new_items, [
                             'qty' => $quantity,
                             'atlasId' => $atlas_id,
-                            'price' => $new_price,
+                            'price' => $inital_price,
                             'total' => $new_price,
+                            'description' => $desc,
                         ]);
                     }
 
@@ -3482,6 +3490,7 @@ class AdminController extends Controller
             'atlas_id' => 'required',
             'dealer' => 'required',
             'quantity' => 'required',
+            'description' => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -3491,6 +3500,7 @@ class AdminController extends Controller
                 'atlas_id' => $validator->errors()->get('atlas_id'),
                 'dealer' => $validator->errors()->get('dealer'),
                 'quantity' => $validator->errors()->get('quantity'),
+                'description' => $validator->errors()->get('description'),
             ];
             return response()->json($this->result);
         } else {
@@ -3498,6 +3508,7 @@ class AdminController extends Controller
             $atlas_id = $request->input('atlas_id');
             $dealer = $request->input('dealer');
             $quantity = $request->input('quantity');
+            $desc = $request->input('description');
 
             if (ExtraProducts::where('item_code', $atlas_id)->exists()) {
                 $extra_data = ExtraProducts::where('item_code', $atlas_id)
@@ -3525,8 +3536,9 @@ class AdminController extends Controller
                         $update_quantity = array_push($new_items, [
                             'qty' => $quantity,
                             'atlasId' => $atlas_id,
-                            'price' => $new_price,
+                            'price' => $inital_price,
                             'total' => $new_price,
+                            'description' => $desc,
                         ]);
                     }
 
@@ -3568,6 +3580,7 @@ class AdminController extends Controller
             'quantity' => 'required|integer',
             'price' => 'required',
             'total' => 'required',
+            'description' => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -3577,8 +3590,9 @@ class AdminController extends Controller
                 'atlas_id' => $validator->errors()->get('atlas_id'),
                 'dealer' => $validator->errors()->get('dealer'),
                 'quantity' => $validator->errors()->get('quantity'),
-                'price' => $validator->errors()->get('total'),
-                'total' => $validator->errors()->get('price'),
+                'price' => $validator->errors()->get('price'),
+                'total' => $validator->errors()->get('total'),
+                'description' => $validator->errors()->get('description'),
             ];
             return response()->json($this->result);
         } else {
@@ -3588,6 +3602,7 @@ class AdminController extends Controller
             $quantity = $request->input('quantity');
             $price = $request->input('price');
             $total = $request->input('total');
+            $desc = $request->input('description');
 
             $no_of_catalogue_order = Catalogue_Order::where('id', $id)->get();
 
@@ -3620,6 +3635,7 @@ class AdminController extends Controller
                         'atlasId' => $atlas_id,
                         'price' => $price,
                         'total' => $total,
+                        'description' => $desc,
                     ]);
 
                     // dd( $new_items );
