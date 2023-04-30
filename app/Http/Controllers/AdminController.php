@@ -4116,7 +4116,7 @@ class AdminController extends Controller
         //     ->sum('price');
 
         if (!empty($all_catalogue_orders)) {
-            $data = json_decode($all_catalogue_orders['data']);
+            $data = json_decode($all_catalogue_orders->data);
             foreach ($data as $value) {
                 $total = $value->total;
                 $total_amount += $total;
