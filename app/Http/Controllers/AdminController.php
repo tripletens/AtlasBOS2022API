@@ -4086,7 +4086,8 @@ class AdminController extends Controller
         $all_catalogue_orders = DB::table('atlas_catalogue_orders')
             ->wherein('dealer', $all_dealer_ids_order_status)
             ->where('completed', '1')
-            ->get();
+            ->get()
+            ->toArray();
 
         $all_service_parts = DB::table('atlas_service_parts')
             ->wherein('dealer', $all_dealer_ids_order_status)
