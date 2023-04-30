@@ -4165,6 +4165,7 @@ class AdminController extends Controller
             ->get();
 
         if (!empty($all_catalogue_not_submitted_orders[0])) {
+            $total_not_submitted_in_cart += 1;
             $data = json_decode($all_catalogue_not_submitted_orders[0]->data);
             foreach ($data as $value) {
                 $total = $value->total;
@@ -4173,6 +4174,7 @@ class AdminController extends Controller
         }
 
         if (!empty($all_service_not_submitted_parts[0])) {
+            $total_not_submitted_in_cart += 1;
             $data = json_decode($all_service_not_submitted_parts[0]->data);
             foreach ($data as $value) {
                 $total = $value->total;
@@ -4181,6 +4183,7 @@ class AdminController extends Controller
         }
 
         if (!empty($all_carded_not_submitted_products[0])) {
+            $total_not_submitted_in_cart += 1;
             $data = json_decode($all_carded_not_submitted_products[0]->data);
             foreach ($data as $value) {
                 $total = $value->total;
@@ -4194,7 +4197,6 @@ class AdminController extends Controller
         $dealer_arr = [];
         foreach ($cart_orders_ch as $val) {
             $dealer = $val->dealer;
-
             if (!in_array($dealer, $dealer_arr)) {
                 array_push($dealer_arr, $dealer);
             }
