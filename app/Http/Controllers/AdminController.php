@@ -4115,13 +4115,13 @@ class AdminController extends Controller
         //     ->wherein('dealer', $all_dealer_ids_order_status)
         //     ->sum('price');
 
-        if (!empty($all_catalogue_orders)) {
-            $data = json_decode($all_catalogue_orders->data);
-            foreach ($data as $value) {
-                $total = $value->total;
-                $total_amount += $total;
-            }
-        }
+        // if (!empty($all_catalogue_orders)) {
+        //     $data = json_decode($all_catalogue_orders->data);
+        //     foreach ($data as $value) {
+        //         $total = $value->total;
+        //         $total_amount += $total;
+        //     }
+        // }
 
         // if ($all_service_parts) {
         //     $data = json_decode($all_service_parts->data);
