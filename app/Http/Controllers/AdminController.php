@@ -4122,21 +4122,21 @@ class AdminController extends Controller
             }
         }
 
-        if ($all_service_parts) {
-            $data = json_decode($all_service_parts->data);
-            foreach ($data as $value) {
-                $total = $value->total;
-                $total_amount += $total;
-            }
-        }
+        // if ($all_service_parts) {
+        //     $data = json_decode($all_service_parts->data);
+        //     foreach ($data as $value) {
+        //         $total = $value->total;
+        //         $total_amount += $total;
+        //     }
+        // }
 
-        if ($all_carded_products) {
-            $data = json_decode($all_carded_products->data);
-            foreach ($data as $value) {
-                $total = $value->total;
-                $total_amount += $total;
-            }
-        }
+        // if ($all_carded_products) {
+        //     $data = json_decode($all_carded_products->data);
+        //     foreach ($data as $value) {
+        //         $total = $value->total;
+        //         $total_amount += $total;
+        //     }
+        // }
 
         $total_not_submitted_in_cart = DB::table('cart')
             ->where('status', '0')
@@ -4163,29 +4163,29 @@ class AdminController extends Controller
             ->where('completed', '0')
             ->get();
 
-        if ($all_catalogue_not_submitted_orders) {
-            $data = json_decode($all_catalogue_not_submitted_orders->data);
-            foreach ($data as $value) {
-                $total = $value->total;
-                $total_not_submitted_in_cart_amt += $total;
-            }
-        }
+        // if ($all_catalogue_not_submitted_orders) {
+        //     $data = json_decode($all_catalogue_not_submitted_orders->data);
+        //     foreach ($data as $value) {
+        //         $total = $value->total;
+        //         $total_not_submitted_in_cart_amt += $total;
+        //     }
+        // }
 
-        if ($all_service_not_submitted_parts) {
-            $data = json_decode($all_service_not_submitted_parts->data);
-            foreach ($data as $value) {
-                $total = $value->total;
-                $total_not_submitted_in_cart_amt += $total;
-            }
-        }
+        // if ($all_service_not_submitted_parts) {
+        //     $data = json_decode($all_service_not_submitted_parts->data);
+        //     foreach ($data as $value) {
+        //         $total = $value->total;
+        //         $total_not_submitted_in_cart_amt += $total;
+        //     }
+        // }
 
-        if ($all_carded_not_submitted_products) {
-            $data = json_decode($all_carded_not_submitted_products->data);
-            foreach ($data as $value) {
-                $total = $value->total;
-                $total_not_submitted_in_cart_amt += $total;
-            }
-        }
+        // if ($all_carded_not_submitted_products) {
+        //     $data = json_decode($all_carded_not_submitted_products->data);
+        //     foreach ($data as $value) {
+        //         $total = $value->total;
+        //         $total_not_submitted_in_cart_amt += $total;
+        //     }
+        // }
 
         $total_orders = Dealer::where('order_status', '1')->count();
 
@@ -4330,6 +4330,8 @@ class AdminController extends Controller
         $this->result->data->total_not_submitted_in_cart_amt = $total_not_submitted_in_cart_amt;
 
         $this->result->data->total_amount4 = 'tests';
+
+        $this->result->data->catalogue_data = $all_catalogue_orders;
 
         $this->result->message = 'Dashboard details fetched successfully';
         return response()->json($this->result);
