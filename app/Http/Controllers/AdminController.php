@@ -4070,6 +4070,11 @@ class AdminController extends Controller
     {
         $dealers = Dealer::all();
         $products = Products::all();
+        $total_amount = 0;
+
+        $total_amount = DB::table('cart')
+            ->where('status', '1')
+            ->sum('price');
 
         $fetch_account_ids = $dealers->pluck('account_id')->toArray();
         $all_dealer_ids_order_status = DB::table('atlas_dealers')
@@ -4109,9 +4114,29 @@ class AdminController extends Controller
         //     ->wherein('dealer', $all_dealer_ids_order_status)
         //     ->sum('price');
 
-        $total_amount = DB::table('cart')
-            ->where('status', '1')
-            ->sum('price');
+        if ($all_catalogue_orders) {
+            $data = json_decode($all_catalogue_orders->data);
+            foreach ($data as $value) {
+                $total = $value->total;
+                $total_amount += $total;
+            }
+        }
+
+        if ($all_service_parts) {
+            $data = json_decode($all_service_parts->data);
+            foreach ($data as $value) {
+                $total = $value->total;
+                $total_amount += $total;
+            }
+        }
+
+        if ($all_carded_products) {
+            $data = json_decode($all_carded_products->data);
+            foreach ($data as $value) {
+                $total = $value->total;
+                $total_amount += $total;
+            }
+        }
 
         $total_not_submitted_in_cart = DB::table('cart')
             ->where('status', '0')
@@ -4120,6 +4145,47 @@ class AdminController extends Controller
         $total_not_submitted_in_cart_amt = DB::table('cart')
             ->where('status', '0')
             ->sum('price');
+
+        $all_catalogue_not_submitted_orders = DB::table(
+            'atlas_catalogue_orders'
+        )
+            ->wherein('dealer', $all_dealer_ids_order_status)
+            ->where('completed', '0')
+            ->get();
+
+        $all_service_not_submitted_parts = DB::table('atlas_service_parts')
+            ->wherein('dealer', $all_dealer_ids_order_status)
+            ->where('completed', '0')
+            ->get();
+
+        $all_carded_not_submitted_products = DB::table('atlas_carded_products')
+            ->wherein('dealer', $all_dealer_ids_order_status)
+            ->where('completed', '0')
+            ->get();
+
+        if ($all_catalogue_not_submitted_orders) {
+            $data = json_decode($all_catalogue_not_submitted_orders->data);
+            foreach ($data as $value) {
+                $total = $value->total;
+                $total_not_submitted_in_cart_amt += $total;
+            }
+        }
+
+        if ($all_service_not_submitted_parts) {
+            $data = json_decode($all_service_not_submitted_parts->data);
+            foreach ($data as $value) {
+                $total = $value->total;
+                $total_not_submitted_in_cart_amt += $total;
+            }
+        }
+
+        if ($all_carded_not_submitted_products) {
+            $data = json_decode($all_carded_not_submitted_products->data);
+            foreach ($data as $value) {
+                $total = $value->total;
+                $total_not_submitted_in_cart_amt += $total;
+            }
+        }
 
         $total_orders = Dealer::where('order_status', '1')->count();
 
