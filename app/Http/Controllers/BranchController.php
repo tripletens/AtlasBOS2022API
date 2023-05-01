@@ -281,24 +281,35 @@ class BranchController extends Controller
 
                 // return $dealer_id;
 
+                $record->total_carded_price = 0;
+
+                $record->total_service_price = 0;
+
+                $record->total_catalogue_price = 0;
+
                 $check_service_parts = ServiceParts::where(
                     'dealer',
                     $dealer_id
                 )->get();
 
-                if(count($check_service_parts) == 0 ){
+                if (count($check_service_parts) == 0) {
                     $record->has_service_parts = 0; // doesnt have catalogue orders 
-                }else{
+                } else {
                     // get the status 
 
                     $completed_service_parts = $check_service_parts[0]->completed;
-                    if($completed_service_parts == 1){
+                    if ($completed_service_parts == 1) {
                         // active 
                         $record->has_service_parts = 1;
                     }
 
-                    if($completed_service_parts == 0){
+                    if ($completed_service_parts == 0) {
                         // pending 
+
+                        // lets get the pending service parts 
+                        
+                        $record->total_service_price = $this->service_parts_total_pending_price($dealer_id);
+
                         $record->has_service_parts = 2;
                     }
                 }
@@ -311,19 +322,24 @@ class BranchController extends Controller
                     $dealer_id
                 )->get();
 
-                if(count($check_catalogue_products) == 0 ){
+                if (count($check_catalogue_products) == 0) {
                     $record->has_catalogue_products = 0; // doesnt have catalogue orders 
-                }else{
+                } else {
                     // get the status 
 
                     $completed_catalogue = $check_catalogue_products[0]->completed;
-                    if($completed_catalogue == 1){
+                    if ($completed_catalogue == 1) {
                         // active 
                         $record->has_catalogue_products = 1;
                     }
 
-                    if($completed_catalogue == 0){
+                    if ($completed_catalogue == 0) {
                         // pending 
+
+                        // get all the total pending orders
+
+                        $record->total_catalogue_price = $this->catalogue_total_pending_price($dealer_id);
+
                         $record->has_catalogue_products = 2;
                     }
                 }
@@ -335,33 +351,35 @@ class BranchController extends Controller
                 $check_carded_products = CardedProducts::where(
                     'dealer',
                     $dealer_id
-                )
-                    ->get();
+                )->get();
 
-                    if(count($check_carded_products) == 0 ){
-                        $record->has_carded_products = 0; // doesnt have catalogue orders 
-                    }else{
+                if (count($check_carded_products) == 0) {
+                    $record->has_carded_products = 0; // doesnt have catalogue orders 
+                } else {
 
-                        // get the carded products data 
-                        $carded_product_data = $check_carded_products[0]->data;
+                    // get the carded products data 
+                    $carded_product_data = $check_carded_products[0]->data;
 
-                        // return $check_carded_products[0]; 
-                        // array_column($carded_product_data,'total');
+                    // return $check_carded_products[0]; 
+                    // array_column($carded_product_data,'total');
 
-                        // get the status 
-    
-                        $completed_carded = $check_carded_products[0]->completed;
-                        if($completed_carded == 1){
-                            // active 
-                            $record->has_carded_products = 1;
-                        }
-    
-                        if($completed_carded == 0){
-                            // pending 
-                            $record->has_carded_products = 2;
-                        }
+                    // get the status 
+
+                    $completed_carded = $check_carded_products[0]->completed;
+                    if ($completed_carded == 1) {
+                        // active 
+                        $record->has_carded_products = 1;
                     }
-    
+
+                    if ($completed_carded == 0) {
+                        // pending 
+
+                        
+                        $record->total_carded_price = $this->carded_total_pending_price($dealer_id);
+                        $record->has_carded_products = 2;
+                    }
+                }
+
 
                 // check if the dealer has an item in cart return 0
                 $check_cart = Cart::where('dealer', $dealer_user_id)->get();
@@ -378,13 +396,14 @@ class BranchController extends Controller
                 if (count($check_cart) > 0) {
                     $record->order_status = 2;
 
-                    // lets sum the total pending amount
-                    $sum_pending_amount = Cart::where('dealer', $dealer_user_id)
+                    // lets sum the total pending amount for cart items 
+                    $sum_pending_cart_amount = Cart::where('dealer', $dealer_user_id)
                         ->where('status', 0)
                         ->sum('price');
 
+
                     $record->pending_total = number_format(
-                        $sum_pending_amount,
+                        $sum_pending_cart_amount + $record->total_service_price + $record->total_carded_price + $record->total_catalogue_price ,
                         2
                     );
                 } else {
@@ -441,6 +460,61 @@ class BranchController extends Controller
             return response()->json($this->result);
         }
     }
+
+    // get total_pending catalogue price
+    public function catalogue_total_pending_price($dealer_account_id){
+
+        $get_catalogue_orders = Catalogue_Order::where('dealer', $dealer_account_id)->get();
+
+        $format_catalogue_order_data =  json_decode($get_catalogue_orders[0]->data);
+
+        $total_number_catalogue_orders = count($format_catalogue_order_data);
+
+        $total_catalogue_price = 0;
+
+        foreach ($format_catalogue_order_data as $catalogue_product) {
+            $total_catalogue_price += $catalogue_product->total;
+        }
+
+        return $total_catalogue_price;
+    }
+
+    // get total carded pending price 
+    public function carded_total_pending_price($dealer_account_id){
+        $get_carded_products_orders = CardedProducts::where('dealer', $dealer_account_id)->get();
+
+        $format_carded_products_order_data =  json_decode($get_carded_products_orders[0]->data);
+
+        $total_number_carded_products_orders = count($format_carded_products_order_data);
+
+        $total_carded_products_price = 0;
+
+        foreach ($format_carded_products_order_data as $carded_products_product) {
+            $total_carded_products_price += $carded_products_product->total;
+        }
+
+        return $total_carded_products_price;
+    }
+
+
+    // get total service parts pending price 
+
+    public function service_parts_total_pending_price($dealer_account_id){
+        $get_service_parts_orders = ServiceParts::where('dealer', $dealer_account_id)->get();
+
+        $format_service_parts_order_data =  json_decode($get_service_parts_orders[0]->data);
+
+        $total_number_service_parts_orders = count($format_service_parts_order_data);
+
+        $total_service_parts_price = 0;
+
+        foreach ($format_service_parts_order_data as $service_parts_product) {
+            $total_service_parts_price += $service_parts_product->total;
+        }
+
+        return  $total_service_parts_price;
+    }
+
 
     public function sort_data($a, $b, $field)
     {
@@ -1503,99 +1577,99 @@ class BranchController extends Controller
         $this->result->message = 'Email has been sent';
         return response()->json($this->result);
     }
-     // get all the pending orders by pdf from dealer_id
-     public function download_pending_order_pdf_branch($dealer_id)
-     {
-         // get the dealer details 
- 
-         $dealer_details = Dealer::where('id', $dealer_id)->where('status', 1)->get();
-        
-         if (!$dealer_details) {
-             $this->result->status = false;
-             $this->result->status_code = 422;
-             $this->result->message = 'Sorry Dealer could not be found';
-             return response()->json($this->result);
-         }
+    // get all the pending orders by pdf from dealer_id
+    public function download_pending_order_pdf_branch($dealer_id)
+    {
+        // get the dealer details 
 
-         $account_id = $dealer_details[0]->account_id;
- 
-         // else get all the items in cart for the dealer 
- 
-         $cart_data = Cart::where('dealer', $dealer_id)->where('status', 0)->get();
- 
-         // get all the CP, CD AND SP PRODUCTS
- 
-         $carded_products = [];
-         $catalogue_products = [];
-         $service_part_products = [];
- 
+        $dealer_details = Dealer::where('id', $dealer_id)->where('status', 1)->get();
+
+        if (!$dealer_details) {
+            $this->result->status = false;
+            $this->result->status_code = 422;
+            $this->result->message = 'Sorry Dealer could not be found';
+            return response()->json($this->result);
+        }
+
+        $account_id = $dealer_details[0]->account_id;
+
+        // else get all the items in cart for the dealer 
+
+        $cart_data = Cart::where('dealer', $dealer_id)->where('status', 0)->get();
+
+        // get all the CP, CD AND SP PRODUCTS
+
+        $carded_products = [];
+        $catalogue_products = [];
+        $service_part_products = [];
+
         // get all the carded products 
 
-        $get_all_carded_products = CardedProducts::where('dealer',$account_id)->where('completed',0)->get();
-        
+        $get_all_carded_products = CardedProducts::where('dealer', $account_id)->where('completed', 0)->get();
+
         // get all the service parts 
 
-        $get_all_services_parts = ServiceParts::where('dealer',$account_id)->where('completed',0)->get();
+        $get_all_services_parts = ServiceParts::where('dealer', $account_id)->where('completed', 0)->get();
 
         // get all the catalogue orders
 
-        $get_all_catalogue_orders = Catalogue_Order::where('dealer',$account_id)->where('completed',0)->get();
+        $get_all_catalogue_orders = Catalogue_Order::where('dealer', $account_id)->where('completed', 0)->get();
 
 
- 
+
         //  foreach ($cart_data as $record) {
         //      $record['spec_data'] = json_decode($record['spec_data']);
- 
+
         //      if (!is_null($record['carded_data'])) {
         //          $record['carded_data'] = json_decode($record['carded_data']);
         //          array_push($carded_products, $record);
         //      }
- 
+
         //      if (!is_null($record['service_data'])) {
         //          $record['service_data'] = json_decode($record['service_data']);
         //          array_push($service_part_products, $record);
         //      }
- 
+
         //      if (!is_null($record['catalogue_data'])) {
         //          $record['catalogue_data'] = json_decode($record['catalogue_data']);
         //          array_push($catalogue_products, $record);
         //      }
         //  };
- 
 
-         // foreach($cart_data as $item){
-         //     $item['spec_data'] = json_decode($item['spec_data'],true);
-         // }
- 
-         $data = [
-             "cart_data" => $cart_data,
-             "dealer_details" => $dealer_details,
-             "carded_products" => $get_all_carded_products && count($get_all_carded_products) > 0 ? json_decode($get_all_carded_products[0]->data) : [],
-             "catalogue_products" => $get_all_catalogue_orders && count($get_all_catalogue_orders) > 0 ? json_decode($get_all_catalogue_orders[0]->data) : [],
-             "service_part_products" => $get_all_services_parts && count($get_all_services_parts) > 0 ? json_decode($get_all_services_parts[0]->data) : [],
-         ];
- 
+
+        // foreach($cart_data as $item){
+        //     $item['spec_data'] = json_decode($item['spec_data'],true);
+        // }
+
+        $data = [
+            "cart_data" => $cart_data,
+            "dealer_details" => $dealer_details,
+            "carded_products" => $get_all_carded_products && count($get_all_carded_products) > 0 ? json_decode($get_all_carded_products[0]->data) : [],
+            "catalogue_products" => $get_all_catalogue_orders && count($get_all_catalogue_orders) > 0 ? json_decode($get_all_catalogue_orders[0]->data) : [],
+            "service_part_products" => $get_all_services_parts && count($get_all_services_parts) > 0 ? json_decode($get_all_services_parts[0]->data) : [],
+        ];
+
         //  return $cart_data;
 
         //  return $data['catalogue_products'][0]->description;
- 
-         $pdf = PDF::loadView('mails.pending_orders_format', $data);
- 
-         // // download PDF file with download method
-         $order_pdf = $pdf->download('pending_order_pdf_file.pdf');
- 
+
+        $pdf = PDF::loadView('mails.pending_orders_format', $data);
+
+        // // download PDF file with download method
+        $order_pdf = $pdf->download('pending_order_pdf_file.pdf');
+
         // return $order_pdf;
- 
-         $bb = base64_encode($order_pdf);
- 
-         $this->result->status = true;
-         $this->result->status_code = 200;
-         $this->result->data->pdf = $bb;
-         $this->result->data->dealer = $dealer_details[0]->full_name;
- 
-         // // $this->result->message = 'Email has been sent';
-         return response()->json($this->result);
-     }
+
+        $bb = base64_encode($order_pdf);
+
+        $this->result->status = true;
+        $this->result->status_code = 200;
+        $this->result->data->pdf = $bb;
+        $this->result->data->dealer = $dealer_details[0]->full_name;
+
+        // // $this->result->message = 'Email has been sent';
+        return response()->json($this->result);
+    }
 
     public function fetch_all_dealers_with_active_service_parts_order(
         $branch_id
