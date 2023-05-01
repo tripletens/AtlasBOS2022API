@@ -3292,8 +3292,8 @@ class DealerController extends Controller
             'dealer' => 'required',
             'description' => 'required',
             'quantity' => 'required|integer',
-            'price' => 'required|integer',
-            'total' => 'required|integer',
+            'price' => 'required',
+            'total' => 'required',
         ]);
 
         if ($validator->fails()) {
