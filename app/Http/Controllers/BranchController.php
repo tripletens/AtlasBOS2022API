@@ -300,7 +300,9 @@ class BranchController extends Controller
                     $completed_service_parts = $check_service_parts[0]->completed;
                     if ($completed_service_parts == 1) {
                         // active 
+                        $record->total_service_submitted_price = $this->service_parts_total_pending_price($dealer_id);
                         $record->has_service_parts = 1;
+                        
                     }
 
                     if ($completed_service_parts == 0) {
@@ -330,6 +332,8 @@ class BranchController extends Controller
                     $completed_catalogue = $check_catalogue_products[0]->completed;
                     if ($completed_catalogue == 1) {
                         // active 
+                        $record->total_catalogue_submitted_price = $this->catalogue_total_pending_price($dealer_id);
+
                         $record->has_catalogue_products = 1;
                     }
 
@@ -367,14 +371,13 @@ class BranchController extends Controller
 
                     $completed_carded = $check_carded_products[0]->completed;
                     if ($completed_carded == 1) {
-                        // active 
+                        // active  submitted order
+                        $record->total_carded_submitted_price = $this->carded_total_pending_price($dealer_id);
                         $record->has_carded_products = 1;
                     }
 
                     if ($completed_carded == 0) {
                         // pending 
-
-                        
                         $record->total_carded_price = $this->carded_total_pending_price($dealer_id);
                         $record->has_carded_products = 2;
                     }
@@ -428,7 +431,7 @@ class BranchController extends Controller
                         ->sum('price');
 
                     $record->submitted_total = number_format(
-                        $sum_submitted_amount,
+                        $sum_submitted_amount + $record->total_carded_submitted_price + $record->total_catalogue_submitted_price + $record->total_service_submitted_price,
                         2
                     );
                 } else {
@@ -478,6 +481,8 @@ class BranchController extends Controller
 
         return $total_catalogue_price;
     }
+
+
 
     // get total carded pending price 
     public function carded_total_pending_price($dealer_account_id){
