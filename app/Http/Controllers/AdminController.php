@@ -4376,7 +4376,7 @@ class AdminController extends Controller
 
         $this->result->data->total_amount4 = 'tests';
 
-        $this->result->data->catalogue_data = $all_catalogue_orders[0];
+        /// $this->result->data->catalogue_data = $all_catalogue_orders[0];
 
         $this->result->message = 'Dashboard details fetched successfully';
         return response()->json($this->result);
