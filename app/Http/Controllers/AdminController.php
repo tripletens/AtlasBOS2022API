@@ -2834,7 +2834,12 @@ class AdminController extends Controller
                     ->first();
                 $dealer->service_completed = $service->completed;
                 $data = json_decode($service->data);
+                $total_pending = count($data);
+                $dealer->total_pending_item =
+                    $dealer->total_pending_item + $total_pending;
+
                 $data_total = 0;
+
                 foreach ($data as $value) {
                     $data_total += $value->total;
                 }
@@ -2862,6 +2867,10 @@ class AdminController extends Controller
                 $dealer->carded_completed = $carded->completed;
 
                 $data = json_decode($carded->data);
+                $total_pending = count($data);
+                $dealer->total_pending_item =
+                    $dealer->total_pending_item + $total_pending;
+
                 $data_total = 0;
                 foreach ($data as $value) {
                     $data_total += $value->total;
@@ -2889,6 +2898,10 @@ class AdminController extends Controller
                 $dealer->catalogue_completed = $catalogue->completed;
 
                 $data = json_decode($catalogue->data);
+                $total_pending = count($data);
+                $dealer->total_pending_item =
+                    $dealer->total_pending_item + $total_pending;
+
                 $data_total = 0;
                 foreach ($data as $value) {
                     $data_total += $value->total;
