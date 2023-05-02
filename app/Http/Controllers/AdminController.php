@@ -4152,7 +4152,7 @@ class AdminController extends Controller
 
         if (!empty($all_service_parts)) {
             foreach ($all_service_parts as $service_data) {
-                $data = json_decode($all_service_parts->data);
+                $data = json_decode($service_data->data);
                 foreach ($data as $value) {
                     $total = $value->total;
                     $total_amount += $total;
@@ -4160,16 +4160,28 @@ class AdminController extends Controller
             }
         }
 
-        $all_carded_products = DB::table('atlas_carded_products')
-            ->wherein('dealer', $fetch_account_ids)
+        ////////// Carded Orders submitted
+        $all_carded_products = CardedProducts::wherein(
+            'dealer',
+            $fetch_account_ids
+        )
             ->where('completed', '1')
             ->get();
+
+        if (!empty($all_carded_products)) {
+            foreach ($all_carded_products as $carded_data) {
+                $data = json_decode($carded_data->data);
+                foreach ($data as $value) {
+                    $total = $value->total;
+                    $total_amount += $total;
+                }
+            }
+        }
 
         $fetch_dealer_ids = $dealers->pluck('id')->toArray();
 
         $all_dealer_ids_order_status = DB::table('atlas_dealers')
             ->wherein('id', $fetch_dealer_ids)
-            // ->where('order_status', 1)
             ->pluck('id')
             ->toArray();
 
@@ -4215,7 +4227,7 @@ class AdminController extends Controller
 
         if (!empty($all_catalogue_not_submitted_orders)) {
             foreach ($all_catalogue_not_submitted_orders as $catalogue_data) {
-                $total_not_submitted_in_cart += 1;
+                $total_not_submitted_in_cart = $total_not_submitted_in_cart + 1;
 
                 $data = json_decode($catalogue_data->data);
                 foreach ($data as $value) {
@@ -4235,7 +4247,7 @@ class AdminController extends Controller
 
         if (!empty($all_service_not_submitted_parts)) {
             foreach ($all_service_not_submitted_parts as $service_data) {
-                $total_not_submitted_in_cart += 1;
+                $total_not_submitted_in_cart = $total_not_submitted_in_cart + 1;
 
                 $data = json_decode($service_data->data);
                 foreach ($data as $value) {
@@ -4255,7 +4267,7 @@ class AdminController extends Controller
 
         if (!empty($all_carded_not_submitted_products)) {
             foreach ($all_carded_not_submitted_products as $carded_data) {
-                $total_not_submitted_in_cart += 1;
+                $total_not_submitted_in_cart = $total_not_submitted_in_cart + 1;
 
                 $data = json_decode($carded_data->data);
                 foreach ($data as $value) {
