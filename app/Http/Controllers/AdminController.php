@@ -4113,6 +4113,7 @@ class AdminController extends Controller
         $dealers = Dealer::all();
         $products = Products::all();
         $total_amount = 0;
+        $total_not_submitted_in_cart_amt = 0;
 
         $total_amount = DB::table('cart')
             ->where('status', '1')
@@ -4189,47 +4190,63 @@ class AdminController extends Controller
             ->where('status', '0')
             ->sum('price');
 
-        $all_catalogue_not_submitted_orders = DB::table(
-            'atlas_catalogue_orders'
+        /////// Catalogue Orders not submitted
+        $all_catalogue_not_submitted_orders = Catalogue_Order::wherein(
+            'dealer',
+            $all_dealer_ids_order_status
         )
-            ->wherein('dealer', $all_dealer_ids_order_status)
             ->where('completed', '0')
             ->get();
 
-        $all_service_not_submitted_parts = DB::table('atlas_service_parts')
-            ->wherein('dealer', $all_dealer_ids_order_status)
-            ->where('completed', '0')
-            ->get();
+        if (!empty($all_catalogue_not_submitted_orders)) {
+            foreach ($all_catalogue_not_submitted_orders as $catalogue_data) {
+                $total_not_submitted_in_cart += 1;
 
-        $all_carded_not_submitted_products = DB::table('atlas_carded_products')
-            ->wherein('dealer', $all_dealer_ids_order_status)
-            ->where('completed', '0')
-            ->get();
-
-        if (!empty($all_catalogue_not_submitted_orders[0])) {
-            $total_not_submitted_in_cart += 1;
-            $data = json_decode($all_catalogue_not_submitted_orders[0]->data);
-            foreach ($data as $value) {
-                $total = $value->total;
-                $total_not_submitted_in_cart_amt += $total;
+                $data = json_decode($catalogue_data->data);
+                foreach ($data as $value) {
+                    $total = $value->total;
+                    $total_not_submitted_in_cart_amt += $total;
+                }
             }
         }
 
-        if (!empty($all_service_not_submitted_parts[0])) {
-            $total_not_submitted_in_cart += 1;
-            $data = json_decode($all_service_not_submitted_parts[0]->data);
-            foreach ($data as $value) {
-                $total = $value->total;
-                $total_not_submitted_in_cart_amt += $total;
+        ////// Service Parts orders not submitted
+        $all_service_not_submitted_parts = ServiceParts::wherein(
+            'dealer',
+            $all_dealer_ids_order_status
+        )
+            ->where('completed', '0')
+            ->get();
+
+        if (!empty($all_service_not_submitted_parts)) {
+            foreach ($all_service_not_submitted_parts as $service_data) {
+                $total_not_submitted_in_cart += 1;
+
+                $data = json_decode($service_data->data);
+                foreach ($data as $value) {
+                    $total = $value->total;
+                    $total_not_submitted_in_cart_amt += $total;
+                }
             }
         }
 
-        if (!empty($all_carded_not_submitted_products[0])) {
-            $total_not_submitted_in_cart += 1;
-            $data = json_decode($all_carded_not_submitted_products[0]->data);
-            foreach ($data as $value) {
-                $total = $value->total;
-                $total_not_submitted_in_cart_amt += $total;
+        //////// Carded orders not submitted
+        $all_carded_not_submitted_products = CardedProducts::wherein(
+            'dealer',
+            $all_dealer_ids_order_status
+        )
+            ->where('completed', '0')
+            ->get();
+
+        if (!empty($all_carded_not_submitted_products)) {
+            foreach ($all_carded_not_submitted_products as $carded_data) {
+                $total_not_submitted_in_cart += 1;
+
+                $data = json_decode($carded_data->data);
+                foreach ($data as $value) {
+                    $total = $value->total;
+                    $total_not_submitted_in_cart_amt += $total;
+                }
             }
         }
 
