@@ -1214,7 +1214,6 @@ class DealerController extends Controller
         $dealer_account_id = $dealer_details[0]->account_id;
 
         // get all catalogue orders
-
         if (Catalogue_Order::where('dealer', $dealer_account_id)->exists()) {
             $get_catalogue_orders = Catalogue_Order::where(
                 'dealer',
@@ -1243,7 +1242,6 @@ class DealerController extends Controller
         }
 
         // get all the service parts
-
         if (ServiceParts::where('dealer', $dealer_account_id)->exists()) {
             $get_service_parts_orders = ServiceParts::where(
                 'dealer',
@@ -1275,7 +1273,6 @@ class DealerController extends Controller
         }
 
         // get all the carded products
-
         if (CardedProducts::where('dealer', $dealer_account_id)->exists()) {
             $get_carded_products_orders = CardedProducts::where(
                 'dealer',
@@ -1468,7 +1465,8 @@ class DealerController extends Controller
                     'order_status' => 1,
                     'placed_order_date' => $cur_date,
                 ]);
-                $cart = Cart::where('dealer', $dealer_account_id)->update([
+
+                $cart = Cart::where('dealer', $id)->update([
                     'status' => $status,
                 ]);
 
