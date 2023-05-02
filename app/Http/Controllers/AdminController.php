@@ -4120,25 +4120,48 @@ class AdminController extends Controller
             ->sum('price');
 
         $fetch_account_ids = $dealers->pluck('account_id')->toArray();
+
         $all_dealer_ids_order_status = DB::table('atlas_dealers')
             ->wherein('account_id', $fetch_account_ids)
             // ->where('order_status', 1)
             ->pluck('account_id')
             ->toArray();
 
-        $all_catalogue_orders = DB::table('atlas_catalogue_orders')
-            ->wherein('dealer', $all_dealer_ids_order_status)
-            ->where('completed', '1')
-            ->get()
-            ->toArray();
-
-        $all_service_parts = DB::table('atlas_service_parts')
-            ->wherein('dealer', $all_dealer_ids_order_status)
+        ////// Catalogue orders Submitted
+        $all_catalogue_orders = Catalogue_Order::wherein(
+            'dealer',
+            $fetch_account_ids
+        )
             ->where('completed', '1')
             ->get();
 
+        if (!empty($all_catalogue_orders)) {
+            foreach ($all_catalogue_orders as $catalogue_data) {
+                $data = json_decode($catalogue_data->data);
+                foreach ($data as $value) {
+                    $total = $value->total;
+                    $total_amount += $total;
+                }
+            }
+        }
+
+        /////////// Service Parts orders submitted
+        $all_service_parts = ServiceParts::wherein('dealer', $fetch_account_ids)
+            ->where('completed', '1')
+            ->get();
+
+        if (!empty($all_service_parts)) {
+            foreach ($all_service_parts as $service_data) {
+                $data = json_decode($all_service_parts->data);
+                foreach ($data as $value) {
+                    $total = $value->total;
+                    $total_amount += $total;
+                }
+            }
+        }
+
         $all_carded_products = DB::table('atlas_carded_products')
-            ->wherein('dealer', $all_dealer_ids_order_status)
+            ->wherein('dealer', $fetch_account_ids)
             ->where('completed', '1')
             ->get();
 
@@ -4157,14 +4180,6 @@ class AdminController extends Controller
         // $total_amount = DB::table('cart')
         //     ->wherein('dealer', $all_dealer_ids_order_status)
         //     ->sum('price');
-
-        if (!empty($all_catalogue_orders[0])) {
-            $data = json_decode($all_catalogue_orders[0]->data);
-            foreach ($data as $value) {
-                $total = $value->total;
-                $total_amount += $total;
-            }
-        }
 
         if (!empty($all_service_parts[0])) {
             $data = json_decode($all_service_parts[0]->data);
@@ -4193,7 +4208,7 @@ class AdminController extends Controller
         /////// Catalogue Orders not submitted
         $all_catalogue_not_submitted_orders = Catalogue_Order::wherein(
             'dealer',
-            $all_dealer_ids_order_status
+            $fetch_account_ids
         )
             ->where('completed', '0')
             ->get();
@@ -4213,7 +4228,7 @@ class AdminController extends Controller
         ////// Service Parts orders not submitted
         $all_service_not_submitted_parts = ServiceParts::wherein(
             'dealer',
-            $all_dealer_ids_order_status
+            $fetch_account_ids
         )
             ->where('completed', '0')
             ->get();
@@ -4233,7 +4248,7 @@ class AdminController extends Controller
         //////// Carded orders not submitted
         $all_carded_not_submitted_products = CardedProducts::wherein(
             'dealer',
-            $all_dealer_ids_order_status
+            $fetch_account_ids
         )
             ->where('completed', '0')
             ->get();
