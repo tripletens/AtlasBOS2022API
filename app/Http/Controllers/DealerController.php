@@ -1306,10 +1306,11 @@ class DealerController extends Controller
             $total_number_carded_products_orders = 0;
         }
 
-        $total_cart_price = DB::table('cart')
-            ->where('dealer', $dealer)
-            ->where('status', '0')
-            ->sum('price');
+        if (Cart::where('dealer', $dealer)->exists()) {
+            $total_booking_price = Cart::where('dealer', $dealer)->sum('price');
+        } else {
+            $total_booking_price = 0;
+        }
 
         // foreach ($products as $product) {
         //     $is_new =  $this->check_if_its_new($product['created_at'], 10,$product['atlas_id']) == true ? true : false;
@@ -1326,7 +1327,8 @@ class DealerController extends Controller
         $this->result->status = true;
         $this->result->status_code = 200;
 
-        $this->result->data->total_price = $total_order_price;
+        $this->result->data->total_price =
+            $total_order_price + $total_booking_price;
 
         $this->result->data->total_quantity = $total_quantity;
         $this->result->data->new_products = $new_products
