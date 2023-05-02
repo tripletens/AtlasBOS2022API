@@ -1194,6 +1194,10 @@ class DealerController extends Controller
         $total_quantity = 0;
         $cart = [];
         $new_products = Products::where('check_new', '1')->get();
+        $total_carded_products_price = 0;
+        $total_catalogue_price = 0;
+        $total_service_parts_price = 0;
+        $total_order_price = 0;
 
         $total_order = Cart::where('dealer', '=', $dealer)
             ->where('status', '0')
@@ -1231,6 +1235,7 @@ class DealerController extends Controller
 
             foreach ($format_catalogue_order_data as $catalogue_product) {
                 $total_catalogue_price += $catalogue_product->total;
+                $total_order_price += $catalogue_product->total;
             }
         } else {
             $total_catalogue_price = 0;
@@ -1262,6 +1267,7 @@ class DealerController extends Controller
                 as $service_parts_product
             ) {
                 $total_service_parts_price += $service_parts_product->total;
+                $total_order_price += $service_parts_product->total;
             }
         } else {
             $total_service_parts_price = 0;
@@ -1293,6 +1299,7 @@ class DealerController extends Controller
                 as $carded_products_product
             ) {
                 $total_carded_products_price += $carded_products_product->total;
+                $total_order_price += $carded_products_product->total;
             }
         } else {
             $total_carded_products_price = 0;
@@ -1319,21 +1326,19 @@ class DealerController extends Controller
         $this->result->status = true;
         $this->result->status_code = 200;
 
-        $this->result->data->total_price =
-            $total_cart_price +
-            $total_catalogue_price +
-            $total_service_parts_price +
-            $total_carded_products_price +
-            $total_number_carded_products_orders;
+        $this->result->data->total_price = $total_order_price;
+
         $this->result->data->total_quantity = $total_quantity;
         $this->result->data->new_products = $new_products
             ? count($new_products)
             : 0;
+
         $this->result->data->total_order =
             $total_order +
             $total_number_catalogue_orders +
             $total_number_service_parts_orders +
             $total_number_carded_products_orders;
+
         $this->result->message = 'Dealer Dashboard';
         return response()->json($this->result);
     }
