@@ -2812,6 +2812,7 @@ class AdminController extends Controller
                     ->where('dealer', $id)
                     ->where('status', '0')
                     ->sum('price');
+
                 if ($dealer->order_status == '0') {
                     $dealer->order_status = 2;
                 }
@@ -2832,6 +2833,19 @@ class AdminController extends Controller
                     ->get()
                     ->first();
                 $dealer->service_completed = $service->completed;
+                $data = json_decode($service->data);
+                $data_total = 0;
+                foreach ($data as $value) {
+                    $data_total += $value->total;
+                }
+
+                if ($service->completed == 1) {
+                    $dealer->total_price += $data_total;
+                }
+
+                if ($service->completed == 0) {
+                    $dealer->total_pending_amt += $data_total;
+                }
             } else {
                 $dealer->service_completed = 3;
             }
@@ -2846,6 +2860,20 @@ class AdminController extends Controller
                     ->get()
                     ->first();
                 $dealer->carded_completed = $carded->completed;
+
+                $data = json_decode($carded->data);
+                $data_total = 0;
+                foreach ($data as $value) {
+                    $data_total += $value->total;
+                }
+
+                if ($carded->completed == 1) {
+                    $dealer->total_price += $data_total;
+                }
+
+                if ($carded->completed == 0) {
+                    $dealer->total_pending_amt += $data_total;
+                }
             } else {
                 $dealer->carded_completed = 3;
             }
@@ -2859,6 +2887,20 @@ class AdminController extends Controller
                     ->get()
                     ->first();
                 $dealer->catalogue_completed = $catalogue->completed;
+
+                $data = json_decode($catalogue->data);
+                $data_total = 0;
+                foreach ($data as $value) {
+                    $data_total += $value->total;
+                }
+
+                if ($catalogue->completed == 1) {
+                    $dealer->total_price += $data_total;
+                }
+
+                if ($catalogue->completed == 0) {
+                    $dealer->total_pending_amt += $data_total;
+                }
             } else {
                 $dealer->catalogue_completed = 3;
             }
