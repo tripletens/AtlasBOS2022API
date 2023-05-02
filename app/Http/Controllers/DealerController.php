@@ -1211,66 +1211,92 @@ class DealerController extends Controller
 
         // get all catalogue orders
 
-        $get_catalogue_orders = Catalogue_Order::where(
-            'dealer',
-            $dealer_account_id
-        )->get();
+        if (Catalogue_Order::where('dealer', $dealer_account_id)->exists()) {
+            $get_catalogue_orders = Catalogue_Order::where(
+                'dealer',
+                $dealer_account_id
+            )
+                ->get()
+                ->first();
 
-        $format_catalogue_order_data = json_decode(
-            $get_catalogue_orders[0]->data
-        );
+            $format_catalogue_order_data = json_decode(
+                $get_catalogue_orders->data
+            );
 
-        $total_number_catalogue_orders = count($format_catalogue_order_data);
+            $total_number_catalogue_orders = count(
+                $format_catalogue_order_data
+            );
 
-        $total_catalogue_price = 0;
+            $total_catalogue_price = 0;
 
-        foreach ($format_catalogue_order_data as $catalogue_product) {
-            $total_catalogue_price += $catalogue_product->total;
+            foreach ($format_catalogue_order_data as $catalogue_product) {
+                $total_catalogue_price += $catalogue_product->total;
+            }
+        } else {
+            $total_catalogue_price = 0;
+            $total_number_catalogue_orders = 0;
         }
 
         // get all the service parts
 
-        $get_service_parts_orders = ServiceParts::where(
-            'dealer',
-            $dealer_account_id
-        )->get();
+        if (ServiceParts::where('dealer', $dealer_account_id)->exists()) {
+            $get_service_parts_orders = ServiceParts::where(
+                'dealer',
+                $dealer_account_id
+            )
+                ->get()
+                ->first();
 
-        $format_service_parts_order_data = json_decode(
-            $get_service_parts_orders[0]->data
-        );
+            $format_service_parts_order_data = json_decode(
+                $get_service_parts_orders->data
+            );
 
-        $total_number_service_parts_orders = count(
-            $format_service_parts_order_data
-        );
+            $total_number_service_parts_orders = count(
+                $format_service_parts_order_data
+            );
 
-        $total_service_parts_price = 0;
+            $total_service_parts_price = 0;
 
-        foreach ($format_service_parts_order_data as $service_parts_product) {
-            $total_service_parts_price += $service_parts_product->total;
+            foreach (
+                $format_service_parts_order_data
+                as $service_parts_product
+            ) {
+                $total_service_parts_price += $service_parts_product->total;
+            }
+        } else {
+            $total_service_parts_price = 0;
+            $total_number_service_parts_orders = 0;
         }
 
         // get all the carded products
 
-        $get_carded_products_orders = CardedProducts::where(
-            'dealer',
-            $dealer_account_id
-        )->get();
+        if (CardedProducts::where('dealer', $dealer_account_id)->exists()) {
+            $get_carded_products_orders = CardedProducts::where(
+                'dealer',
+                $dealer_account_id
+            )
+                ->get()
+                ->first();
 
-        $format_carded_products_order_data = json_decode(
-            $get_carded_products_orders[0]->data
-        );
+            $format_carded_products_order_data = json_decode(
+                $get_carded_products_orders->data
+            );
 
-        $total_number_carded_products_orders = count(
-            $format_carded_products_order_data
-        );
+            $total_number_carded_products_orders = count(
+                $format_carded_products_order_data
+            );
 
-        $total_carded_products_price = 0;
+            $total_carded_products_price = 0;
 
-        foreach (
-            $format_carded_products_order_data
-            as $carded_products_product
-        ) {
-            $total_carded_products_price += $carded_products_product->total;
+            foreach (
+                $format_carded_products_order_data
+                as $carded_products_product
+            ) {
+                $total_carded_products_price += $carded_products_product->total;
+            }
+        } else {
+            $total_carded_products_price = 0;
+            $total_number_carded_products_orders = 0;
         }
 
         $total_cart_price = DB::table('cart')
@@ -4145,7 +4171,9 @@ class DealerController extends Controller
             $get_catalogue_orders = Catalogue_Order::where(
                 'dealer',
                 $dealer_account_id
-            )->get();
+            )
+                ->get()
+                ->first();
             $format_catalogue_order_data = json_decode(
                 $get_catalogue_orders->data
             );
@@ -4162,7 +4190,9 @@ class DealerController extends Controller
             $get_service_parts_orders = ServiceParts::where(
                 'dealer',
                 $dealer_account_id
-            )->get();
+            )
+                ->get()
+                ->first();
             $format_service_parts_order_data = json_decode(
                 $get_service_parts_orders->data
             );
@@ -4179,7 +4209,9 @@ class DealerController extends Controller
             $get_carded_products_orders = CardedProducts::where(
                 'dealer',
                 $dealer_account_id
-            )->get();
+            )
+                ->get()
+                ->first();
             $format_carded_products_order_data = json_decode(
                 $get_carded_products_orders->data
             );
