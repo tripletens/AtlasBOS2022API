@@ -1742,9 +1742,20 @@ class BranchController extends Controller
                 ->distinct('atlas_branch_assign_dealers.dealer_id')
                 ->get();
 
+            $decoded_data_value = [];
+            $grand_total = 0;
+
             foreach ($all_service_parts as $value) {
                 $value->data = json_decode($value->data);
+                array_push($decoded_data_value, ...$value->data);
             }
+
+            foreach ($decoded_data_value as $value) {
+                $total_amount = $value->total;
+                $grand_total += $total_amount;
+            }
+
+           $all_service_parts && count($all_service_parts) > 0 ? $all_service_parts[0]->grand_total = $grand_total : [];
 
             // return $all_service_parts;
             // $all_service_parts = DB::table('atlas_service_parts')->wherein('dealer',$all_dealer_ids_order_status)->get();
