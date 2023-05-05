@@ -1695,31 +1695,6 @@ class BranchController extends Controller
         $get_all_catalogue_orders = Catalogue_Order::where('dealer', $account_id)->where('completed', 0)->get();
 
 
-
-        //  foreach ($cart_data as $record) {
-        //      $record['spec_data'] = json_decode($record['spec_data']);
-
-        //      if (!is_null($record['carded_data'])) {
-        //          $record['carded_data'] = json_decode($record['carded_data']);
-        //          array_push($carded_products, $record);
-        //      }
-
-        //      if (!is_null($record['service_data'])) {
-        //          $record['service_data'] = json_decode($record['service_data']);
-        //          array_push($service_part_products, $record);
-        //      }
-
-        //      if (!is_null($record['catalogue_data'])) {
-        //          $record['catalogue_data'] = json_decode($record['catalogue_data']);
-        //          array_push($catalogue_products, $record);
-        //      }
-        //  };
-
-
-        // foreach($cart_data as $item){
-        //     $item['spec_data'] = json_decode($item['spec_data'],true);
-        // }
-
         $data = [
             "cart_data" => $cart_data,
             "dealer_details" => $dealer_details,
@@ -1736,8 +1711,6 @@ class BranchController extends Controller
 
         // // download PDF file with download method
         $order_pdf = $pdf->download('pending_order_pdf_file.pdf');
-
-        // return $order_pdf;
 
         $bb = base64_encode($order_pdf);
 

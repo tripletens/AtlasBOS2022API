@@ -140,6 +140,8 @@
 
 
     <div style="margin-top: 70px">
+    @php $grand_total = 0; @endphp
+    
     {{-- Pending orders Table --}}
     @if ($cart_data && count($cart_data) > 0 )
         <div>
@@ -161,6 +163,7 @@
                 {{ $cart_total = 0 }}
                 @foreach ($cart_data as $item)
                     {{ $cart_total += floatval($item['unit_price'] * $item['qty']) }}
+                    {{ $grand_total += floatval($item['unit_price'] * $item['qty']) }}
                     <tr>
                         <td class="table-value-custom">
                             {{ $item['qty'] }}
@@ -231,6 +234,7 @@
                     {{ $cart_catalogue_total = 0 }}
                     @foreach ($catalogue_products as $item)
                         {{ $cart_catalogue_total += floatval($item->price * $item->qty) }}
+                        {{ $grand_total += floatval($item->price * $item->qty) }}
                         <tr>
                             
                             <td class="table-value-custom">{{ $item->qty }}</td>
@@ -282,6 +286,7 @@
                         
                     @foreach ($carded_products as $item)
                         {{ $cart_carded_total += floatval($item->price * $item->qty) }}
+                        {{ $grand_total += floatval($item->price * $item->qty) }}
                         <tr>
                             <td class="table-value-custom">{{ $item->qty }}</td>
                             <td class="table-value-custom">{{ $item->atlasId }}</td>
@@ -330,6 +335,7 @@
                     {{ $cart_service_part_total = 0 }}
                     @foreach ($service_part_products as $item)
                     {{ $cart_service_part_total += floatval($item->price * $item->qty) }}
+                    {{ $grand_total += floatval($item->price * $item->qty) }}
                         <tr>
                             <td class="table-value-custom">{{ $item->qty ? $item->qty : "" }}</td>
                             <td class="table-value-custom">{{ $item->atlasId ? $item->atlasId : ""}}</td>
@@ -359,7 +365,7 @@
     @endif
 
 
-    {{-- @if (count($outdoor) > 0 || count($propane) > 0 || count($towing_products) > 0 || count($towing_accessories) > 0 || count($accessories) > 0 || count($sealant) > 0 || count($plumbing) > 0 || count($electronics) > 0 || count($vent) > 0 || count($appliance) > 0)
+    @if (count($service_part_products) > 0 || count($carded_products) > 0 || count($catalogue_products) > 0 || count($cart_data) > 0 )
         <div style="width: 100%; text-align: right; border: 1px solid black; margin-top: 20px">
             <h5 class="each-total-cate-text" style="display: inline-block; border-right: 1px solid black">Grand Total:
             </h5>
@@ -367,7 +373,7 @@
                 ${{ number_format($grand_total, 2) }}
             </h5>
         </div>
-    @endif --}}
+    @endif
 
 </div>
 
