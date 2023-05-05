@@ -1860,9 +1860,20 @@ class BranchController extends Controller
                 ->distinct('atlas_branch_assign_dealers.dealer_id')
                 ->get();
 
+            $decoded_data_value = [];
+            $grand_total = 0;
+
             foreach ($all_carded_products as $value) {
                 $value->data = json_decode($value->data);
+                array_push($decoded_data_value, ...$value->data);
             }
+
+            foreach ($decoded_data_value as $value) {
+                $total_amount = $value->total;
+                $grand_total += $total_amount;
+            }
+
+            $all_carded_products[0]->grand_total = $grand_total;
 
             // $dealers_with_active_carded_products_orders = DB::table('atlas_branch_assign_dealers')
             //     ->where('order_status','1')
