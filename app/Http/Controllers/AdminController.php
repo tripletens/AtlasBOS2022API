@@ -4152,8 +4152,10 @@ class AdminController extends Controller
             foreach ($all_catalogue_orders as $catalogue_data) {
                 $data = json_decode($catalogue_data->data);
                 foreach ($data as $value) {
-                    $total = $value->total;
-                    $total_amount += $total;
+                    if (isset($value->total)) {
+                        $total = $value->total;
+                        $total_amount += $total;
+                    }
                 }
             }
         }
@@ -4167,8 +4169,10 @@ class AdminController extends Controller
             foreach ($all_service_parts as $service_data) {
                 $data = json_decode($service_data->data);
                 foreach ($data as $value) {
-                    $total = $value->total;
-                    $total_amount += $total;
+                    if (isset($value->total)) {
+                        $total = $value->total;
+                        $total_amount += $total;
+                    }
                 }
             }
         }
@@ -4185,8 +4189,10 @@ class AdminController extends Controller
             foreach ($all_carded_products as $carded_data) {
                 $data = json_decode($carded_data->data);
                 foreach ($data as $value) {
-                    $total = $value->total;
-                    $total_amount += $total;
+                    if (isset($value->total)) {
+                        $total = $value->total;
+                        $total_amount += $total;
+                    }
                 }
             }
         }
@@ -4245,8 +4251,10 @@ class AdminController extends Controller
                     $total_not_submitted_in_cart =
                         $total_not_submitted_in_cart + 1;
 
-                    $total = $value->total;
-                    $total_not_submitted_in_cart_amt += $total;
+                    if (isset($value->total)) {
+                        $total = $value->total;
+                        $total_not_submitted_in_cart_amt += $total;
+                    }
                 }
             }
         }
@@ -4266,7 +4274,7 @@ class AdminController extends Controller
                     $total_not_submitted_in_cart =
                         $total_not_submitted_in_cart + 1;
 
-                    if ($value->total) {
+                    if (isset($value->total)) {
                         $total = $value->total;
                         $total_not_submitted_in_cart_amt += $total;
                     }
@@ -4288,7 +4296,7 @@ class AdminController extends Controller
                 foreach ($data as $value) {
                     $total_not_submitted_in_cart =
                         $total_not_submitted_in_cart + 1;
-                    if ($value->total) {
+                    if (isset($value->total)) {
                         $total = $value->total;
                         $total_not_submitted_in_cart_amt += $total;
                     }
