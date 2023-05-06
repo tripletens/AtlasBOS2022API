@@ -4286,11 +4286,11 @@ class AdminController extends Controller
             foreach ($all_carded_not_submitted_products as $carded_data) {
                 $data = json_decode($carded_data->data);
                 foreach ($data as $value) {
-                    $total_not_submitted_in_cart =
-                        $total_not_submitted_in_cart + 1;
-
-                    $total = $value->total;
-                    $total_not_submitted_in_cart_amt += $total;
+                    $total_not_submitted_in_cart = $total_not_submitted_in_cart + 1;
+                    if($value->total){
+                         $total = $value->total;
+                         $total_not_submitted_in_cart_amt += $total;
+                    }
                 }
             }
         }
