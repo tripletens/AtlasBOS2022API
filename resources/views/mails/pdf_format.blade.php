@@ -746,9 +746,9 @@
                     <th class="thead-custom">Quantity</th>
                     <th class="thead-custom">Atlas #</th>
                     <th class="thead-custom">Description</th>
+                    <th class="thead-custom">UM</th>
                     <th class="thead-custom">Unit Price</th>
-                    <th class="thead-custom">Total</th>
-
+                    <th class="thead-custom">Extended</th>
                 </tr>
             </thead>
             <tbody>
@@ -761,6 +761,10 @@
                             <td class="table-value-custom">{{ $item['qty'] }}</td>
                             <td class="table-value-custom">{{ $item['atlasId'] }}</td>
                             <td class="table-value-custom">{{ $item['description'] }}</td>
+
+                            @isset($item['um'])
+                                <td class="table-value-custom">{{ $item['um'] }}</td>
+                            @endisset
 
                             @isset($item['price'])
                                 <td class="table-value-custom">${{ number_format($item['price'], 2) }}</td>
@@ -806,9 +810,9 @@
                     <th class="thead-custom">Quantity</th>
                     <th class="thead-custom">Atlas #</th>
                     <th class="thead-custom">Description</th>
+                    <th class="thead-custom">UM</th>
                     <th class="thead-custom">Unit Price</th>
-                    <th class="thead-custom">Total</th>
-
+                    <th class="thead-custom">Extended</th>
                 </tr>
             </thead>
             <tbody>
@@ -822,6 +826,10 @@
                             <td class="table-value-custom">{{ $item['qty'] }}</td>
                             <td class="table-value-custom">{{ $item['atlasId'] }}</td>
                             <td class="table-value-custom">{{ $item['description'] }}</td>
+
+                            @isset($item['um'])
+                                <td class="table-value-custom">{{ $item['um'] }}</td>
+                            @endisset
 
                             @isset($item['price'])
                                 <td class="table-value-custom">${{ number_format($item['price'], 2) }}</td>
@@ -839,8 +847,6 @@
                         <td>
                             <h5 class="each-total-text" style="">
                                 ${{ number_format($carded_total, 2) }}</h5>
-
-
                         </td>
                     </tr>
                     {{ $grand_total += $carded_total }}
@@ -867,9 +873,9 @@
                     <th class="thead-custom">Quantity</th>
                     <th class="thead-custom">Atlas #</th>
                     <th class="thead-custom">Description</th>
+                    <th class="thead-custom">UM</th>
                     <th class="thead-custom">Unit Price</th>
-                    <th class="thead-custom">Total</th>
-
+                    <th class="thead-custom">Extended</th>
                 </tr>
             </thead>
             <tbody>
@@ -883,6 +889,12 @@
                             <td class="table-value-custom">{{ $item['qty'] }}</td>
                             <td class="table-value-custom">{{ $item['atlasId'] }}</td>
                             <td class="table-value-custom">{{ $item['description'] }}</td>
+
+                            
+                            @isset($item['um'])
+                                <td class="table-value-custom">{{ $item['um'] }}</td>
+                            @endisset
+
 
                             @isset($item['price'])
                                 <td class="table-value-custom">${{ number_format($item['price'], 2) }}</td>
