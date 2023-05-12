@@ -20,6 +20,9 @@ use App\Models\Category;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Branch;
+
+use App\Models\SalesRep;
+
 use App\Models\Promotional_ads;
 use App\Models\Cart;
 use App\Models\Catalogue_Order;
@@ -60,6 +63,28 @@ class AdminController extends Controller
             'token' => null,
             'debug' => null,
         ];
+    }
+
+    public function get_all_sale_rep_user()
+    {
+        $sale_rep = SalesRep::all();
+
+        $this->result->status = true;
+        $this->result->status_code = 200;
+        $this->result->data = $sale_rep;
+        $this->result->message = 'All sales rep user';
+        return response()->json($this->result);
+    }
+
+    public function get_all_branch_user()
+    {
+        $branch = Branch::all();
+
+        $this->result->status = true;
+        $this->result->status_code = 200;
+        $this->result->data = $branch;
+        $this->result->message = 'All branch user';
+        return response()->json($this->result);
     }
 
     public function all_logged_in_dealers()
