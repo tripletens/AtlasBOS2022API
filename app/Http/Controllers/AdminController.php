@@ -20,6 +20,9 @@ use App\Models\Category;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Branch;
+
+use App\Models\SalesRep;
+
 use App\Models\Promotional_ads;
 use App\Models\Cart;
 use App\Models\Catalogue_Order;
@@ -60,6 +63,28 @@ class AdminController extends Controller
             'token' => null,
             'debug' => null,
         ];
+    }
+
+    public function get_all_sale_rep_user()
+    {
+        $sale_rep = SalesRep::all();
+
+        $this->result->status = true;
+        $this->result->status_code = 200;
+        $this->result->data = $sale_rep;
+        $this->result->message = 'All sales rep user';
+        return response()->json($this->result);
+    }
+
+    public function get_all_branch_user()
+    {
+        $branch = Branch::all();
+
+        $this->result->status = true;
+        $this->result->status_code = 200;
+        $this->result->data = $branch;
+        $this->result->message = 'All branch user';
+        return response()->json($this->result);
     }
 
     public function all_logged_in_dealers()
@@ -2226,6 +2251,11 @@ class AdminController extends Controller
                 'account_id' => $request->account_id,
             ]);
 
+            BranchAssignDealer::create([
+                'branch_id' => $$request->branch,
+                'dealer_id' => $request->account_id,
+            ]);
+
             $this->result->status = true;
             $this->result->message = 'Successful';
         }
@@ -4193,8 +4223,10 @@ class AdminController extends Controller
             foreach ($all_catalogue_orders as $catalogue_data) {
                 $data = json_decode($catalogue_data->data);
                 foreach ($data as $value) {
-                    $total = $value->total;
-                    $total_amount += $total;
+                    if (isset($value->total)) {
+                        $total = $value->total;
+                        $total_amount += $total;
+                    }
                 }
             }
         }
@@ -4208,8 +4240,10 @@ class AdminController extends Controller
             foreach ($all_service_parts as $service_data) {
                 $data = json_decode($service_data->data);
                 foreach ($data as $value) {
-                    $total = $value->total;
-                    $total_amount += $total;
+                    if (isset($value->total)) {
+                        $total = $value->total;
+                        $total_amount += $total;
+                    }
                 }
             }
         }
@@ -4226,8 +4260,10 @@ class AdminController extends Controller
             foreach ($all_carded_products as $carded_data) {
                 $data = json_decode($carded_data->data);
                 foreach ($data as $value) {
-                    $total = $value->total;
-                    $total_amount += $total;
+                    if (isset($value->total)) {
+                        $total = $value->total;
+                        $total_amount += $total;
+                    }
                 }
             }
         }
@@ -4247,21 +4283,21 @@ class AdminController extends Controller
         //     ->wherein('dealer', $all_dealer_ids_order_status)
         //     ->sum('price');
 
-        if (!empty($all_service_parts[0])) {
-            $data = json_decode($all_service_parts[0]->data);
-            foreach ($data as $value) {
-                $total = $value->total;
-                $total_amount += $total;
-            }
-        }
+        // if (!empty($all_service_parts[0])) {
+        //     $data = json_decode($all_service_parts[0]->data);
+        //     foreach ($data as $value) {
+        //         $total = $value->total;
+        //         $total_amount += $total;
+        //     }
+        // }
 
-        if (!empty($all_carded_products[0])) {
-            $data = json_decode($all_carded_products[0]->data);
-            foreach ($data as $value) {
-                $total = $value->total;
-                $total_amount += $total;
-            }
-        }
+        // if (!empty($all_carded_products[0])) {
+        //     $data = json_decode($all_carded_products[0]->data);
+        //     foreach ($data as $value) {
+        //         $total = $value->total;
+        //         $total_amount += $total;
+        //     }
+        // }
 
         $total_not_submitted_in_cart = DB::table('cart')
             ->where('status', '0')
@@ -4286,8 +4322,10 @@ class AdminController extends Controller
                     $total_not_submitted_in_cart =
                         $total_not_submitted_in_cart + 1;
 
-                    $total = $value->total;
-                    $total_not_submitted_in_cart_amt += $total;
+                    if (isset($value->total)) {
+                        $total = $value->total;
+                        $total_not_submitted_in_cart_amt += $total;
+                    }
                 }
             }
         }
@@ -4304,9 +4342,10 @@ class AdminController extends Controller
             foreach ($all_service_not_submitted_parts as $service_data) {
                 $data = json_decode($service_data->data);
                 foreach ($data as $value) {
-                    $total_not_submitted_in_cart = $total_not_submitted_in_cart + 1;
+                    $total_not_submitted_in_cart =
+                        $total_not_submitted_in_cart + 1;
 
-                    if ($value->total) {
+                    if (isset($value->total)) {
                         $total = $value->total;
                         $total_not_submitted_in_cart_amt += $total;
                     }
@@ -4328,9 +4367,10 @@ class AdminController extends Controller
                 foreach ($data as $value) {
                     $total_not_submitted_in_cart =
                         $total_not_submitted_in_cart + 1;
-
-                    $total = $value->total;
-                    $total_not_submitted_in_cart_amt += $total;
+                    if (isset($value->total)) {
+                        $total = $value->total;
+                        $total_not_submitted_in_cart_amt += $total;
+                    }
                 }
             }
         }

@@ -63,6 +63,16 @@ Route::group(
         );
 
         Route::get(
+            '/admin/all-sales-rep',
+            'AdminController@get_all_sale_rep_user'
+        );
+
+        Route::get(
+            '/admin/all-branch-rep',
+            'AdminController@get_all_branch_user'
+        );
+
+        Route::get(
             '/admin/logged-in-dealers',
             'AdminController@all_logged_in_dealers'
         );
