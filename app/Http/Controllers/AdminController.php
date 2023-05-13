@@ -2872,7 +2872,7 @@ class AdminController extends Controller
                 $service = ServiceParts::where('dealer', $code)
                     ->get()
                     ->first();
-                // $dealer->service_completed = $service->completed;
+                $dealer->service_completed = $service->completed;
 
                 // check if the item has been submitted 
                 if($service && $service->completed == '1'){
@@ -2914,7 +2914,7 @@ class AdminController extends Controller
                 $carded = CardedProducts::where('dealer', $code)
                     ->get()
                     ->first();
-                // $dealer->carded_completed = $carded->completed;
+                $dealer->carded_completed = $carded->completed;
 
                  // check if the item has been submitted 
                  if($carded && $carded->completed == '1'){
@@ -2956,7 +2956,7 @@ class AdminController extends Controller
                 $catalogue = Catalogue_Order::where('dealer', $code)
                     ->get()
                     ->first();
-                // $dealer->catalogue_completed = $catalogue->completed;
+                $dealer->catalogue_completed = $catalogue->completed;
 
                 if($catalogue && $catalogue->completed == '1'){
                     $data = json_decode($catalogue->data);
