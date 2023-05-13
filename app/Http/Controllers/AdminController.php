@@ -245,8 +245,8 @@ class AdminController extends Controller
                 )->get();
                 $record->description =
                     $extra_product_details && count($extra_product_details)
-                        ? $extra_product_details[0]->description
-                        : '';
+                    ? $extra_product_details[0]->description
+                    : '';
                 return $record;
             }, $value->data);
         }
@@ -2108,8 +2108,8 @@ class AdminController extends Controller
                 )->get();
                 $record->description =
                     $extra_product_details && count($extra_product_details)
-                        ? $extra_product_details[0]->description
-                        : '';
+                    ? $extra_product_details[0]->description
+                    : '';
                 return $record;
             }, $value->data);
 
@@ -2200,8 +2200,8 @@ class AdminController extends Controller
             // $record =
             $format_data =
                 $this->check_if_its_new($record['created_at'], 10) == true
-                    ? true
-                    : false;
+                ? true
+                : false;
 
             return array_merge(
                 [
@@ -2345,9 +2345,9 @@ class AdminController extends Controller
             'access_token' => $token,
             'token_type' => 'bearer',
             'expires_in' =>
-                auth()
-                    ->factory()
-                    ->getTTL() * 60,
+            auth()
+                ->factory()
+                ->getTTL() * 60,
         ]);
     }
 
@@ -2824,24 +2824,41 @@ class AdminController extends Controller
                 $code
             )->exists();
 
+            $total_items = 0;
+            $dealer->total_price = 0;
+            $dealer->total_item = 0;
+            $dealer->total_pending_item = 0;
+            $dealer->total_pending_amt = 0;
+
+
             if (Cart::where('dealer', $id)->exists()) {
                 $total = Cart::where('dealer', $id)
                     ->where('status', '1')
                     ->sum('price');
                 $dealer->total_price = $total;
 
-                $dealer->total_item = Cart::where('dealer', $id)
+                // get the total number of items that are submitted i.e cart + CD + CP + SP 
+                // total cart in cart 
+                $total_submitted_cart_items = Cart::where('dealer', $id)
                     ->where('status', '1')
                     ->count();
 
-                $dealer->total_pending_item = Cart::where('dealer', $id)
+                $dealer->total_item += $total_submitted_cart_items; // add it to the total items 
+
+                // total pending item in cart 
+                $total_cart_pending_items = Cart::where('dealer', $id)
                     ->where('status', '0')
                     ->count();
 
-                $dealer->total_pending_amt = DB::table('cart')
+                $dealer->total_pending_item += $total_cart_pending_items;
+
+                // total_pending item price in cart 
+                $total_pending_cart_price = DB::table('cart')
                     ->where('dealer', $id)
                     ->where('status', '0')
                     ->sum('price');
+                
+                $dealer->total_pending_amt += $total_pending_cart_price;
 
                 if ($dealer->order_status == '0') {
                     $dealer->order_status = 2;
@@ -2849,24 +2866,27 @@ class AdminController extends Controller
                 if ($dealer->order_status == '1') {
                     $dealer->order_status = 1;
                 }
-            } else {
-                $dealer->total_price = 0;
-                $dealer->total_item = 0;
-                $dealer->total_pending_item = 0;
-                $dealer->total_pending_amt = 0;
-
-                // $dealer->order_status = 0;
             }
 
             if ($check_service_parts) {
                 $service = ServiceParts::where('dealer', $code)
                     ->get()
                     ->first();
-                $dealer->service_completed = $service->completed;
-                $data = json_decode($service->data);
-                $total_pending = count($data);
-                $dealer->total_pending_item =
-                    $dealer->total_pending_item + $total_pending;
+                // $dealer->service_completed = $service->completed;
+
+                // check if the item has been submitted 
+                if($service && $service->completed == '1'){
+                    $data = json_decode($service->data);
+                    $total_submitted_sp = count($data);
+                    $dealer->total_item += $total_submitted_sp;
+                }
+
+                // check for pending sp items 
+                if($service && $service->completed == '0'){
+                    $data = json_decode($service->data);
+                    $total_pending_sp = count($data);
+                    $dealer->total_pending_item += $total_pending_sp;
+                }
 
                 $data_total = 0;
 
@@ -2894,12 +2914,23 @@ class AdminController extends Controller
                 $carded = CardedProducts::where('dealer', $code)
                     ->get()
                     ->first();
-                $dealer->carded_completed = $carded->completed;
+                // $dealer->carded_completed = $carded->completed;
+
+                 // check if the item has been submitted 
+                 if($carded && $carded->completed == '1'){
+                    $data = json_decode($carded->data);
+                    $total_submitted_cd = count($data);
+                    $dealer->total_item += $total_submitted_cd;
+                }
+
+                // check for pending sp items 
+                if($carded && $carded->completed == '0'){
+                    $data = json_decode($carded->data);
+                    $total_pending_cd = count($data);
+                    $dealer->total_pending_item += $total_pending_cd;
+                }
 
                 $data = json_decode($carded->data);
-                $total_pending = count($data);
-                $dealer->total_pending_item =
-                    $dealer->total_pending_item + $total_pending;
 
                 $data_total = 0;
                 foreach ($data as $value) {
@@ -2925,12 +2956,22 @@ class AdminController extends Controller
                 $catalogue = Catalogue_Order::where('dealer', $code)
                     ->get()
                     ->first();
-                $dealer->catalogue_completed = $catalogue->completed;
+                // $dealer->catalogue_completed = $catalogue->completed;
+
+                if($catalogue && $catalogue->completed == '1'){
+                    $data = json_decode($catalogue->data);
+                    $total_submitted_cp = count($data);
+                    $dealer->total_item += $total_submitted_cp;
+                }
+
+                // check for pending sp items 
+                if($catalogue && $catalogue->completed == '0'){
+                    $data = json_decode($catalogue->data);
+                    $total_pending_cp = count($data);
+                    $dealer->total_pending_item += $total_pending_cp;
+                }
 
                 $data = json_decode($catalogue->data);
-                $total_pending = count($data);
-                $dealer->total_pending_item =
-                    $dealer->total_pending_item + $total_pending;
 
                 $data_total = 0;
                 foreach ($data as $value) {
@@ -3856,7 +3897,7 @@ class AdminController extends Controller
 
                 if (
                     count(json_decode($check_catalogue_order[0]->data, true)) ==
-                        0 ||
+                    0 ||
                     empty($check_catalogue_order[0]->data) == true
                 ) {
                     $check_catalogue_order[0]->delete();
@@ -4382,8 +4423,8 @@ class AdminController extends Controller
         foreach ($products as $product) {
             $is_new =
                 $this->check_if_its_new($product['created_at'], 10) == true
-                    ? true
-                    : false;
+                ? true
+                : false;
 
             $spec_data = $product->spec_data
                 ? json_decode($product->spec_data)
@@ -4920,8 +4961,8 @@ class AdminController extends Controller
                 )->get();
                 $record->description =
                     $extra_product_details && count($extra_product_details)
-                        ? $extra_product_details[0]->description
-                        : '';
+                    ? $extra_product_details[0]->description
+                    : '';
                 return $record;
             }, $value->data);
         }
@@ -5615,8 +5656,8 @@ class AdminController extends Controller
                 )->get();
                 $record->description =
                     $extra_product_details && count($extra_product_details)
-                        ? $extra_product_details[0]->description
-                        : '';
+                    ? $extra_product_details[0]->description
+                    : '';
                 return $record;
             }, $value->data);
             $value->order_date = $order_date;
@@ -5659,8 +5700,8 @@ class AdminController extends Controller
                 )->get();
                 $record->description =
                     $extra_product_details && count($extra_product_details)
-                        ? $extra_product_details[0]->description
-                        : '';
+                    ? $extra_product_details[0]->description
+                    : '';
                 return $record;
             }, $value->data);
             $value->order_date = $order_date;
