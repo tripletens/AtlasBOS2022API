@@ -28,11 +28,13 @@
     td {
         font-size: 10px;
         padding-left: 8px;
+        
 
     }
 
     .table-value-custom {
         font-size: 10px;
+        text-align: center;
     }
 
     table {
@@ -156,6 +158,8 @@
                     <th class="thead-custom">Quantity</th>
                     <th class="thead-custom">Atlas #</th>
                     <th class="thead-custom">Description</th>
+                    <th class="thead-custom">UM</th>
+
                     <th class="thead-custom">Booking ($)</th>
                     <th class="thead-custom">Extended($)</th>
                 </tr>
@@ -180,6 +184,9 @@
                             {{ $item['desc'] }}
                         </td>
                         <td class="table-value-custom">
+                            {{ $item['um'] }}
+                        </td>
+                        <td class="table-value-custom">
                             ${{ number_format($item['unit_price'], 2) }}
                         </td>
                         <td class="table-value-custom">
@@ -190,7 +197,7 @@
                 @endforeach
 
                 <tr>
-                    <td colspan="4">
+                    <td colspan="5">
                         <h5 class="each-total-cate-text" style="">
                             Total For
                             Appliance</h5>
@@ -218,6 +225,8 @@
                     <th class="thead-custom">Quantity</th>
                     <th class="thead-custom">Atlas #</th>
                     <th class="thead-custom">Description</th>
+                    <th class="thead-custom">UM</th>
+
                     <th class="thead-custom">Booking ($)</th>
                     <th class="thead-custom">Extended($)</th>
                 </tr>
@@ -241,6 +250,10 @@
                         </td>
 
                         <td class="table-value-custom">
+                            {{ $item['um'] }}
+                        </td>
+
+                        <td class="table-value-custom">
                             ${{ number_format($item['unit_price'], 2) }}
                         </td>
                         <td class="table-value-custom">
@@ -250,7 +263,7 @@
                 @endforeach
 
                 <tr>
-                    <td colspan="4">
+                    <td colspan="5">
                         <h5 class="each-total-cate-text" style="">
                             Total For
                             Vents & Hardwares</h5>
@@ -278,6 +291,8 @@
                     <th class="thead-custom">Atlas #</th>
                     {{-- <th class="thead-custom">Vendor</th> --}}
                     <th class="thead-custom">Description</th>
+                    <th class="thead-custom">UM</th>
+
                     <th class="thead-custom">Booking ($)</th>
                     <th class="thead-custom">Extended($)</th>
                 </tr>
@@ -300,6 +315,9 @@
                             {{ $item['desc'] }}
                         </td>
                         <td class="table-value-custom">
+                            {{ $item['um'] }}
+                        </td>
+                        <td class="table-value-custom">
                             ${{ number_format($item['unit_price'], 2) }}
                         </td>
                         <td class="table-value-custom">
@@ -308,7 +326,7 @@
                     </tr>
                 @endforeach
                 <tr>
-                    <td colspan="4">
+                    <td colspan="5">
                         <h5 class="each-total-cate-text" style="">
                             Total For
                             Electrical</h5>
@@ -337,6 +355,8 @@
                     <th class="thead-custom">Quantity</th>
                     <th class="thead-custom">Atlas #</th>
                     <th class="thead-custom">Description</th>
+                    <th class="thead-custom">UM</th>
+
                     <th class="thead-custom">Booking ($)</th>
                     <th class="thead-custom">Extended($)</th>
                 </tr>
@@ -354,6 +374,8 @@
                         </td> --}}
                         <td class="table-value-custom">{{ $item['desc'] }}</td>
 
+                        <td class="table-value-custom">{{ $item['um'] }}</td>
+
                         <td class="table-value-custom">${{ number_format($item['unit_price'], 2) }}
                         </td>
                         <td class="table-value-custom">
@@ -363,7 +385,7 @@
 
                 @endforeach
                 <tr>
-                    <td colspan="4">
+                    <td colspan="5">
                         <h5 class="each-total-cate-text" style="">
                             Total For
                             Electronics</h5>
@@ -392,6 +414,8 @@
                     <th class="thead-custom">Atlas #</th>
                     {{-- <th class="thead-custom">Vendor</th> --}}
                     <th class="thead-custom">Description</th>
+                    <th class="thead-custom">UM</th>
+
                     <th class="thead-custom">Booking ($)</th>
                     <th class="thead-custom">Extended($)</th>
                 </tr>
@@ -406,6 +430,8 @@
                         <td class="table-value-custom">{{ $item['qty'] }}</td>
                         <td class="table-value-custom">{{ $item['atlas_id'] }}</td>
                         <td class="table-value-custom">{{ $item['desc'] }}</td>
+                        <td class="table-value-custom">{{ $item['um'] }}</td>
+
                         <td class="table-value-custom">${{ number_format($item['unit_price'], 2) }}
                         </td>
                         <td class="table-value-custom">
@@ -414,7 +440,7 @@
                     </tr>
                 @endforeach
                 <tr>
-                    <td colspan="4">
+                    <td colspan="5">
                         <h5 class="each-total-cate-text" style="">
                             Total For
                             Plumbing</h5>
@@ -441,6 +467,8 @@
                     <th class="thead-custom">Quantity</th>
                     <th class="thead-custom">Atlas #</th>
                     <th class="thead-custom">Description</th>
+                    <th class="thead-custom">UM</th>
+
                     <th class="thead-custom">Booking ($)</th>
                     <th class="thead-custom">Extended($)</th>
                 </tr>
@@ -454,6 +482,8 @@
                         <td class="table-value-custom">{{ $item['qty'] }}</td>
                         <td class="table-value-custom">{{ $item['atlas_id'] }}</td>
                         <td class="table-value-custom">{{ $item['desc'] }}</td>
+                        <td class="table-value-custom">{{ $item['um'] }}</td>
+
                         <td class="table-value-custom">
                             ${{ number_format($item['unit_price'], 2) }}
                         </td>
@@ -464,7 +494,7 @@
 
                 @endforeach
                 <tr>
-                    <td colspan="4">
+                    <td colspan="5">
                         <h5 class="each-total-cate-text" style="">
                             Total For
                             Sealants & Cleaners</h5>
@@ -492,6 +522,8 @@
                     <th class="thead-custom">Atlas #</th>
                     {{-- <th class="thead-custom">Vendor</th> --}}
                     <th class="thead-custom">Description</th>
+                    <th class="thead-custom">UM</th>
+
                     <th class="thead-custom">Booking ($)</th>
                     <th class="thead-custom">Extended($)</th>
                 </tr>
@@ -505,6 +537,8 @@
                         <td class="table-value-custom">{{ $item['qty'] }}</td>
                         <td class="table-value-custom">{{ $item['atlas_id'] }}</td>
                         <td class="table-value-custom">{{ $item['desc'] }}</td>
+                        <td class="table-value-custom">{{ $item['um'] }}</td>
+
                         <td class="table-value-custom">
                             ${{ number_format($item['unit_price'], 2) }}
                         </td>
@@ -515,7 +549,7 @@
 
                 @endforeach
                 <tr>
-                    <td colspan="4">
+                    <td colspan="5">
                         <h5 class="each-total-cate-text" style="">
                             Total For
                             Accessories</h5>
@@ -544,6 +578,8 @@
                     <th class="thead-custom">Quantity</th>
                     <th class="thead-custom">Atlas #</th>
                     <th class="thead-custom">Description</th>
+                    <th class="thead-custom">UM</th>
+
                     <th class="thead-custom">Booking ($)</th>
                     <th class="thead-custom">Extended($)</th>
                 </tr>
@@ -556,6 +592,8 @@
                         <td class="table-value-custom">{{ $item['qty'] }}</td>
                         <td class="table-value-custom">{{ $item['atlas_id'] }}</td>
                         <td class="table-value-custom">{{ $item['desc'] }}</td>
+                        <td class="table-value-custom">{{ $item['um'] }}</td>
+
                         <td class="table-value-custom">
                             ${{ number_format($item['unit_price'], 2) }}
                         </td>
@@ -566,7 +604,7 @@
 
                 @endforeach
                 <tr>
-                    <td colspan="4">
+                    <td colspan="5">
                         <h5 class="each-total-cate-text" style="">
                             Total For
                             Towing Accessories</h5>
@@ -595,6 +633,8 @@
                     <th class="thead-custom">Quantity</th>
                     <th class="thead-custom">Atlas #</th>
                     <th class="thead-custom">Description</th>
+                    <th class="thead-custom">UM</th>
+
                     <th class="thead-custom">Booking ($)</th>
                     <th class="thead-custom">Extended($)</th>
                 </tr>
@@ -607,6 +647,8 @@
                         <td class="table-value-custom">{{ $item['qty'] }}</td>
                         <td class="table-value-custom">{{ $item['atlas_id'] }}</td>
                         <td class="table-value-custom">{{ $item['desc'] }}</td>
+                        <td class="table-value-custom">{{ $item['um'] }}</td>
+
                         <td class="table-value-custom">${{ number_format($item['unit_price'], 2) }}
                         </td>
                         <td class="table-value-custom">
@@ -617,7 +659,7 @@
                 @endforeach
 
                 <tr>
-                    <td colspan="4">
+                    <td colspan="5">
                         <h5 class="each-total-cate-text" style="">
                             Total For
                             Towing Products</h5>
@@ -645,6 +687,8 @@
                     <th class="thead-custom">Quantity</th>
                     <th class="thead-custom">Atlas #</th>
                     <th class="thead-custom">Description</th>
+                    <th class="thead-custom">UM</th>
+
                     <th class="thead-custom">Booking ($)</th>
                     <th class="thead-custom">Extended($)</th>
                 </tr>
@@ -657,6 +701,8 @@
                         <td class="table-value-custom">{{ $item['qty'] }}</td>
                         <td class="table-value-custom">{{ $item['atlas_id'] }}</td>
                         <td class="table-value-custom">{{ $item['desc'] }}</td>
+                        <td class="table-value-custom">{{ $item['um'] }}</td>
+
                         <td class="table-value-custom">
                             ${{ number_format($item['unit_price'], 2) }}
                         </td>
@@ -667,7 +713,7 @@
 
                 @endforeach
                 <tr>
-                    <td colspan="4">
+                    <td colspan="5">
                         <h5 class="each-total-cate-text" style="">
                             Total For
                             Propane</h5>
@@ -693,6 +739,8 @@
                     <th class="thead-custom">Quantity</th>
                     <th class="thead-custom">Atlas #</th>
                     <th class="thead-custom">Description</th>
+                    <th class="thead-custom">UM</th>
+
                     <th class="thead-custom">Booking ($)</th>
                     <th class="thead-custom">Extended($)</th>
                 </tr>
@@ -706,6 +754,8 @@
                         <td class="table-value-custom">{{ $item['qty'] }}</td>
                         <td class="table-value-custom">{{ $item['atlas_id'] }}</td>
                         <td class="table-value-custom">{{ $item['desc'] }}</td>
+                        <td class="table-value-custom">{{ $item['um'] }}</td>
+
                         <td class="table-value-custom">
                             ${{ number_format($item['unit_price'], 2) }}
                         </td>
@@ -716,7 +766,7 @@
 
                 @endforeach
                 <tr>
-                    <td colspan="4">
+                    <td colspan="5">
                         <h5 class="each-total-cate-text" style="">
                             Total For
                             Outdoor Living</h5>
@@ -731,14 +781,7 @@
     @endif
 
 
-    <div style="width: 100%; text-align: right; border: 1px solid black; margin-top: 20px">
-        <h5 class="each-total-cate-text" style="display: inline-block; border-right: 1px solid black">Grand Total:
-        </h5>
-        <h5 class="each-total-text" style="display: inline-block; padding-right: 30px">
-            ${{ number_format($grand_total, 2) }}
-        </h5>
-    </div>
-
+  
 
     {{-- Catalougue Products Table --}}
     @if ($catalogue_data)
@@ -751,30 +794,47 @@
                     <th class="thead-custom">Quantity</th>
                     <th class="thead-custom">Atlas #</th>
                     <th class="thead-custom">Description</th>
-                    <th class="thead-custom">Price</th>
-                    <th class="thead-custom">Total</th>
-
+                    <th class="thead-custom">UM</th>
+                    <th class="thead-custom">Unit Price</th>
+                    <th class="thead-custom">Extended</th>
                 </tr>
             </thead>
             <tbody>
                 @if ($catalogue_data)
+                    {{ $catalogue_total = 0 }}
                     @foreach ($catalogue_data as $item)
+                    {{ $catalogue_total+= $item['total'] }}
+
                         <tr>
                             <td class="table-value-custom">{{ $item['qty'] }}</td>
                             <td class="table-value-custom">{{ $item['atlasId'] }}</td>
                             <td class="table-value-custom">{{ $item['description'] }}</td>
+
+                            @isset($item['um'])
+                                <td class="table-value-custom">{{ $item['um'] }}</td>
+                            @endisset
 
                             @isset($item['price'])
                                 <td class="table-value-custom">${{ number_format($item['price'], 2) }}</td>
                                 <td class="table-value-custom">${{ number_format($item['total'], 2) }}</td>
                             @endisset
 
-                           
-
-
-
                         </tr>
                     @endforeach
+                    <tr>
+                        <td colspan="5">
+                            <h5 class="each-total-cate-text" style="">
+                                Total For
+                                Catalogue Order</h5>
+                        </td>
+                        <td>
+                            <h5 class="each-total-text" style="">
+                                ${{ number_format($catalogue_total, 2) }}</h5>
+                        </td>
+                    </tr>
+
+                    {{ $grand_total += $catalogue_total }}
+
                 @else
                     <tr>
                         <td colspan="2" class="table-value-custom" style="text-align: center">No Catalogue Item</td>
@@ -798,28 +858,47 @@
                     <th class="thead-custom">Quantity</th>
                     <th class="thead-custom">Atlas #</th>
                     <th class="thead-custom">Description</th>
-                    <th class="thead-custom">Price</th>
-                    <th class="thead-custom">Total</th>
-
+                    <th class="thead-custom">UM</th>
+                    <th class="thead-custom">Unit Price</th>
+                    <th class="thead-custom">Extended</th>
                 </tr>
             </thead>
             <tbody>
                 @if ($carded_data)
+                {{ $carded_total = 0 }}
+
                     @foreach ($carded_data as $item)
+                    {{ $carded_total+= $item['total'] }}
+
                         <tr>
                             <td class="table-value-custom">{{ $item['qty'] }}</td>
                             <td class="table-value-custom">{{ $item['atlasId'] }}</td>
                             <td class="table-value-custom">{{ $item['description'] }}</td>
+
+                            @isset($item['um'])
+                                <td class="table-value-custom">{{ $item['um'] }}</td>
+                            @endisset
 
                             @isset($item['price'])
                                 <td class="table-value-custom">${{ number_format($item['price'], 2) }}</td>
                                 <td class="table-value-custom">${{ number_format($item['total'], 2) }}</td>
                             @endisset
 
-                         
-
                         </tr>
                     @endforeach
+                    <tr>
+                        <td colspan="5">
+                            <h5 class="each-total-cate-text" style="">
+                                Total For
+                                Carded Order</h5>
+                        </td>
+                        <td>
+                            <h5 class="each-total-text" style="">
+                                ${{ number_format($carded_total, 2) }}</h5>
+                        </td>
+                    </tr>
+                    {{ $grand_total += $carded_total }}
+
                 @else
                     <tr>
                         <td colspan="2" class="table-value-custom" style="text-align: center">No Carded Products</td>
@@ -842,28 +921,48 @@
                     <th class="thead-custom">Quantity</th>
                     <th class="thead-custom">Atlas #</th>
                     <th class="thead-custom">Description</th>
-                    <th class="thead-custom">Price</th>
-                    <th class="thead-custom">Total</th>
-
+                    <th class="thead-custom">UM</th>
+                    <th class="thead-custom">Unit Price</th>
+                    <th class="thead-custom">Extended</th>
                 </tr>
             </thead>
             <tbody>
                 @if ($service_data)
+                {{ $service_total = 0 }}
+
                     @foreach ($service_data as $item)
+                    {{ $service_total+= $item['total'] }}
+
                         <tr>
                             <td class="table-value-custom">{{ $item['qty'] }}</td>
                             <td class="table-value-custom">{{ $item['atlasId'] }}</td>
                             <td class="table-value-custom">{{ $item['description'] }}</td>
 
+                            
+                            @isset($item['um'])
+                                <td class="table-value-custom">{{ $item['um'] }}</td>
+                            @endisset
+
+
                             @isset($item['price'])
                                 <td class="table-value-custom">${{ number_format($item['price'], 2) }}</td>
                                 <td class="table-value-custom">${{ number_format($item['total'], 2) }}</td>
                             @endisset
-
-                       
-
                         </tr>
                     @endforeach
+                    <tr>
+                        <td colspan="5">
+                            <h5 class="each-total-cate-text" style="">
+                                Total For
+                                Service Parts Order</h5>
+                        </td>
+                        <td>
+                            <h5 class="each-total-text" style="">
+                                ${{ number_format($service_total, 2) }}</h5>
+                        </td>
+                    </tr>
+                    {{ $grand_total += $service_total }}
+
                 @else
                     <tr>
                         <td colspan="2" class="table-value-custom" style="text-align: center">No Service Parts</td>
@@ -872,6 +971,16 @@
             </tbody>
         </table>
     @endif
+
+
+
+    <div style="width: 100%; text-align: right; border: 1px solid black; margin-top: 20px">
+        <h5 class="each-total-cate-text" style="display: inline-block; border-right: 1px solid black">Grand Total:
+        </h5>
+        <h5 class="each-total-text" style="display: inline-block; padding-right: 30px">
+            ${{ number_format($grand_total, 2) }}
+        </h5>
+    </div>
 
 
     {{-- @if (count($outdoor) > 0 || count($propane) > 0 || count($towing_products) > 0 || count($towing_accessories) > 0 || count($accessories) > 0 || count($sealant) > 0 || count($plumbing) > 0 || count($electronics) > 0 || count($vent) > 0 || count($appliance) > 0)
@@ -892,3 +1001,5 @@
 </body>
 
 </html>
+
+
