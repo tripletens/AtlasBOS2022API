@@ -2011,7 +2011,9 @@ class BranchController extends Controller
                 $grand_total += $total_amount;
             }
 
-            $all_carded_products && count($all_carded_products) > 0 ? $all_carded_products[0]->grand_total : [];
+            // return $all_carded_products;
+
+            $all_carded_products && count($all_carded_products) > 0 ? $all_carded_products[0]->grand_total = $grand_total  : [];
 
             // $dealers_with_active_carded_products_orders = DB::table('atlas_branch_assign_dealers')
             //     ->where('order_status','1')
