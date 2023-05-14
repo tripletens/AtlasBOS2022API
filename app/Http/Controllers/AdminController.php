@@ -4460,7 +4460,7 @@ class AdminController extends Controller
                         ->first();
 
                     foreach ($catalogue_orders as $catalogue_data) {
-                        $data = json_decode($catalogue_data->data);
+                        $data = $catalogue_data->data;
                         foreach ($data as $value) {
                             if (isset($value->total)) {
                                 $total = $value->total;
