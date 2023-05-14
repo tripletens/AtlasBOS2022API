@@ -4275,30 +4275,6 @@ class AdminController extends Controller
             ->pluck('id')
             ->toArray();
 
-        // $total_amount = DB::table( 'cart' )->wherein( 'dealer', )->sum( 'price' );
-
-        // return 'hello';
-
-        // $total_amount = DB::table('cart')
-        //     ->wherein('dealer', $all_dealer_ids_order_status)
-        //     ->sum('price');
-
-        // if (!empty($all_service_parts[0])) {
-        //     $data = json_decode($all_service_parts[0]->data);
-        //     foreach ($data as $value) {
-        //         $total = $value->total;
-        //         $total_amount += $total;
-        //     }
-        // }
-
-        // if (!empty($all_carded_products[0])) {
-        //     $data = json_decode($all_carded_products[0]->data);
-        //     foreach ($data as $value) {
-        //         $total = $value->total;
-        //         $total_amount += $total;
-        //     }
-        // }
-
         $total_not_submitted_in_cart = DB::table('cart')
             ->where('status', '0')
             ->count();
@@ -4437,21 +4413,6 @@ class AdminController extends Controller
             }
         }
 
-        // if (
-        //     !$dealers ||
-        //     !$all_catalogue_orders ||
-        //     !$products ||
-        //     !$all_carded_products ||
-        //     !$all_service_parts ||
-        //     !$orders
-        // ) {
-        //     $this->result->status = false;
-        //     $this->result->status_code = 422;
-        //     $this->result->message =
-        //         'Sorry we could not fetch all the dashboard details';
-        //     return response()->json($this->result);
-        // }
-
         $submitted_dealers = DB::table('atlas_dealers')
             ->select(
                 'id',
@@ -4475,14 +4436,77 @@ class AdminController extends Controller
                 $dealer_name = $data->full_name;
                 $order_date = $data->placed_order_date;
 
+                $total_amount = 0;
+
+                ////// Catalogue orders Submitted
+                $catalogue_orders = Catalogue_Order::query()
+                    ->where('dealer', $account_id)
+                    ->where('completed', '1')
+                    ->get()
+                    ->first();
+
+                if (!empty($catalogue_orders)) {
+                    foreach ($catalogue_orders as $catalogue_data) {
+                        $data = json_decode($catalogue_data->data);
+                        foreach ($data as $value) {
+                            if (isset($value->total)) {
+                                $total = $value->total;
+                                $total_amount += $total;
+                            }
+                        }
+                    }
+                }
+
+                /////////// Service Parts orders submitted
+                $service_parts = ServiceParts::query()
+                    ->where('dealer', $account_id)
+                    ->where('completed', '1')
+                    ->get()
+                    ->first();
+
+                if (!empty($service_parts)) {
+                    foreach ($service_parts as $service_data) {
+                        $data = json_decode($service_data->data);
+                        foreach ($data as $value) {
+                            if (isset($value->total)) {
+                                $total = $value->total;
+                                $total_amount += $total;
+                            }
+                        }
+                    }
+                }
+
+                ////////// Carded Orders submitted
+                $carded_products = CardedProducts::query()
+                    ->where('dealer', $account_id)
+                    ->where('completed', '1')
+                    ->get()
+                    ->first();
+
+                if (!empty($carded_products)) {
+                    foreach ($carded_products as $carded_data) {
+                        $data = json_decode($carded_data->data);
+                        foreach ($data as $value) {
+                            if (isset($value->total)) {
+                                $total = $value->total;
+                                $total_amount += $total;
+                            }
+                        }
+                    }
+                }
+
+                $cart_total = DB::table('cart')
+                    ->where('dealer', $dealer_id)
+                    ->sum('price');
+
+                $over_all_total = $cart_total + $total_amount;
+
                 return [
                     'id' => $dealer_id,
                     'account_id' => $account_id,
                     'dealer_name' => $dealer_name,
                     'total_item' => Cart::where('dealer', $dealer_id)->count(),
-                    'total_amt' => DB::table('cart')
-                        ->where('dealer', $dealer_id)
-                        ->sum('price'),
+                    'total_amt' => $over_all_total,
                     'order_date' => $order_date,
                 ];
             }, $submitted_dealers);
