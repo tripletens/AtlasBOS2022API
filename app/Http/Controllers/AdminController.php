@@ -4459,64 +4459,60 @@ class AdminController extends Controller
                         ->get()
                         ->first();
 
-                    foreach ($catalogue_orders as $catalogue_data) {
-                        $data = $catalogue_data->data;
-                        foreach ($data as $value) {
-                            if (isset($value->total)) {
-                                $total = $value->total;
-                                $total_amount += $total;
-                            }
+                    $data = json_decode($catalogue_orders->data);
+                    foreach ($data as $value) {
+                        if (isset($value->total)) {
+                            $total = $value->total;
+                            $total_amount += $total;
                         }
                     }
                 }
 
                 /////////// Service Parts orders submitted
-                // $service_parts = ServiceParts::query()
-                //     ->where('dealer', $account_id)
-                //     ->where('completed', '1')
-                //     ->get()
-                //     ->first();
 
-                // if (
-                //     ServiceParts::query()
-                //         ->where('dealer', $account_id)
-                //         ->where('completed', '1')
-                //         ->exists()
-                // ) {
-                //     foreach ($service_parts as $service_data) {
-                //         $data = json_decode($service_data->data);
-                //         foreach ($data as $value) {
-                //             if (isset($value->total)) {
-                //                 $total = $value->total;
-                //                 $total_amount += $total;
-                //             }
-                //         }
-                //     }
-                // }
+                if (
+                    ServiceParts::query()
+                        ->where('dealer', $account_id)
+                        ->where('completed', '1')
+                        ->exists()
+                ) {
+                    $service_parts = ServiceParts::query()
+                        ->where('dealer', $account_id)
+                        ->where('completed', '1')
+                        ->get()
+                        ->first();
+
+                    $data = json_decode($service_parts->data);
+                    foreach ($data as $value) {
+                        if (isset($value->total)) {
+                            $total = $value->total;
+                            $total_amount += $total;
+                        }
+                    }
+                }
 
                 ////////// Carded Orders submitted
-                // $carded_products = CardedProducts::query()
-                //     ->where('dealer', $account_id)
-                //     ->where('completed', '1')
-                //     ->get()
-                //     ->first();
 
-                // if (
-                //     CardedProducts::query()
-                //         ->where('dealer', $account_id)
-                //         ->where('completed', '1')
-                //         ->exists()
-                // ) {
-                //     foreach ($carded_products as $carded_data) {
-                //         $data = json_decode($carded_data->data);
-                //         foreach ($data as $value) {
-                //             if (isset($value->total)) {
-                //                 $total = $value->total;
-                //                 $total_amount += $total;
-                //             }
-                //         }
-                //     }
-                // }
+                if (
+                    CardedProducts::query()
+                        ->where('dealer', $account_id)
+                        ->where('completed', '1')
+                        ->exists()
+                ) {
+                    $carded_products = CardedProducts::query()
+                        ->where('dealer', $account_id)
+                        ->where('completed', '1')
+                        ->get()
+                        ->first();
+
+                    $data = json_decode($carded_products->data);
+                    foreach ($data as $value) {
+                        if (isset($value->total)) {
+                            $total = $value->total;
+                            $total_amount += $total;
+                        }
+                    }
+                }
 
                 $cart_total = DB::table('cart')
                     ->where('dealer', $dealer_id)
