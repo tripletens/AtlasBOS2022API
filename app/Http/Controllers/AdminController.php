@@ -4454,7 +4454,12 @@ class AdminController extends Controller
                     ->get()
                     ->first();
 
-                if (!empty($catalogue_orders)) {
+                if (
+                    Catalogue_Order::query()
+                        ->where('dealer', $account_id)
+                        ->where('completed', '1')
+                        ->exists()
+                ) {
                     foreach ($catalogue_orders as $catalogue_data) {
                         $data = json_decode($catalogue_data->data);
                         foreach ($data as $value) {
@@ -4473,7 +4478,12 @@ class AdminController extends Controller
                     ->get()
                     ->first();
 
-                if (!empty($service_parts)) {
+                if (
+                    ServiceParts::query()
+                        ->where('dealer', $account_id)
+                        ->where('completed', '1')
+                        ->exists()
+                ) {
                     foreach ($service_parts as $service_data) {
                         $data = json_decode($service_data->data);
                         foreach ($data as $value) {
@@ -4492,7 +4502,12 @@ class AdminController extends Controller
                     ->get()
                     ->first();
 
-                if (!empty($carded_products)) {
+                if (
+                    CardedProducts::query()
+                        ->where('dealer', $account_id)
+                        ->where('completed', '1')
+                        ->exists()
+                ) {
                     foreach ($carded_products as $carded_data) {
                         $data = json_decode($carded_data->data);
                         foreach ($data as $value) {
