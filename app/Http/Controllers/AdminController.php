@@ -4219,6 +4219,8 @@ class AdminController extends Controller
             ->where('completed', '1')
             ->get();
 
+        $total_catalogue_submitted = 0;
+
         if (!empty($all_catalogue_orders)) {
             foreach ($all_catalogue_orders as $catalogue_data) {
                 $data = json_decode($catalogue_data->data);
@@ -4226,6 +4228,7 @@ class AdminController extends Controller
                     if (isset($value->total)) {
                         $total = $value->total;
                         $total_amount += $total;
+                        $total_catalogue_submitted += $total;
                     }
                 }
             }
@@ -4236,6 +4239,8 @@ class AdminController extends Controller
             ->where('completed', '1')
             ->get();
 
+        $total_service_submitted = 0;
+
         if (!empty($all_service_parts)) {
             foreach ($all_service_parts as $service_data) {
                 $data = json_decode($service_data->data);
@@ -4243,6 +4248,7 @@ class AdminController extends Controller
                     if (isset($value->total)) {
                         $total = $value->total;
                         $total_amount += $total;
+                        $total_service_submitted += $total;
                     }
                 }
             }
@@ -4256,6 +4262,8 @@ class AdminController extends Controller
             ->where('completed', '1')
             ->get();
 
+        $total_carded_submitted = 0;
+
         if (!empty($all_carded_products)) {
             foreach ($all_carded_products as $carded_data) {
                 $data = json_decode($carded_data->data);
@@ -4263,6 +4271,7 @@ class AdminController extends Controller
                     if (isset($value->total)) {
                         $total = $value->total;
                         $total_amount += $total;
+                        $total_carded_submitted += $total;
                     }
                 }
             }
@@ -4542,7 +4551,9 @@ class AdminController extends Controller
 
         $this->result->data->total_amount4 = 'tests';
 
-        /// $this->result->data->catalogue_data = $all_catalogue_orders[0];
+        $this->result->data->total_carded_submitted = $total_carded_submitted;
+        $this->result->data->total_service_submitted = $total_service_submitted;
+        $this->result->data->total_catalogue_submitted = $total_catalogue_submitted;
 
         $this->result->message = 'Dashboard details fetched successfully';
         return response()->json($this->result);
