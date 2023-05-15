@@ -912,7 +912,7 @@ class BranchController extends Controller
             ->pluck('id')
             ->toArray();
 
-        $total_amount = Cart::whereIn('dealer', $all_dealer_ids)->sum('price');
+        $total_amount_booking = Cart::whereIn('dealer', $all_dealer_ids)->sum('price');
 
         $get_recent_order_Details = [];
 
@@ -961,7 +961,8 @@ class BranchController extends Controller
         $this->result->data->no_of_service_parts = $all_service_parts;
         $this->result->data->no_of_carded_products = $all_carded_products;
         $this->result->data->recent_orders = $get_recent_order_Details;
-        $this->result->data->total_amount = $total_amount;
+        $this->result->data->total_amount_booking = $total_amount_booking;
+        $this->result->data->total_amount = $total_amount_booking + $total_cd + $total_cp + $total_sp;
         $this->result->data->total_cp = $total_cp;
         $this->result->data->total_cd = $total_cd;
         $this->result->data->total_sp = $total_sp;
