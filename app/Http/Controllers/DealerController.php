@@ -3040,25 +3040,25 @@ class DealerController extends Controller
             if (count($no_of_catalogue_order) > 0) {
                 $data = json_decode($no_of_catalogue_order[0]['data']);
 
-                $new_items = [];
+                // $new_items = [];
 
                 if (count($data) > 0) {
                     foreach ($data as $key => $value) {
                         $atlas_id_old = $value->atlasId;
 
-                        if ($atlas_id_old = $atlas_id) {
+                        if ($atlas_id_old == $atlas_id) {
                             $value->price = $price;
                             $value->total = $total;
                             $value->qty = $quantity;
 
-                            array_push($new_items, (array) $value);
+                            // array_push($new_items, (array) $value);
                         } else {
-                            array_push($new_items, (array) $value);
+                            ///  array_push($new_items, (array) $value);
                         }
                     }
 
                     // dd( $new_items );
-                    $no_of_catalogue_order[0]->data = $new_items;
+                    $no_of_catalogue_order[0]->data = $data;
 
                     $update_catalogue_order = $no_of_catalogue_order[0]->save();
 
@@ -3135,21 +3135,21 @@ class DealerController extends Controller
                     foreach ($data as $key => $value) {
                         $atlas_id_old = $value->atlasId;
 
-                        if ($atlas_id_old = $atlas_id) {
+                        if ($atlas_id_old == $atlas_id) {
                             $value->price = $price;
                             $value->total = $total;
                             $value->qty = $quantity;
 
-                            array_push($new_items, (array) $value);
+                            // array_push($new_items, (array) $value);
                         } else {
-                            array_push($new_items, (array) $value);
+                            // array_push($new_items, (array) $value);
                         }
                     }
 
                     // dd($new_items);
 
                     // dd($new_items);
-                    $no_of_carded_product[0]->data = $new_items;
+                    $no_of_carded_product[0]->data = $data;
 
                     $update_carded_product = $no_of_carded_product[0]->save();
 
@@ -3392,21 +3392,21 @@ class DealerController extends Controller
                     foreach ($data as $key => $value) {
                         $atlas_id_old = $value->atlasId;
 
-                        if ($atlas_id_old = $atlas_id) {
+                        if ($atlas_id_old == $atlas_id) {
                             $value->price = $price;
                             $value->total = $total;
                             $value->qty = $quantity;
 
-                            array_push($new_items, (array) $value);
+                            //  array_push($new_items, (array) $value);
                         } else {
-                            array_push($new_items, (array) $value);
+                            // array_push($new_items, (array) $value);
                         }
                     }
 
                     // dd($new_items);
 
                     // dd($new_items);
-                    $no_of_service_part[0]->data = $new_items;
+                    $no_of_service_part[0]->data = $data;
 
                     $update_service_part = $no_of_service_part[0]->save();
 
