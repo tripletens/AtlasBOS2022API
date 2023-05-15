@@ -3565,18 +3565,24 @@ class AdminController extends Controller
 
                         foreach ($data as $value) {
                             $atlas_id_old = $value->atlasId;
-                            if ($atlas_id_old != $atlas_id) {
+                            if ($atlas_id_old = $atlas_id) {
+                                $value->price = $price;
+                                $value->total = $total;
+                                $value->qty = $quantity;
+
+                                array_push($new_items, (array) $value);
+                            } else {
                                 array_push($new_items, (array) $value);
                             }
                         }
 
-                        $update_quantity = array_push($new_items, [
-                            'qty' => $quantity,
-                            'atlasId' => $atlas_id,
-                            'price' => $inital_price,
-                            'total' => $new_price,
-                            'description' => $desc,
-                        ]);
+                        // $update_quantity = array_push($new_items, [
+                        //     'qty' => $quantity,
+                        //     'atlasId' => $atlas_id,
+                        //     'price' => $inital_price,
+                        //     'total' => $new_price,
+                        //     'description' => $desc,
+                        // ]);
                     }
 
                     $data_encode = json_encode($new_items);
@@ -3653,18 +3659,24 @@ class AdminController extends Controller
 
                         foreach ($data as $value) {
                             $atlas_id_old = $value->atlasId;
-                            if ($atlas_id_old != $atlas_id) {
+                            if ($atlas_id_old = $atlas_id) {
+                                $value->price = $price;
+                                $value->total = $total;
+                                $value->qty = $quantity;
+
+                                array_push($new_items, (array) $value);
+                            } else {
                                 array_push($new_items, (array) $value);
                             }
                         }
 
-                        $update_quantity = array_push($new_items, [
-                            'qty' => $quantity,
-                            'atlasId' => $atlas_id,
-                            'price' => $inital_price,
-                            'total' => $new_price,
-                            'description' => $desc,
-                        ]);
+                        // $update_quantity = array_push($new_items, [
+                        //     'qty' => $quantity,
+                        //     'atlasId' => $atlas_id,
+                        //     'price' => $inital_price,
+                        //     'total' => $new_price,
+                        //     'description' => $desc,
+                        // ]);
                     }
 
                     $data_encode = json_encode($new_items);
@@ -3747,21 +3759,26 @@ class AdminController extends Controller
                     foreach ($data as $key => $value) {
                         $atlas_id_old = $value->atlasId;
 
-                        if ($atlas_id_old != $atlas_id) {
-                            // same atlas_id
+                        if ($atlas_id_old = $atlas_id) {
+                            $value->price = $price;
+                            $value->total = $total;
+                            $value->qty = $quantity;
+
+                            array_push($new_items, (array) $value);
+                        } else {
                             array_push($new_items, (array) $value);
                         }
                     }
 
                     // dd( $new_items );
 
-                    $update_quantity = array_push($new_items, [
-                        'qty' => $quantity,
-                        'atlasId' => $atlas_id,
-                        'price' => $price,
-                        'total' => $total,
-                        'description' => $desc,
-                    ]);
+                    // $update_quantity = array_push($new_items, [
+                    //     'qty' => $quantity,
+                    //     'atlasId' => $atlas_id,
+                    //     'price' => $price,
+                    //     'total' => $total,
+                    //     'description' => $desc,
+                    // ]);
 
                     // dd( $new_items );
                     $no_of_catalogue_order[0]->data = $new_items;
