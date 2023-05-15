@@ -3046,19 +3046,22 @@ class DealerController extends Controller
                     foreach ($data as $key => $value) {
                         $atlas_id_old = $value->atlasId;
 
-                        if ($atlas_id_old != $atlas_id) {
-                            // same atlas_id
-                            array_push($new_items, (array) $value);
+                        if ($atlas_id_old = $atlas_id) {
+                            $value->price = $price;
+                            $value->total = $total;
+                            $value->qty = $quantity;
+
+                            ////  array_push($new_items, (array) $value);
                         }
                     }
 
-                    $update_quantity = array_push($new_items, [
-                        'qty' => $quantity,
-                        'atlasId' => $atlas_id,
-                        'price' => $price,
-                        'total' => $total,
-                        'description' => $desc,
-                    ]);
+                    // $update_quantity = array_push($new_items, [
+                    //     'qty' => $quantity,
+                    //     'atlasId' => $atlas_id,
+                    //     'price' => $price,
+                    //     'total' => $total,
+                    //     'description' => $desc,
+                    // ]);
 
                     // dd( $new_items );
                     $no_of_catalogue_order[0]->data = $new_items;
