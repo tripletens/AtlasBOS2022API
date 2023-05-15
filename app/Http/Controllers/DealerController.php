@@ -3051,7 +3051,9 @@ class DealerController extends Controller
                             $value->total = $total;
                             $value->qty = $quantity;
 
-                            ////  array_push($new_items, (array) $value);
+                            array_push($new_items, (array) $value);
+                        } else {
+                            array_push($new_items, (array) $value);
                         }
                     }
 
