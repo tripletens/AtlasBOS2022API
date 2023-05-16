@@ -34,6 +34,7 @@ use App\Models\ServiceParts;
 use App\Models\CardedProducts;
 use App\Models\PromotionalCategory;
 use App\Models\ExtraProducts;
+use App\Models\BranchAssignDealer;
 
 use Barryvdh\DomPDF\Facade as PDF;
 
