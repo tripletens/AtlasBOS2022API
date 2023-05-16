@@ -2251,10 +2251,14 @@ class AdminController extends Controller
                 'account_id' => $request->account_id,
             ]);
 
-            BranchAssignDealer::create([
-                'branch_id' => $$request->branch,
-                'dealer_id' => $request->account_id,
-            ]);
+            if (count($request->branch) > 0) {
+                foreach ($request->branch as $branch) {
+                    BranchAssignDealer::create([
+                        'branch_id' => $branch,
+                        'dealer_id' => $request->account_id,
+                    ]);
+                }
+            }
 
             $this->result->status = true;
             $this->result->message = 'Successful';
