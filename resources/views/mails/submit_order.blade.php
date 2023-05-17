@@ -7,8 +7,6 @@
         "desc":"AQUA MAGIC V LOW - WHITE","proImg":"https://m.media-amazon.com/images/I/61DMaLuSkIL._AC_SL1500_.jpg",
         "vendorImg":"https://www.carlogos.org/logo/Hyundai-logo-silver-2560x1440.png","quantity":"3","price":387}]} -->
 
-        <h3>Your Order has been received successfully</h3> <br/>
-
         Dear Valued Customer,
         <p>Your Booking order has been received.</p> 
         <p> Thank your for participating in this year's Booking Program. </p>
