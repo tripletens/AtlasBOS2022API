@@ -1407,6 +1407,10 @@ class DealerController extends Controller
         $close_program = $dealer[0]->close_program;
         $dealer_account_id = $dealer[0]->account_id;
 
+        $cart = Cart::where('dealer', $id)->update([
+            'status' => '1',
+        ]);
+
         ///$dealer_status = Cart::where('dealer', $dealer_id)->where('status', $status)->get()->toArray();
 
         if ($close_program == '1') {
@@ -1464,10 +1468,6 @@ class DealerController extends Controller
                 )->update([
                     'order_status' => 1,
                     'placed_order_date' => $cur_date,
-                ]);
-
-                $cart = Cart::where('dealer', $id)->update([
-                    'status' => $status,
                 ]);
 
                 // update all the service parts completed to true (1)
