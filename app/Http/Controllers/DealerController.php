@@ -4164,10 +4164,10 @@ class DealerController extends Controller
         // get all catalogue orders
 
         if (Catalogue_Order::where('dealer', $dealer_account_id)->exists()) {
-            $get_catalogue_orders = Catalogue_Order::where(
-                'dealer',
-                $dealer_account_id
-            )
+            $get_catalogue_orders = Catalogue_Order::where([
+                'dealer' => $dealer_account_id,
+                'completed' => '0',
+            ])
                 ->get()
                 ->first();
             $format_catalogue_order_data = json_decode(
@@ -4183,10 +4183,10 @@ class DealerController extends Controller
         // get all the service parts
 
         if (ServiceParts::where('dealer', $dealer_account_id)->exists()) {
-            $get_service_parts_orders = ServiceParts::where(
-                'dealer',
-                $dealer_account_id
-            )
+            $get_service_parts_orders = ServiceParts::where([
+                'dealer' => $dealer_account_id,
+                'completed' => '0',
+            ])
                 ->get()
                 ->first();
             $format_service_parts_order_data = json_decode(
@@ -4202,10 +4202,10 @@ class DealerController extends Controller
         // get all the carded products
 
         if (CardedProducts::where('dealer', $dealer_account_id)->exists()) {
-            $get_carded_products_orders = CardedProducts::where(
-                'dealer',
-                $dealer_account_id
-            )
+            $get_carded_products_orders = CardedProducts::where([
+                'dealer' => $dealer_account_id,
+                'completed' => '0',
+            ])
                 ->get()
                 ->first();
             $format_carded_products_order_data = json_decode(
