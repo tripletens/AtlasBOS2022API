@@ -934,10 +934,11 @@ class BranchController extends Controller
             $catalogue_completed_price = $this->catalogue_total_completed_price($dealer_account_id);
 
             $total_sp += $service_parts_completed_price; 
-            $total_cp += $carded_completed_price;
-            $total_cd += $catalogue_completed_price;
+            $total_cd += $carded_completed_price;
+            $total_cp += $catalogue_completed_price;
 
             $sum_cart_total = Cart::where('dealer', $dealer_id)->sum('price');
+            
             $sum_total = $sum_cart_total + $service_parts_completed_price + $carded_completed_price + $catalogue_completed_price;
 
             $get_recent_order_Details[] = [
