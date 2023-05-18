@@ -16,7 +16,7 @@
     th {
         background-color: black;
         color: white;
-        padding-left: 10px;
+        text-align: center;
     }
 
     table,
