@@ -779,9 +779,6 @@
         </table>
     @endif
 
-
-  
-
     {{-- Catalougue Products Table --}}
     @if ($catalogue_data)
         <div style="margin-top: 30px">
@@ -842,7 +839,6 @@
             </tbody>
         </table>
     @endif
-
 
     {{-- service parts Products Table --}}
     @if ($service_data)
@@ -966,11 +962,6 @@
             </tbody>
         </table>
     @endif
-
-
-
-    
-
 
     <div style="width: 100%; text-align: right; border: 1px solid black; margin-top: 20px">
         <h5 class="each-total-cate-text" style="display: inline-block; border-right: 1px solid black">Grand Total:
