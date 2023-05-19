@@ -1210,20 +1210,30 @@ class BranchController extends Controller
                 ->distinct('atlas_branch_assign_dealers.dealer_id')
                 ->get();
 
+            // return $all_catalogue_orders;
+
             $decoded_data_value = [];
             $grand_total = 0;
 
             foreach ($all_catalogue_orders as $value) {
                 $value->data = json_decode($value->data);
-                array_push($decoded_data_value, ...$value->data);
+                // array_push($decoded_data_value, ...$value->data);
             }
 
-            foreach ($decoded_data_value as $value) {
-                $total_amount = $value->total;
-                $grand_total += $total_amount;
+            // foreach ($decoded_data_value as $value) {
+            //     $total_amount = $value->total;
+            //     $grand_total += $total_amount;
+            // }
+
+            foreach ($all_catalogue_orders as &$order) {
+                $grandTotal = array_reduce($order->data, function ($carry, $item) {
+                    return $carry + $item->total;
+                }, 0);
+            
+                $order->grand_total = $grandTotal;
             }
 
-            $all_catalogue_orders && count($all_catalogue_orders) > 0 ? $all_catalogue_orders[0]->grand_total = $grand_total : [];
+            // $all_catalogue_orders && count($all_catalogue_orders) > 0 ? $all_catalogue_orders[0]->grand_total = $grand_total : [];
 
             $this->result->status = true;
             $this->result->status_code = 200;
