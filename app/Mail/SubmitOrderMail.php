@@ -18,10 +18,12 @@ class SubmitOrderMail extends Mailable
      * @return void
      */
     private $order_ref;
+    private $title;
 
     public function __construct($order_ref)
     {
         $this->order_ref = $order_ref;
+        $this->title = '2023 Atlas Booking Order Details'; // Set the title of the email
     }
 
     /**
@@ -31,6 +33,6 @@ class SubmitOrderMail extends Mailable
      */
     public function build()
     {
-        return $this->view('mails.submit_order')->attachData(env('APP_URL') . Storage::get('public/pdf/'. $this->order_ref), $this->order_ref);
+        return $this->subject($this->title)->view('mails.submit_order')->attachData(env('APP_URL') . Storage::get('public/pdf/' . $this->order_ref), $this->order_ref);
     }
 }

@@ -841,6 +841,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
         '/fetch_all_dealers_with_active_catalogue_order/{branch_id}',
         'BranchController@fetch_all_dealers_with_active_catalogue_order'
     );
+    
     Route::get(
         '/fetch_all_dealers_with_active_order/{branch_id}',
         'BranchController@fetch_all_dealers_with_active_order'
