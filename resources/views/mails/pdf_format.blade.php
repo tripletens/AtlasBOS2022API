@@ -844,7 +844,67 @@
     @endif
 
 
+    {{-- service parts Products Table --}}
+    @if ($service_data)
+        <div style="margin-top: 30px">
+            <h5 class="top-title-table" style="">Service Parts</h5>
+        </div>
+        <table class="">
+            <thead class="">
+                <tr>
+                    <th class="thead-custom">Quantity</th>
+                    <th class="thead-custom">Atlas #</th>
+                    <th class="thead-custom">Description</th>
+                    <th class="thead-custom">UM</th>
+                    <th class="thead-custom">Unit Price</th>
+                    <th class="thead-custom">Extended</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if ($service_data)
+                {{ $service_total = 0 }}
 
+                    @foreach ($service_data as $item)
+                    {{ $service_total+= $item['total'] }}
+
+                        <tr>
+                            <td class="table-value-custom">{{ $item['qty'] }}</td>
+                            <td class="table-value-custom">{{ $item['atlasId'] }}</td>
+                            <td class="table-value-custom">{{ $item['description'] }}</td>
+
+                            
+                            @isset($item['um'])
+                                <td class="table-value-custom">{{ $item['um'] }}</td>
+                            @endisset
+
+
+                            @isset($item['price'])
+                                <td class="table-value-custom">${{ number_format($item['price'], 2) }}</td>
+                                <td class="table-value-custom">${{ number_format($item['total'], 2) }}</td>
+                            @endisset
+                        </tr>
+                    @endforeach
+                    <tr>
+                        <td colspan="5">
+                            <h5 class="each-total-cate-text" style="">
+                                Total For
+                                Service Parts Order</h5>
+                        </td>
+                        <td>
+                            <h5 class="each-total-text" style="">
+                                ${{ number_format($service_total, 2) }}</h5>
+                        </td>
+                    </tr>
+                    {{ $grand_total += $service_total }}
+
+                @else
+                    <tr>
+                        <td colspan="2" class="table-value-custom" style="text-align: center">No Service Parts</td>
+                    </tr>
+                @endif
+            </tbody>
+        </table>
+    @endif
 
     {{-- Carded Products Table --}}
     @if ($carded_data)
@@ -909,68 +969,7 @@
 
 
 
-    {{-- Carded Products Table --}}
-    @if ($service_data)
-        <div style="margin-top: 30px">
-            <h5 class="top-title-table" style="">Service Parts</h5>
-        </div>
-        <table class="">
-            <thead class="">
-                <tr>
-                    <th class="thead-custom">Quantity</th>
-                    <th class="thead-custom">Atlas #</th>
-                    <th class="thead-custom">Description</th>
-                    <th class="thead-custom">UM</th>
-                    <th class="thead-custom">Unit Price</th>
-                    <th class="thead-custom">Extended</th>
-                </tr>
-            </thead>
-            <tbody>
-                @if ($service_data)
-                {{ $service_total = 0 }}
-
-                    @foreach ($service_data as $item)
-                    {{ $service_total+= $item['total'] }}
-
-                        <tr>
-                            <td class="table-value-custom">{{ $item['qty'] }}</td>
-                            <td class="table-value-custom">{{ $item['atlasId'] }}</td>
-                            <td class="table-value-custom">{{ $item['description'] }}</td>
-
-                            
-                            @isset($item['um'])
-                                <td class="table-value-custom">{{ $item['um'] }}</td>
-                            @endisset
-
-
-                            @isset($item['price'])
-                                <td class="table-value-custom">${{ number_format($item['price'], 2) }}</td>
-                                <td class="table-value-custom">${{ number_format($item['total'], 2) }}</td>
-                            @endisset
-                        </tr>
-                    @endforeach
-                    <tr>
-                        <td colspan="5">
-                            <h5 class="each-total-cate-text" style="">
-                                Total For
-                                Service Parts Order</h5>
-                        </td>
-                        <td>
-                            <h5 class="each-total-text" style="">
-                                ${{ number_format($service_total, 2) }}</h5>
-                        </td>
-                    </tr>
-                    {{ $grand_total += $service_total }}
-
-                @else
-                    <tr>
-                        <td colspan="2" class="table-value-custom" style="text-align: center">No Service Parts</td>
-                    </tr>
-                @endif
-            </tbody>
-        </table>
-    @endif
-
+    
 
 
     <div style="width: 100%; text-align: right; border: 1px solid black; margin-top: 20px">
