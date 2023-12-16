@@ -249,7 +249,6 @@ class Sheet
 
         $calculatesFormulas = $import instanceof WithCalculatedFormulas;
         $formatData         = $import instanceof WithFormatData;
-        $endColumn          = $import instanceof WithColumnLimit ? $import->endColumn() : null;
 
         if ($import instanceof WithMappedCells) {
             app(MappedReader::class)->map($import, $this->worksheet);
@@ -292,9 +291,11 @@ class Sheet
                     $sheetRow->setPreparationCallback($preparationCallback);
                 }
 
-                if (!$import instanceof SkipsEmptyRows || ($import instanceof SkipsEmptyRows && !$sheetRow->isEmpty($calculatesFormulas))) {
+                $rowArray                    = $sheetRow->toArray(null, $import instanceof WithCalculatedFormulas, $import instanceof WithFormatData, $endColumn);
+                $rowIsEmptyAccordingToImport = $import instanceof SkipsEmptyRows && method_exists($import, 'isEmptyWhen') && $import->isEmptyWhen($rowArray);
+                if (!$import instanceof SkipsEmptyRows || ($import instanceof SkipsEmptyRows && (!$rowIsEmptyAccordingToImport && !$sheetRow->isEmpty($calculatesFormulas)))) {
                     if ($import instanceof WithValidation) {
-                        $toValidate = [$sheetRow->getIndex() => $sheetRow->toArray(null, $import instanceof WithCalculatedFormulas, $import instanceof WithFormatData, $endColumn)];
+                        $toValidate = [$sheetRow->getIndex() => $rowArray];
 
                         try {
                             app(RowValidator::class)->validate($toValidate, $import);
@@ -463,9 +464,34 @@ class Sheet
      */
     public function fromQuery(FromQuery $sheetExport, Worksheet $worksheet)
     {
+        if ($sheetExport->query() instanceof \Laravel\Scout\Builder) {
+            $this->fromScout($sheetExport, $worksheet);
+
+            return;
+        }
+
         $sheetExport->query()->chunk($this->getChunkSize($sheetExport), function ($chunk) use ($sheetExport) {
             $this->appendRows($chunk, $sheetExport);
         });
+    }
+
+    /**
+     * @param  FromQuery  $sheetExport
+     * @param  Worksheet  $worksheet
+     */
+    public function fromScout(FromQuery $sheetExport, Worksheet $worksheet)
+    {
+        $scout     = $sheetExport->query();
+        $chunkSize = $this->getChunkSize($sheetExport);
+
+        $chunk = $scout->paginate($chunkSize);
+        // Append first page
+        $this->appendRows($chunk->items(), $sheetExport);
+
+        // Append rest of pages
+        for ($page = 2; $page <= $chunk->lastPage(); $page++) {
+            $this->appendRows($scout->paginate($chunkSize, 'page', $page)->items(), $sheetExport);
+        }
     }
 
     /**
@@ -660,7 +686,7 @@ class Sheet
     }
 
     /**
-     * @param $sheetImport
+     * @param  $sheetImport
      * @return int
      */
     public function getStartRow($sheetImport): int
