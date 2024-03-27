@@ -20,6 +20,9 @@ use App\Models\Products;
 use Carbon\Carbon;
 use DB;
 use Barryvdh\DomPDF\Facade as PDF;
+use App\Exports\BranchDealerExport;
+use Maatwebsite\Excel\Facades\Excel;
+
 
 class BranchController extends Controller
 {
@@ -32,7 +35,7 @@ class BranchController extends Controller
 
     public function __construct()
     {
-        //// $this->middleware( 'auth:api', [ 'except' => [ 'login', 'register', 'test' ] ] );
+        // $this->middleware( 'auth:api', [ 'except' => [ 'login', 'register', 'test' ] ] );
         $this->result = (object) [
             'status' => false,
             'status_code' => 200,
@@ -2406,4 +2409,372 @@ class BranchController extends Controller
         // get_all_branch_notloggedin_dealers
         // get_all_branch_loggedin_dealers
     }
+
+    public function export_dealer_details($branch_id)
+    {
+        $fetch_branch_details = Branch::where('id', $branch_id)
+            ->where('status', '1')
+            ->first();
+        
+        // return $fetch_branch_details;
+
+        if (!$fetch_branch_details) {
+            $this->result->status = false;
+            $this->result->status_code = 422;
+            $this->result->data = [];
+            $this->result->message = 'Sorry branch doesnt exist or deactivated';
+            return response()->json($this->result);
+        } else {
+            $fetch_dealers = BranchAssignDealer::where(
+                'branch_id',
+                $branch_id
+            )->get();
+
+            if (!$fetch_dealers) {
+                $this->result->status = false;
+                $this->result->status_code = 422;
+                $this->result->data = [];
+                $this->result->message =
+                    'Sorry we could not fetch all the dealers assigned to the branch';
+                return response()->json($this->result);
+            }
+
+            $dealer_array = [];
+
+            foreach ($fetch_dealers as $dealer) {
+                $dealer = (object) $dealer;
+                // check if the dealer has service part, carded or catalogue products
+
+                $fetch_dealer_details = Dealer::where(
+                    'account_id',
+                    $dealer->dealer_id
+                )->first();
+                if ($fetch_dealer_details) {
+                    array_push($dealer_array, $fetch_dealer_details);
+                }
+            }
+
+            // return $dealer_array;
+
+            $format_dealer_array = array_map(function ($record) {
+                $dealer_id = $record->account_id;
+
+                $dealer_user_id = $record->id;
+
+                // return $dealer_id;
+
+                $record->total_carded_price = 0;
+
+                $record->total_service_price = 0;
+
+                $record->total_catalogue_price = 0;
+
+                $check_service_parts = ServiceParts::where(
+                    'dealer',
+                    $dealer_id
+                )->get();
+
+                if (count($check_service_parts) == 0) {
+                    $record->has_service_parts = 0; // doesnt have catalogue orders 
+                } else {
+                    // get the status 
+
+                    $completed_service_parts = $check_service_parts[0]->completed;
+                    if ($completed_service_parts == 1) {
+                        // active 
+                        $record->total_service_submitted_price = $this->service_parts_total_pending_price($dealer_id);
+                        $record->has_service_parts = 1;
+                    }
+
+                    if ($completed_service_parts == 0) {
+                        // pending 
+
+                        // lets get the pending service parts 
+
+                        $record->total_service_price = $this->service_parts_total_pending_price($dealer_id);
+
+                        $record->has_service_parts = 2;
+                    }
+                }
+
+                // catalogue starts here 
+
+                // check for catalogue products
+                $check_catalogue_products = Catalogue_Order::where(
+                    'dealer',
+                    $dealer_id
+                )->get();
+
+                if (count($check_catalogue_products) == 0) {
+                    $record->has_catalogue_products = 0; // doesnt have catalogue orders 
+                } else {
+                    // get the status 
+
+                    $completed_catalogue = $check_catalogue_products[0]->completed;
+                    if ($completed_catalogue == 1) {
+                        // active 
+                        $record->total_catalogue_submitted_price = $this->catalogue_total_pending_price($dealer_id);
+
+                        $record->has_catalogue_products = 1;
+                    }
+
+                    if ($completed_catalogue == 0) {
+                        // pending 
+
+                        // get all the total pending orders
+
+                        $record->total_catalogue_price = $this->catalogue_total_pending_price($dealer_id);
+
+                        $record->has_catalogue_products = 2;
+                    }
+                }
+
+                // 1 equals active, 0 pending 
+
+                // check for carded products
+
+                $check_carded_products = CardedProducts::where(
+                    'dealer',
+                    $dealer_id
+                )->get();
+
+                if (count($check_carded_products) == 0) {
+                    $record->has_carded_products = 0; // doesnt have catalogue orders 
+                } else {
+
+                    // get the carded products data 
+                    $carded_product_data = $check_carded_products[0]->data;
+
+                    // return $check_carded_products[0]; 
+                    // array_column($carded_product_data,'total');
+
+                    // get the status 
+
+                    $completed_carded = $check_carded_products[0]->completed;
+                    if ($completed_carded == 1) {
+                        // active  submitted order
+                        $record->total_carded_submitted_price = $this->carded_total_pending_price($dealer_id);
+                        $record->has_carded_products = 1;
+                    }
+
+                    if ($completed_carded == 0) {
+                        // pending 
+                        $record->total_carded_price = $this->carded_total_pending_price($dealer_id);
+                        $record->has_carded_products = 2;
+                    }
+                }
+
+
+                // check if the dealer has an item in cart return 0
+                $check_cart = Cart::where('dealer', $dealer_user_id)->get();
+
+                if (count($check_cart) == 0) {
+                    $record->order_status = 0;
+                }
+
+                // doesnt have item in the cart and has not submitted return 2 pending
+                $check_cart = Cart::where('dealer', $dealer_user_id)
+                    ->where('status', 0)
+                    ->get();
+
+                if (count($check_cart) > 0) {
+                    $record->order_status = 2;
+
+                    // lets sum the total pending amount for cart items 
+                    $sum_pending_cart_amount = Cart::where('dealer', $dealer_user_id)
+                        ->where('status', 0)
+                        ->sum('price');
+
+
+                    $record->pending_total = number_format(
+                        $sum_pending_cart_amount + $record->total_service_price + $record->total_carded_price + $record->total_catalogue_price,
+                        2
+                    );
+                } else {
+                    $record->pending_total = number_format(0, 2);
+                }
+
+                // check if the person has submitted return 1
+
+                $check_cart = Cart::where('dealer', $dealer_user_id)
+                    ->where('status', 1)
+                    ->get();
+
+                if (count($check_cart) > 0) {
+                    $record->order_status = 1;
+
+                    // lets get the total submitted amount
+                    $sum_submitted_amount = Cart::where(
+                        'dealer',
+                        $dealer_user_id
+                    )
+                        ->where('status', 1)
+                        ->sum('price');
+
+                    $record->submitted_total = number_format(
+                        $sum_submitted_amount + $record->total_carded_submitted_price + $record->total_catalogue_submitted_price + $record->total_service_submitted_price,
+                        2
+                    );
+                } else {
+                    $record->submitted_total = number_format(0, 2);
+                }
+
+                return $record;
+            }, $dealer_array);
+
+            // lets sort the data via account_id
+            // return gettype($format_dealer_array);
+
+            usort($format_dealer_array, function ($a, $b) {
+                return strcmp($a['account_id'], $b['account_id']);
+            });
+
+            // return Excel::download(new BranchDealerExport($format_dealer_array), 'branchdealer.xlsx');
+
+            // return $format_dealer_array;
+
+            $this->result->status = true;
+            $this->result->status_code = 200;
+            $this->result->data = [
+                'branch' => $fetch_branch_details,
+                'dealers' =>
+                $format_dealer_array && count($format_dealer_array) > 0
+                    ? $format_dealer_array
+                    : [],
+            ];
+            $this->result->message = 'All Branches fetched Successfully';
+            return response()->json($this->result);
+        }
+    }
+
+    // public function __old_export_dealer_details($branch_id){
+    //     // get all the dealers under a branch 
+
+    //     // fetch all dealers assigned to a branch
+    //     $fetch_branch_details = Branch::where('id', $branch_id)
+    //         ->where('status', '1')
+    //         ->first();
+    //     // return $fetch_branch_details;
+
+    //     if (!$fetch_branch_details) {
+    //         $this->result->status = false;
+    //         $this->result->status_code = 422;
+    //         $this->result->data = [];
+    //         $this->result->message = 'Sorry branch doesnt exist or deactivated';
+    //         return response()->json($this->result);
+    //     } else {
+    //         $fetch_dealers = BranchAssignDealer::where(
+    //             'branch_id',
+    //             $branch_id
+    //         )->get();
+
+    //         // return $fetch_dealers;
+
+    //         $fetch_account_ids = $fetch_dealers->pluck('dealer_id')->toArray();
+
+    //         // return $fetch_account_ids;
+
+    //         $all_dealer_ids = DB::table('atlas_dealers')
+    //             ->wherein('account_id', $fetch_account_ids)
+    //             ->where('order_status', 1)
+    //             ->pluck('id')
+    //             ->toArray();
+
+    //         // return $all_dealer_ids;
+
+
+    //         $all_orders = DB::table('atlas_dealers')
+    //             ->wherein('id', $all_dealer_ids)
+    //             ->where('order_status', '1')
+    //             ->select(
+    //                 'atlas_dealers.id',
+    //                 'atlas_dealers.full_name',
+    //                 'atlas_dealers.first_name',
+    //                 'atlas_dealers.last_name',
+    //                 'atlas_dealers.email',
+    //                 'atlas_dealers.account_id',
+    //                 'atlas_dealers.phone',
+    //                 'atlas_dealers.status',
+    //                 'atlas_dealers.order_status',
+    //                 'atlas_dealers.location',
+    //                 'atlas_dealers.company_name',
+    //                 'atlas_dealers.last_login',
+    //                 'atlas_dealers.placed_order_date',
+    //                 'atlas_dealers.order_pdf',
+    //                 'placed_order_date as order_date'
+    //             )
+    //             ->orderby('placed_order_date', 'desc')
+    //             ->get()
+    //             ->toArray();
+
+    //         // return $all_orders;
+
+    //         $format_all_orders = array_map(function ($record) {
+    //             $dealer_id = $record->id;
+
+    //             $check_total_price = Cart::where('dealer', $dealer_id)->sum(
+    //                 'price'
+    //             );
+
+    //             $record->total_amount = number_format($check_total_price, 2);
+
+    //             // total pending amount i.e amount of items that has not been submitted
+    //             $record->total_pending_amt = number_format(
+    //                 DB::table('cart')
+    //                     ->where('dealer', $dealer_id)
+    //                     ->where('status', '0')
+    //                     ->sum('price'),
+    //                 2
+    //             );
+
+    //             // total pending items i.e no of items that has not been submitted
+    //             $record->total_pending_items = DB::table('cart')
+    //                 ->where('dealer', $dealer_id)
+    //                 ->where('status', '0')
+    //                 ->count();
+
+    //             // list of pending items 
+    //             $record->total_pending_items = DB::table('cart')
+    //                 ->where('dealer', $dealer_id)
+    //                 ->where('status', '0')
+    //                 ->get();
+
+    //             foreach ($record->total_pending_items as $item) {
+    //                 $item->spec_data = json_decode($item->spec_data);
+    //             }
+
+    //             // list of completed order items 
+    //             $record->total_completed_items = DB::table('cart')
+    //                 ->where('dealer', $dealer_id)
+    //                 ->where('status', '1')
+    //                 ->get();
+
+    //             foreach ($record->total_completed_items as $item) {
+    //                 $item->spec_data = json_decode($item->spec_data);
+    //             }
+
+    //             return $record;
+    //         }, $all_orders);
+
+    //         return $format_all_orders;
+
+    //         if (!$all_orders) {
+    //             $this->result->status = false;
+    //             $this->result->status_code = 422;
+    //             $this->result->message =
+    //                 'Sorry we could not fetch all the dealers assigned to the branch';
+    //             return response()->json($this->result);
+    //         }
+
+    //         $this->result->status = true;
+    //         $this->result->status_code = 200;
+    //         $this->result->data = $format_all_orders ? $format_all_orders : [];
+    //         $this->result->message =
+    //             'All dealers with pending orders fetched successfully';
+    //         return response()->json($this->result);
+    //     }
+    // }
 }
+
+
+
