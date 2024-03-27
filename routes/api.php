@@ -634,6 +634,9 @@ Route::group(
         );
 
         Route::post('/store-user-cart', 'DealerController@store_user_cart');
+        
+        Route::post('/store_user_cart_no_price', 'DealerController@store_user_cart_no_price');
+        
         Route::post('edit-user-cart/', 'DealerController@edit_user_cart');
 
         Route::get(
@@ -899,6 +902,10 @@ Route::group(['namespace' => 'App\Http\Controllers'], function () {
 
     Route::get(
         '/attach_img_url_to_products',
-        'DealerController@attach_img_url_to_products'
+        'DealerController@attach_img_url_to_productfetch_dealer_by_branchs'
     );
+
+    // export dealers under a branch 
+
+    Route::get('/export-dealers/{branch_id}','BranchController@export_dealer_details');
 });

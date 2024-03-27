@@ -1145,6 +1145,62 @@ class DealerController extends Controller
         // }
     }
 
+    public function store_user_cart_no_price(Request $request)
+    {
+        // lets get the items from the array
+        $product_array = $request->input('product_array');
+        $dealer = $request->input('dealer');
+
+        $added_item = 0;
+        $in_cart = '';
+
+        if (count(json_decode($product_array)) > 0 && $product_array) {
+            $decode_product_array = json_decode($product_array);
+
+            foreach ($decode_product_array as $product) {
+                // update to the db
+
+                if (
+                    !Cart::where('dealer', $dealer)
+                        ->where('atlas_id', $product->atlasId)
+                        ->exists()
+                ) {
+                    if (intval($product->quantity) > 0) {
+                        $added_item++;
+                        $create_carded_product = Cart::create([
+                            'dealer' => $dealer,
+                            'atlas_id' => $product->atlasId,
+                            'desc' => null,
+                            'pro_img' => $product->proImg,
+                            'vendor_img' => $product->vendorImg,
+                            'qty' => $product->quantity,
+                            'price' => null,
+                            'unit_price' => null,
+                            'spec_data' => null,
+                            'grouping' => null,
+                            'type' => $product->type,
+                            'xref' => null,
+                            'pro_id' => $product->id,
+                            'booking' => null,
+                            'category' => $product->category,
+                            'um' => null,
+                        ]);
+                    }
+                } else {
+                    $in_cart .= $product->atlasId . ', ';
+                }
+            }
+        }
+
+        $this->result->status = true;
+        $this->result->status_code = 200;
+        $this->result->data->added = $added_item;
+        $this->result->data->in_cart = $in_cart;
+
+        // $this->result->message = 'Item Already Added to the cart';
+        return response()->json($this->result);
+    }
+
     public function edit_user_cart(Request $request)
     {
         // `dealer`, `pro_id`, `atlas_id`, `qty`, `price`, `unit_price`, `status`,
