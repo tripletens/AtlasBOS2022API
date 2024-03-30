@@ -17,6 +17,7 @@ use App\Models\Cart;
 use App\Models\Category;
 use App\Models\Orders;
 use App\Models\Products;
+use App\Models\ExtraProducts;
 use Carbon\Carbon;
 use DB;
 use Barryvdh\DomPDF\Facade as PDF;
@@ -998,6 +999,13 @@ class BranchController extends Controller
 
         $total_uncompleted_cd_count = 0; 
 
+
+        // total products 
+
+        $total_products = Products::count();
+
+        $total_new_products = ExtraProducts::count();
+
         foreach ($all_recent_with_order_dealer_ids as $record) {
             $dealer_id = $record['id'];
             $dealer_account_id = $record['account_id'];
@@ -1076,6 +1084,10 @@ class BranchController extends Controller
         $this->result->data->total_completed_cp_count = $total_completed_cp_count;
 
         $this->result->data->total_uncompleted_cp_count = $total_uncompleted_cp_count;
+
+        $this->result->data->total_products = $total_products;
+        
+        $this->result->data->total_new_products = $total_new_products;
         
         $this->result->message = 'Dashboard details fetched successfully';
 
